@@ -1,0 +1,254 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Generate Mozilla Security Recommended Web Server Configuration Files</title>
+    <link rel="stylesheet" type="text/css" media="all" href="../css/screen.css" />
+    <style>
+        div#server-config-text pre {
+            background-color: #F7F7F7;
+            border-radius: 3px;
+            padding: 2em;
+        }
+        label {
+            font-family: 'OpenSans', "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
+            font-weight: normal;
+            text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.75);
+        }
+        .message {
+            font-size: 150%;
+        }
+    </style>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
+    <script>
+        // https://gist.github.com/cowboy/566233
+        var isSemVer=(function(){var a=/^(<|>|[=!<>]=)?\s*(\d+(?:\.\d+){0,2})([a-z][a-z0-9\-]*)?$/i;function b(e,c){var d=(e+"").match(a);return d?(c?(d[1]||"=="):"")+'"'+(d[2]+".0.0").match(/\d+(?:\.\d+){0,2}/)[0].replace(/(?:^|\.)(\d+)/g,function(g,f){return Array(9-f.length).join(0)+f})+(d[3]||"~")+'"':(c?"==0":1)}return function(e){e=b(e);for(var c,d=1;c=arguments[d++];){if(!(new Function("return "+e+b(c,1)))()){return false}}return true}})();
+    </script>
+
+    <script id="nginx-template" type="text/x-handlebars-template">
+<h1>Server : {{server}} {{serverVersion}} | {{securityProfile}} profile</h1>
+Openssl : {{opensslVersion}}<br />
+<pre>
+server {
+    listen 443;
+    ssl on;
+
+    # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
+    ssl_certificate /path/to/signed_cert_plus_intermediates;
+    ssl_certificate_key /path/to/private_key;
+    ssl_session_timeout 5m;
+    ssl_session_cache shared:SSL:50m;
+{{dhparam}}
+
+    # {{securityProfile}} configuration. tweak to your needs.
+    ssl_protocols {{sslProtocols}};
+    ssl_ciphers '{{cipherSuites}}';
+    ssl_prefer_server_ciphers on;
+ 
+{{hsts}}
+{{ocspstapling}}
+
+    resolver &lt;IP DNS resolver&gt;;
+ 
+    ....
+}
+</pre>
+    </script>
+
+    <script id="apache-template" type="text/x-handlebars-template">
+<h1>Server : {{server}} {{serverVersion}} | {{securityProfile}} profile</h1>
+Openssl : {{opensslVersion}}<br />
+<pre>
+&lt;VirtualHost *:443&gt;
+    ...
+    SSLEngine on
+    SSLCertificateFile      /path/to/signed_certificate
+    SSLCertificateChainFile /path/to/intermediate_certificate
+    SSLCertificateKeyFile   /path/to/private/key
+    SSLCACertificateFile    /path/to/all_ca_certs
+
+    # {{securityProfile}} configuration, tweak to your needs
+    SSLProtocol             {{sslProtocols}}
+    SSLCipherSuite          {{cipherSuites}}
+    SSLHonorCipherOrder     on
+{{compression}}
+{{ocspStapling}}
+{{hsts}}
+    ...
+&lt;/VirtualHost&gt;
+</pre>
+</script>
+
+<script id="haproxy-template" type="text/x-handlebars-template">
+<h1>Server : {{server}} {{serverVersion}} | {{securityProfile}} profile</h1>
+Openssl : {{opensslVersion}}<br />
+<span class="message">{{message}}</span>
+<pre style="visibility: {{visibility}};">
+global
+    # set default parameters to the {{securityProfile}} configuration
+    tune.ssl.default-dh-param 2048
+    ssl-default-bind-ciphers {{cipherSuites}}
+
+frontend ft_test
+    mode    http
+    bind    0.0.0.0:443 {{sslProtocols}} crt /path/to/&lt;cert+privkey+intermediate+dhparam&gt;
+{{hsts}}
+</pre>
+    </script>
+
+    <script>
+        var cipherSuites = {
+            modern: 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK',
+            intermediate: 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA',
+            old: 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-RSA-DES-CBC3-SHA:ECDHE-ECDSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA:AES256-SHA:AES:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA'
+        };
+        var sslProtocols = {
+            modern: {
+                apache: 'all -SSLv2 -SSLv3 -TLSv1',
+                nginx: 'TLSv1.1 TLSv1.2',
+                haproxy: 'ssl no-sslv3 no-tlsv10'
+            },
+            intermediate: {
+                apache: 'all -SSLv2 -SSLv3',
+                nginx: 'TLSv1 TLSv1.1 TLSv1.2',
+                haproxy: 'ssl no-sslv3'
+            },
+            old: {
+                apache: 'all -SSLv2',
+                nginx: 'SSLv3 TLSv1 TLSv1.1 TLSv1.2',
+                haproxy: 'ssl'
+            }
+        };
+
+        function getVersionConstrainedDirectives(data) {
+            switch (data.server) {
+                case "nginx":
+                    // http://nginx.org/en/docs/http/ngx_http_core_module.html
+                    if (isSemVer(data.serverVersion, ">=0.7.2")) {
+                        data.dhparam = '\n    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits' + '\n' +
+                            '    ssl_dhparam /path/to/dhparam.pem;'
+                    }
+                    if (isSemVer(data.serverVersion, ">=1.3.7")) {
+                        data.ocspstapling = '\n    # OCSP Stapling ---' + '\n' +
+                            '    # fetch OCSP records from URL in ssl_certificate and cache them' + '\n' +
+                            '    ssl_stapling on;' + '\n' +
+                            '    ssl_stapling_verify on;' + '\n'
+                    }
+                    if (data.hstsEnabled == "true") {
+                        data.hsts = '    # HSTS' + '\n' +
+                            '    add_header Strict-Transport-Security max-age=15768000;'
+                    }
+                    break;
+                case "apache":
+                    // http://httpd.apache.org/docs/current/mod/mod_ssl.html
+                    data.compression = isSemVer(data.serverVersion, ">=2.4.3") ? '    SSLCompression          off' : ''
+                    if (isSemVer(data.opensslVersion, ">=0.9.8h") && isSemVer(data.serverVersion, '>=2.3.3')) {
+                        data.ocspStapling = '\n    # OCSP Stapling, only in httpd 2.3.3 and later' + '\n' +
+                            '    SSLUseStapling          on' + '\n' +
+                            '    SSLStaplingResponderTimeout 5' + '\n' +
+                            '    SSLStaplingReturnResponderErrors off' + '\n' +
+                            '    SSLStaplingCache        shmcb:/var/run/ocsp(128000)' + '\n' +
+                            '\n' +
+                            '    ## verify chain of trust of OCSP response using Root CA and Intermediate certs' + '\n' +
+                            '    ssl_trusted_certificate /path/to/root_CA_cert_plus_intermediates;'
+                    }
+                    if (data.hstsEnabled == "true") {
+                        data.hsts = '    # HSTS' + '\n' +
+                            '    Header add Strict-Transport-Security "max-age=15768000"'
+                    }
+                    break;
+                case "haproxy":
+                    // http://www.haproxy.org/download/1.5/doc/configuration.txt
+                    if (data.hstsEnabled == "true") {
+                        data.hsts = '    # HSTS' + '\n' +
+                            '    rspadd  Strict-Transport-Security:\ max-age=15768000'
+                    }
+                    if (isSemVer(data.serverVersion, "<1.5")) {
+                        data.visibility = 'hidden';
+                        data.message = "HAProxy version " + data.serverVersion + " doesn't support SSL";
+                    }
+                    break;
+            }
+            return data;
+        }
+
+        $(document).ready(function() {
+            function renderConfig() {
+                var data = {
+                    serverVersion: $("#server-version").val(),
+                    opensslVersion: $("#openssl-version").val(),
+                    hstsEnabled: $("input#hsts-enabled:checkbox:checked").val(),
+                    server: $("div#server-list input:radio:checked").val(),
+                    securityProfile: $("div#security-profile-list input:radio:checked").val()
+                }
+                var source = $("#" + data.server + "-template").html();
+                var template = Handlebars.compile(source);
+                data.visibility = "visible"; 
+                jQuery.extend(data, getVersionConstrainedDirectives(data))
+                jQuery.extend(data, {
+                    sslProtocols: sslProtocols[data.securityProfile][data.server],
+                    cipherSuites: cipherSuites[data.securityProfile]
+                });
+                $("#server-config-text").html(template(data));
+            }
+            $("ul#security-profile-list li button").click(function() {
+                securityProfile = $(this).text();
+                renderConfig();
+            });
+            $("input").change(function() {
+                renderConfig();
+            });
+            renderConfig();
+        });
+    </script>
+
+</head>
+
+<body>
+    <div style="width 100px; float:left; padding:1em;">
+        <div id="server-list">
+            <input type="radio" name="server" id="apache" value="apache" checked="true">
+            <label for="apache">Apache</label>
+            <br />
+            <input type="radio" name="server" id="nginx" value="nginx">
+            <label for="nginx">Nginx</label>
+            <br />
+            <input type="radio" name="server" id="haproxy" value="haproxy">
+            <label for="haproxy">HAProxy</label>
+            <br />
+        </div>
+    </div>
+    <div style="width 100px; float:left; padding:1em;">
+
+        <div id="security-profile-list">
+            <input type="radio" name="security-profile" id="modern" value="modern" checked="true">
+            <label for="modern">modern</label>
+            <br />
+            <input type="radio" name="security-profile" id="intermediate" value="intermediate">
+            <label for="intermediate">intermediate</label>
+            <br />
+            <input type="radio" name="security-profile" id="old" value="old">
+            <label for="old">old</label>
+            <br />
+        </div>
+    </div>
+    <div style="width 100px; float:left; padding:1em;">
+        <label for="server-version">Server Version</label>
+        <input id="server-version" type="text" maxlength="15" value="1.0" />
+        <br />
+        <label for="openssl-version">OpenSSL Version</label>
+        <input id="openssl-version" type="text" maxlength="15" value="0.9.8h" />
+        <br />
+        <label for="hsts-enabled">HSTS Enabled</label>
+        <input id="hsts-enabled" type="checkbox" value="true" checked="true" />
+    </div>
+    <div style="clear:both;"></div>
+    <div id="server-config-text"></div>
+
+
+</body>
+
+</html>
