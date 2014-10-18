@@ -11,7 +11,7 @@
             border-radius: 3px;
             padding: 2em;
         }
-        label {
+        label, p {
             font-family: 'OpenSans', "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
             font-weight: normal;
             text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.75);
@@ -30,7 +30,7 @@
 
     <script id="nginx-template" type="text/x-handlebars-template">
 <h1>Server : {{server}} {{serverVersion}} | {{securityProfile}} profile</h1>
-Openssl : {{opensslVersion}}<br />
+<p>Openssl : {{opensslVersion}}</p>
 <pre>
 server {
     listen 443;
@@ -60,7 +60,7 @@ server {
 
     <script id="apache-template" type="text/x-handlebars-template">
 <h1>Server : {{server}} {{serverVersion}} | {{securityProfile}} profile</h1>
-Openssl : {{opensslVersion}}<br />
+<p>Openssl : {{opensslVersion}}</p>
 <pre>
 &lt;VirtualHost *:443&gt;
     ...
@@ -84,7 +84,7 @@ Openssl : {{opensslVersion}}<br />
 
 <script id="haproxy-template" type="text/x-handlebars-template">
 <h1>Server : {{server}} {{serverVersion}} | {{securityProfile}} profile</h1>
-Openssl : {{opensslVersion}}<br />
+<p>Openssl : {{opensslVersion}}</p>
 <span class="message">{{message}}</span>
 <pre style="visibility: {{visibility}};">
 global
@@ -225,13 +225,13 @@ frontend ft_test
 
         <div id="security-profile-list">
             <input type="radio" name="security-profile" id="modern" value="modern" checked="true">
-            <label for="modern">modern</label>
+            <label for="modern">Modern</label>
             <br />
             <input type="radio" name="security-profile" id="intermediate" value="intermediate">
-            <label for="intermediate">intermediate</label>
+            <label for="intermediate">Intermediate</label>
             <br />
             <input type="radio" name="security-profile" id="old" value="old">
-            <label for="old">old</label>
+            <label for="old">Old</label>
             <br />
         </div>
     </div>
@@ -242,12 +242,14 @@ frontend ft_test
         <label for="openssl-version">OpenSSL Version</label>
         <input id="openssl-version" type="text" maxlength="15" value="0.9.8h" />
         <br />
-        <label for="hsts-enabled">HSTS Enabled</label>
+        <label for="hsts-enabled"><a href="http://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security">HSTS</a> Enabled</label>
         <input id="hsts-enabled" type="checkbox" value="true" checked="true" />
     </div>
     <div style="clear:both;"></div>
     <div id="server-config-text"></div>
-
+    <div>
+        <p><a href="https://wiki.mozilla.org/Security/Server_Side_TLS">More details on these security profiles</a></p>
+    </div>
 
 </body>
 
