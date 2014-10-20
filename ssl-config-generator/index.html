@@ -79,6 +79,7 @@ server {
 {{hsts}}
     ...
 &lt;/VirtualHost&gt;
+{{ocspStaplingCache}}
 </pre>
 </script>
 
@@ -150,10 +151,11 @@ frontend ft_test
                             '    SSLUseStapling          on' + '\n' +
                             '    SSLStaplingResponderTimeout 5' + '\n' +
                             '    SSLStaplingReturnResponderErrors off' + '\n' +
-                            '    SSLStaplingCache        shmcb:/var/run/ocsp(128000)' + '\n' +
                             '\n' +
                             '    ## verify chain of trust of OCSP response using Root CA and Intermediate certs' + '\n' +
                             '    ssl_trusted_certificate /path/to/root_CA_cert_plus_intermediates;'
+                        data.ocspStaplingCache = 'SSLStaplingCache        shmcb:/var/run/ocsp(128000)' + '\n'
+
                     }
                     if (data.hstsEnabled == "true") {
                         data.hsts = '    # HSTS' + '\n' +
