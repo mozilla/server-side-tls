@@ -47,7 +47,6 @@ server {
     ssl_protocols {{sslProtocols}};
     ssl_ciphers '{{cipherSuites}}';
     ssl_prefer_server_ciphers on;
- 
 {{hsts}}
 {{ocspstapling}}
 
@@ -136,10 +135,13 @@ frontend ft_test
                         data.ocspstapling = '\n    # OCSP Stapling ---' + '\n' +
                             '    # fetch OCSP records from URL in ssl_certificate and cache them' + '\n' +
                             '    ssl_stapling on;' + '\n' +
-                            '    ssl_stapling_verify on;' + '\n'
+                            '    ssl_stapling_verify on;' + '\n' +
+                            '\n' +
+                            '    ## verify chain of trust of OCSP response using Root CA and Intermediate certs' + '\n' +
+                            '    ssl_trusted_certificate /path/to/root_CA_cert_plus_intermediates;'
                     }
                     if (data.hstsEnabled == "true") {
-                        data.hsts = '    # HSTS' + '\n' +
+                        data.hsts = '\n    # HSTS' + '\n' +
                             '    add_header Strict-Transport-Security max-age=15768000;'
                     }
                     break;
@@ -150,22 +152,19 @@ frontend ft_test
                         data.ocspStapling = '\n    # OCSP Stapling, only in httpd 2.3.3 and later' + '\n' +
                             '    SSLUseStapling          on' + '\n' +
                             '    SSLStaplingResponderTimeout 5' + '\n' +
-                            '    SSLStaplingReturnResponderErrors off' + '\n' +
-                            '\n' +
-                            '    ## verify chain of trust of OCSP response using Root CA and Intermediate certs' + '\n' +
-                            '    ssl_trusted_certificate /path/to/root_CA_cert_plus_intermediates;'
+                            '    SSLStaplingReturnResponderErrors off';
                         data.ocspStaplingCache = 'SSLStaplingCache        shmcb:/var/run/ocsp(128000)' + '\n'
 
                     }
                     if (data.hstsEnabled == "true") {
-                        data.hsts = '    # HSTS' + '\n' +
+                        data.hsts = '\n    # HSTS' + '\n' +
                             '    Header add Strict-Transport-Security "max-age=15768000"'
                     }
                     break;
                 case "haproxy":
                     // http://www.haproxy.org/download/1.5/doc/configuration.txt
                     if (data.hstsEnabled == "true") {
-                        data.hsts = '    # HSTS' + '\n' +
+                        data.hsts = '\n    # HSTS' + '\n' +
                             '    rspadd  Strict-Transport-Security:\ max-age=15768000'
                     }
                     if (isSemVer(data.serverVersion, "<1.5")) {
