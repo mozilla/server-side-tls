@@ -20,7 +20,7 @@
             font-size: 150%;
         }
         pre {
-            overflow-x: auto
+            overflow-x: auto;
         }
     </style>
 
@@ -34,6 +34,7 @@
     <script id="nginx-template" type="text/x-handlebars-template">
 <h1>Server : {{server}} {{serverVersion}} | {{securityProfile}} profile</h1>
 <p>Openssl : {{opensslVersion}}</p>
+<p>Oldest compatible clients : {{clientList}}</p>
 <pre>
 server {
     listen 443;
@@ -63,6 +64,7 @@ server {
     <script id="apache-template" type="text/x-handlebars-template">
 <h1>Server : {{server}} {{serverVersion}} | {{securityProfile}} profile</h1>
 <p>Openssl : {{opensslVersion}}</p>
+<p>Oldest compatible clients : {{clientList}}</p>
 <pre>
 &lt;VirtualHost *:443&gt;
     ...
@@ -88,6 +90,7 @@ server {
 <script id="haproxy-template" type="text/x-handlebars-template">
 <h1>Server : {{server}} {{serverVersion}} | {{securityProfile}} profile</h1>
 <p>Openssl : {{opensslVersion}}</p>
+<p>Oldest compatible clients : {{clientList}}</p>
 <span class="message">{{message}}</span>
 <pre style="visibility: {{visibility}};">
 global
@@ -124,6 +127,12 @@ frontend ft_test
                 nginx: 'SSLv3 TLSv1 TLSv1.1 TLSv1.2',
                 haproxy: 'ssl'
             }
+        };
+
+        var clientList = {
+            modern: 'Firefox 27, Chrome 22, IE 11, Opera 14, Safari 7, Android 4.4, Java 8',
+            intermediate: 'Firefox 1, Chrome 1, IE 7, Opera 5, Safari 1, Windows XP IE8, Android 2.3, Java 7',
+            old: 'Windows XP IE6, Java 6'
         };
 
         function getVersionConstrainedDirectives(data) {
@@ -194,7 +203,8 @@ frontend ft_test
                 jQuery.extend(data, getVersionConstrainedDirectives(data))
                 jQuery.extend(data, {
                     sslProtocols: sslProtocols[data.securityProfile][data.server],
-                    cipherSuites: cipherSuites[data.securityProfile]
+                    cipherSuites: cipherSuites[data.securityProfile],
+                    clientList: clientList[data.securityProfile]
                 });
                 $("#server-config-text").html(template(data));
             }
