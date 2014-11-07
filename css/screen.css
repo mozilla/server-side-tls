@@ -214,7 +214,7 @@ body {
 	width: 896px;
 	margin: 0px auto;
 	padding: 72px 48px 84px;
-	background: rgb(245,241,232) url('mozorg-gradient.png') repeat-x top center;
+	background: rgb(245,241,232) url('../images/mozorg-gradient.png') repeat-x top center;
 	color: rgb(60,60,60);
 	-webkit-text-size-adjust: 100%; /* Stops Mobile Safari from auto-adjusting font-sizes */
 }
