@@ -153,6 +153,8 @@ frontend ft_test
                     }
                     if (data.hstsEnabled == "true")
                     {
+                        $("#hsts-incsubdomains").attr('disabled',null);
+
                         data.hsts = '\n    # HSTS' + '\n' +
                             '    add_header Strict-Transport-Security max-age=15768000;'
 
@@ -160,6 +162,10 @@ frontend ft_test
                         {
                             data.hsts+=" includeSubDomains;";
                         }
+                    }
+                    else
+                    {
+                        $("#hsts-incsubdomains").attr('disabled','disabled');                        
                     }
                     break;
                 case "apache":
@@ -175,6 +181,8 @@ frontend ft_test
                     }
                     if (data.hstsEnabled == "true")
                     {
+                        $("#hsts-incsubdomains").attr('disabled',null);
+
                         data.hsts = '\n    # HSTS' + '\n' +
                             '    Header add Strict-Transport-Security "max-age=15768000"'
 
@@ -183,11 +191,17 @@ frontend ft_test
                             data.hsts+=" includeSubDomains;";
                         }
                     }
+                    else
+                    {
+                        $("#hsts-incsubdomains").attr('disabled','disabled');                        
+                    }
                     break;
                 case "haproxy":
                     // http://www.haproxy.org/download/1.5/doc/configuration.txt
                     if (data.hstsEnabled == "true")
                     {
+                        $("#hsts-incsubdomains").attr('disabled',null);
+                        
                         data.hsts = '\n    # HSTS' + '\n' +
                             '    rspadd  Strict-Transport-Security:\\\ max-age=15768000'
 
@@ -196,6 +210,11 @@ frontend ft_test
                             data.hsts+=";\\\ includeSubDomains";
                         }
                     }
+                    else
+                    {
+                        $("#hsts-incsubdomains").attr('disabled','disabled');                        
+                    }
+
                     if (isSemVer(data.serverVersion, "<1.5")) {
                         data.visibility = 'hidden';
                         data.message = "HAProxy version " + data.serverVersion + " doesn't support SSL";
@@ -210,10 +229,10 @@ frontend ft_test
                 var data = {
                     serverVersion: $("#server-version").val(),
                     opensslVersion: $("#openssl-version").val(),
-                    hstsEnabled: $("input#hsts-enabled:checkbox:checked").val(),
-                    hstsSubDomains: $("input#hsts-incsubdomains:checked").val(),
-                    server: $("div#server-list input:radio:checked").val(),
-                    securityProfile: $("div#security-profile-list input:radio:checked").val()
+                    hstsEnabled: $("#hsts-enabled:checkbox:checked").val(),
+                    hstsSubDomains: $("#hsts-incsubdomains:checked").val(),
+                    server: $("#server-list input:radio:checked").val(),
+                    securityProfile: $("#security-profile-list input:radio:checked").val()
                 }
                 var source = $("#" + data.server + "-template").html();
                 var template = Handlebars.compile(source);
