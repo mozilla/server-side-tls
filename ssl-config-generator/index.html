@@ -142,6 +142,7 @@ frontend ft_test
                         data.dhparam = '\n    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits' + '\n' +
                             '    ssl_dhparam /path/to/dhparam.pem;'
                     }
+
                     if (isSemVer(data.serverVersion, ">=1.3.7")) {
                         data.ocspstapling = '\n    # OCSP Stapling ---' + '\n' +
                             '    # fetch OCSP records from URL in ssl_certificate and cache them' + '\n' +
@@ -151,7 +152,8 @@ frontend ft_test
                             '    ## verify chain of trust of OCSP response using Root CA and Intermediate certs' + '\n' +
                             '    ssl_trusted_certificate /path/to/root_CA_cert_plus_intermediates;'
                     }
-                    if (data.hstsEnabled == "true")
+
+                    if(data.hstsEnabled)
                     {
                         $("#hsts-incsubdomains").attr('disabled',null);
 
@@ -167,6 +169,7 @@ frontend ft_test
                     {
                         $("#hsts-incsubdomains").attr('disabled','disabled');                        
                     }
+                    
                     break;
                 case "apache":
                     // http://httpd.apache.org/docs/current/mod/mod_ssl.html
@@ -179,7 +182,7 @@ frontend ft_test
                         data.ocspStaplingCache = 'SSLStaplingCache        shmcb:/var/run/ocsp(128000)' + '\n'
 
                     }
-                    if (data.hstsEnabled == "true")
+                    if(data.hstsEnabled)
                     {
                         $("#hsts-incsubdomains").attr('disabled',null);
 
@@ -198,10 +201,10 @@ frontend ft_test
                     break;
                 case "haproxy":
                     // http://www.haproxy.org/download/1.5/doc/configuration.txt
-                    if (data.hstsEnabled == "true")
+                    if(data.hstsEnabled)
                     {
                         $("#hsts-incsubdomains").attr('disabled',null);
-                        
+
                         data.hsts = '\n    # HSTS' + '\n' +
                             '    rspadd  Strict-Transport-Security:\\\ max-age=15768000'
 
