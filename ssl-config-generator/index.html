@@ -152,10 +152,17 @@ frontend ft_test
                             '    ## verify chain of trust of OCSP response using Root CA and Intermediate certs' + '\n' +
                             '    ssl_trusted_certificate /path/to/root_CA_cert_plus_intermediates;'
                     }
-                    if (data.hstsEnabled == "true") {
+                    if (data.hstsEnabled == "true")
+                    {
                         data.hsts = '\n    # HSTS' + '\n' +
                             '    add_header Strict-Transport-Security max-age=15768000;'
+
+                        if(data.hstsSubDomains)
+                        {
+                            data.hsts+=" includeSubDomains;";
+                        }
                     }
+                    
                     break;
                 case "apache":
                     // http://httpd.apache.org/docs/current/mod/mod_ssl.html
@@ -168,16 +175,28 @@ frontend ft_test
                         data.ocspStaplingCache = 'SSLStaplingCache        shmcb:/var/run/ocsp(128000)' + '\n'
 
                     }
-                    if (data.hstsEnabled == "true") {
+                    if (data.hstsEnabled == "true")
+                    {
                         data.hsts = '\n    # HSTS' + '\n' +
                             '    Header add Strict-Transport-Security "max-age=15768000"'
+
+                        if(data.hstsSubDomains)
+                        {
+                            data.hsts+=" includeSubDomains;";
+                        }
                     }
                     break;
                 case "haproxy":
                     // http://www.haproxy.org/download/1.5/doc/configuration.txt
-                    if (data.hstsEnabled == "true") {
+                    if (data.hstsEnabled == "true")
+                    {
                         data.hsts = '\n    # HSTS' + '\n' +
                             '    rspadd  Strict-Transport-Security:\ max-age=15768000'
+
+                        if(data.hstsSubDomains)
+                        {
+                            data.hsts+=" includeSubDomains;";
+                        }
                     }
                     if (isSemVer(data.serverVersion, "<1.5")) {
                         data.visibility = 'hidden';
@@ -194,6 +213,7 @@ frontend ft_test
                     serverVersion: $("#server-version").val(),
                     opensslVersion: $("#openssl-version").val(),
                     hstsEnabled: $("input#hsts-enabled:checkbox:checked").val(),
+                    hstsSubDomains: $("input#hsts-incsubdomains:checked").val(),
                     server: $("div#server-list input:radio:checked").val(),
                     securityProfile: $("div#security-profile-list input:radio:checked").val()
                 }
@@ -259,6 +279,8 @@ frontend ft_test
         <br />
         <label for="hsts-enabled"><a href="http://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security">HSTS</a> Enabled</label>
         <input id="hsts-enabled" type="checkbox" value="true" checked="true" />
+        <input id="hsts-incsubdomains" type="checkbox" value="true" checked="true" />
+        <label for="hsts-incsubdomains">Include sub-domains</label>
     </div>
     <div style="clear:both;"></div>
     <div id="server-config-text"></div>
