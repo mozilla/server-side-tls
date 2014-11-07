@@ -68,7 +68,6 @@ server {
 <pre>
 &lt;VirtualHost *:443&gt;
     ...
-    SSLEngine on
     SSLCertificateFile      /path/to/signed_certificate
     SSLCertificateChainFile /path/to/intermediate_certificate
     SSLCertificateKeyFile   /path/to/private/key
@@ -162,7 +161,6 @@ frontend ft_test
                             data.hsts+=" includeSubDomains;";
                         }
                     }
-                    
                     break;
                 case "apache":
                     // http://httpd.apache.org/docs/current/mod/mod_ssl.html
@@ -191,11 +189,11 @@ frontend ft_test
                     if (data.hstsEnabled == "true")
                     {
                         data.hsts = '\n    # HSTS' + '\n' +
-                            '    rspadd  Strict-Transport-Security:\ max-age=15768000'
+                            '    rspadd  Strict-Transport-Security:\\\ max-age=15768000'
 
                         if(data.hstsSubDomains)
                         {
-                            data.hsts+=" includeSubDomains;";
+                            data.hsts+=";\\\ includeSubDomains";
                         }
                     }
                     if (isSemVer(data.serverVersion, "<1.5")) {
