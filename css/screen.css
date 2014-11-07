@@ -40,12 +40,12 @@ p {margin-bottom: 24px;}
 	
 @font-face {
 	font-family: "OpenSans";
-	src: url(OpenSans-Light.ttf) format("truetype");
+	src: url("../fonts/OpenSans-Light.ttf") format("truetype");
 	}
 	
 @font-face {
 	font-family: "OpenSans-Reg";
-	src: url(OpenSans-Regular.ttf) format("truetype");
+	src: url("../fonts/OpenSans-Regular.ttf") format("truetype");
 	}
 	
 body {font: 16px/24px Georgia, serif;}
