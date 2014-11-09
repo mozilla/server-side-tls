@@ -37,8 +37,7 @@
 <p>Oldest compatible clients : {{clientList}}</p>
 <pre>
 server {
-    listen 443;
-    ssl on;
+    listen 443 ssl;
 
     # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
     ssl_certificate /path/to/signed_cert_plus_intermediates;
