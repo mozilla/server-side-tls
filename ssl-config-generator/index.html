@@ -169,7 +169,7 @@ frontend ft_test
                     }
                     if (data.hstsEnabled == "true") {
                         data.hsts = '\n    # HSTS' + '\n' +
-                            '    Header add Strict-Transport-Security "max-age=15768000"'
+                            '    Header always add Strict-Transport-Security "max-age=15768000"'
                     }
                     break;
                 case "haproxy":
