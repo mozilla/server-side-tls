@@ -41,7 +41,7 @@
 <p>Oldest compatible clients : {{clientList}}</p>
 <pre>
 server {
-    listen 443 ssl;
+{{listen}}
 
     # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
     ssl_certificate /path/to/signed_cert_plus_intermediates;
@@ -158,6 +158,12 @@ frontend ft_test
                     if (data.hstsEnabled == "true") {
                         data.hsts = '\n    # HSTS' + '\n' +
                             '    add_header Strict-Transport-Security max-age=15768000;'
+                    }
+                    if (isSemVer(data.serverVersion, ">=0.7.14")) {
+                        data.listen = '    listen 443 ssl;'
+                    } else {
+                        data.listen = '    listen 443;' + '\n' +
+                                      '    ssl on;'
                     }
                     break;
                 case "apache":
