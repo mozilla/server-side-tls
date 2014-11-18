@@ -24,7 +24,7 @@ footer, header, nav, section, audio, video {
 	display: block;
 }
 
-a {color: rgb(175,50,50); text-decoration: none; border-bottom: 1px dotted rgb(175,50,50);}
+#wrapper a {color: rgb(175,50,50); text-decoration: none; border-bottom: 1px dotted rgb(175,50,50);}
 
 a img {border: 0;}
 p {margin-bottom: 24px;}
@@ -34,23 +34,82 @@ p {margin-bottom: 24px;}
 
 .pad {padding: 4px;}
 
-
-/*	Typography presets
-	------------------	*/
-	
+/* @Fonts *********/
+/* Regular */
 @font-face {
-	font-family: "OpenSans";
-	src: url(OpenSans-Light.ttf) format("truetype");
-	}
-	
-@font-face {
-	font-family: "OpenSans-Reg";
-	src: url(OpenSans-Regular.ttf) format("truetype");
-	}
-	
-body {font: 16px/24px Georgia, serif;}
+  font-family: "Open Sans";
+  src: url("//www.mozilla.org/media/fonts/OpenSans-Regular-webfont.eot");
+  src: url("//www.mozilla.org/media/fonts/OpenSans-Regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("//www.mozilla.org/media/fonts/OpenSans-Regular-webfont.woff") format("woff"),
+       url("//www.mozilla.org/media/fonts/OpenSans-Regular-webfont.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
 
-.huge, .large, h1, h2, h3, h4 {font-family: 'OpenSans', "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif; font-weight: normal; text-shadow: 0px 1px 0px rgba(255,255,255,0.75);}
+@font-face {
+  font-family: "Open Sans";
+  src: url("//www.mozilla.org/media/fonts/OpenSans-Italic-webfont.eot");
+  src: url("//www.mozilla.org/media/fonts/OpenSans-Italic-webfont.eot?#iefix") format("embedded-opentype"),
+       url("//www.mozilla.org/media/fonts/OpenSans-Italic-webfont.woff") format("woff"),
+       url("//www.mozilla.org/media/fonts/OpenSans-Italic-webfont.ttf") format("truetype");
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Open Sans";
+  src: url("//www.mozilla.org/media/fonts/OpenSans-Semibold-webfont.eot");
+  src: url("//www.mozilla.org/media/fonts/OpenSans-Semibold-webfont.eot?#iefix") format("embedded-opentype"),
+       url("//www.mozilla.org/media/fonts/OpenSans-Semibold-webfont.woff") format("woff"),
+       url("//www.mozilla.org/media/fonts/OpenSans-Semibold-webfont.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Open Sans";
+  src: url("//www.mozilla.org/media/fonts/OpenSans-SemiboldItalic-webfont.eot");
+  src: url("//www.mozilla.org/media/fonts/OpenSans-SemiboldItalic-webfont.eot?#iefix") format("embedded-opentype"),
+       url("//www.mozilla.org/media/fonts/OpenSans-SemiboldItalic-webfont.woff") format("woff"),
+       url("//www.mozilla.org/media/fonts/OpenSans-SemiboldItalic-webfont.ttf") format("truetype");
+  font-weight: bold;
+  font-style: italic;
+}
+
+/* Light */
+@font-face {
+  font-family: "Open Sans Light";
+  src: url("//www.mozilla.org/media/fonts/OpenSans-Light-webfont.eot");
+  src: url("//www.mozilla.org/media/fonts/OpenSans-Light-webfont.eot?#iefix") format("embedded-opentype"),
+       url("//www.mozilla.org/media/fonts/OpenSans-Light-webfont.woff") format("woff"),
+       url("//www.mozilla.org/media/fonts/OpenSans-Light-webfont.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Open Sans Light";
+  src: url("//www.mozilla.org/media/fonts/OpenSans-LightItalic-webfont.eot");
+  src: url("//www.mozilla.org/media/fonts/OpenSans-LightItalic-webfont.eot?#iefix") format("embedded-opentype"),
+       url("//www.mozilla.org/media/fonts/OpenSans-LightItalic-webfont.woff") format("woff"),
+       url("//www.mozilla.org/media/fonts/OpenSans-LightItalic-webfont.ttf") format("truetype");
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Open Sans Light";
+  src: url("//www.mozilla.org/media/fonts/OpenSans-Regular-webfont.eot");
+  src: url("//www.mozilla.org/media/fonts/OpenSans-Regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("//www.mozilla.org/media/fonts/OpenSans-Regular-webfont.woff") format("woff"),
+       url("//www.mozilla.org/media/fonts/OpenSans-Regular-webfont.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+	
+body {font-family: 'Open Sans', "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;}
+
+.huge, .large, h1, h2, h3, h4 {font-family: 'Open Sans Light', "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif; font-weight: normal; text-shadow: 0px 1px 0px rgba(255,255,255,0.75);}
 
 .huge {font-size: 108px; letter-spacing: -4px; line-height: 100%;}
 .large {font-size: 72px; letter-spacing: -3px; line-height: 100%;}
@@ -69,7 +128,7 @@ float: left;
 display: block; 
 text-decoration: none;
 text-shadow: 0px 1px 0px rgba(0,0,0,0.25);
-font: 14px/48px 'OpenSans-Reg', "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
+font: 14px/48px 'Open Sans', "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
 letter-spacing: -0.25px;
 height: 48px; 
 width: 252px; 
@@ -211,15 +270,21 @@ html {
 
 
 body {
-	width: 896px;
-	margin: 0px auto;
-	padding: 72px 48px 84px;
-	background: rgb(245,241,232) url('mozorg-gradient.png') repeat-x top center;
 	color: rgb(60,60,60);
 	-webkit-text-size-adjust: 100%; /* Stops Mobile Safari from auto-adjusting font-sizes */
 }
 
-#menu {width: 100%; min-height: 72px; line-height: 72px; text-align: center; margin-bottom: 48px; font-family: 'OpenSans', "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif; background-color: white;
+#outer-wrapper {
+  background: url('../media/bg-gradient-sand.png') repeat-x scroll 0% 0%, url('../media/bg-sand.png') repeat scroll 0% 0%, none repeat scroll 0% 0% #F5F1E8;
+}
+
+#wrapper {
+  width: 896px;
+  margin: 0px auto;
+  padding: 72px 48px 84px;
+}
+
+#menu {width: 100%; min-height: 72px; line-height: 72px; text-align: center; margin-bottom: 48px; font-family: 'Open Sans Light', "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif; background-color: white;
 
 -webkit-box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.1);
 -moz-box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.1);
@@ -229,7 +294,7 @@ box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.1);
 .menuItem {display: inline; margin: 0px;}
 #menu a {text-decoration: none; margin: 0px 24px; border-bottom: none;}
 #menu a:hover {color: rgba(0,0,0,0.8);}
-.top {font-family: 'OpenSans', "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;}
+.top {font-family: 'Open Sans Light', "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;}
 
 
 #framework {position: relative;}

@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <title>Generate Mozilla Security Recommended Web Server Configuration Files</title>
     <link rel="stylesheet" type="text/css" media="all" href="../css/screen.css" />
+    <link href="//mozorg.cdn.mozilla.net/media/css/tabzilla-min.css" rel="stylesheet" />
     <style>
         div#server-config-text pre {
             background-color: #F7F7F7;
@@ -12,7 +13,7 @@
             padding: 2em;
         }
         label, p {
-            font-family: 'OpenSans', "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
+            font-family: 'Open Sans', "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
             font-weight: normal;
             text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.75);
         }
@@ -26,6 +27,7 @@
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
+    <script src="//mozorg.cdn.mozilla.net/tabzilla/tabzilla.js"></script>
     <script>
         // https://gist.github.com/cowboy/566233
         var isSemVer=(function(){var a=/^(<|>|[=!<>]=)?\s*(\d+(?:\.\d+){0,2})([a-z][a-z0-9\-]*)?$/i;function b(e,c){var d=(e+"").match(a);return d?(c?(d[1]||"=="):"")+'"'+(d[2]+".0.0").match(/\d+(?:\.\d+){0,2}/)[0].replace(/(?:^|\.)(\d+)/g,function(g,f){return Array(9-f.length).join(0)+f})+(d[3]||"~")+'"':(c?"==0":1)}return function(e){e=b(e);for(var c,d=1;c=arguments[d++];){if(!(new Function("return "+e+b(c,1)))()){return false}}return true}})();
@@ -36,8 +38,7 @@
     </script>
 
     <script id="nginx-template" type="text/x-handlebars-template">
-<h1>Server : {{server}} {{serverVersion}} | {{securityProfile}} profile</h1>
-<p>Openssl : {{opensslVersion}}</p>
+<h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}}</h2>
 <p>Oldest compatible clients : {{clientList}}</p>
 <pre>
 server {
@@ -65,8 +66,7 @@ server {
     </script>
 
     <script id="apache-template" type="text/x-handlebars-template">
-<h1>Server : {{server}} {{serverVersion}} | {{securityProfile}} profile</h1>
-<p>Openssl : {{opensslVersion}}</p>
+<h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}}</h2>
 <p>Oldest compatible clients : {{clientList}}</p>
 <pre>
 &lt;VirtualHost *:443&gt;
@@ -91,8 +91,7 @@ server {
 </script>
 
 <script id="haproxy-template" type="text/x-handlebars-template">
-<h1>Server : {{server}} {{serverVersion}} | {{securityProfile}} profile</h1>
-<p>Openssl : {{opensslVersion}}</p>
+<h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}}</h2>
 <p>Oldest compatible clients : {{clientList}}</p>
 <span class="message">{{message}}</span>
 <pre style="visibility: {{visibility}};">
@@ -231,7 +230,11 @@ frontend ft_test
 </head>
 
 <body>
-<a href="https://github.com/mozilla/server-side-tls"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
+<a href="https://github.com/mozilla/server-side-tls"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+<a href="https://www.mozilla.org/" id="tabzilla">mozilla</a>
+<div id="outer-wrapper">
+<div id="wrapper">
+    <h1>Mozilla SSL Configuration Generator</h1>
     <div style="width 100px; float:left; padding:1em;">
         <div id="server-list">
             <input type="radio" name="server" id="apache" value="apache" checked="true">
@@ -274,7 +277,8 @@ frontend ft_test
     <div>
         <p><a href="https://wiki.mozilla.org/Security/Server_Side_TLS">More details on these security profiles</a></p>
     </div>
-
+</div>
+</div>
 </body>
 
 </html>
