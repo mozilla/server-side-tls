@@ -156,7 +156,7 @@ frontend ft_test
                             '    ssl_trusted_certificate /path/to/root_CA_cert_plus_intermediates;'
                     }
                     if (data.hstsEnabled == "true") {
-                        data.hsts = '\n    # HSTS' + '\n' +
+                        data.hsts = '\n    # HSTS (ngx_http_headers_module is required) (15768000 seconds = 6 months)' + '\n' +
                             '    add_header Strict-Transport-Security max-age=15768000;'
                     }
                     if (isSemVer(data.serverVersion, ">=0.7.14")) {
@@ -178,14 +178,14 @@ frontend ft_test
 
                     }
                     if (data.hstsEnabled == "true") {
-                        data.hsts = '\n    # HSTS' + '\n' +
+                        data.hsts = '\n    # HSTS (mod_headers is required) (15768000 seconds = 6 months)' + '\n' +
                             '    Header add Strict-Transport-Security "max-age=15768000"'
                     }
                     break;
                 case "haproxy":
                     // http://www.haproxy.org/download/1.5/doc/configuration.txt
                     if (data.hstsEnabled == "true") {
-                        data.hsts = '\n    # HSTS' + '\n' +
+                        data.hsts = '\n    # HSTS (15768000 seconds = 6 months)' + '\n' +
                             '    rspadd  Strict-Transport-Security:\ max-age=15768000'
                     }
                     if (isSemVer(data.serverVersion, "<1.5")) {
