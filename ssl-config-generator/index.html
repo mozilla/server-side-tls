@@ -47,7 +47,7 @@ server {
     # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
     ssl_certificate /path/to/signed_cert_plus_intermediates;
     ssl_certificate_key /path/to/private_key;
-    ssl_session_timeout 5m;
+    ssl_session_timeout 1d;
     ssl_session_cache shared:SSL:50m;
 {{dhparam}}
 
@@ -59,7 +59,7 @@ server {
 {{ocspstapling}}
 
     resolver &lt;IP DNS resolver&gt;;
- 
+
     ....
 }
 </pre>
@@ -207,7 +207,7 @@ frontend ft_test
                 }
                 var source = $("#" + data.server + "-template").html();
                 var template = Handlebars.compile(source);
-                data.visibility = "visible"; 
+                data.visibility = "visible";
                 jQuery.extend(data, getVersionConstrainedDirectives(data))
                 jQuery.extend(data, {
                     sslProtocols: sslProtocols[data.securityProfile][data.server],
