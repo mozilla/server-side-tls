@@ -30,7 +30,7 @@
     <script src="//mozorg.cdn.mozilla.net/tabzilla/tabzilla.js"></script>
     <script>
         // https://gist.github.com/cowboy/566233
-        var isSemVer=(function(){var a=/^(<|>|[=!<>]=)?\s*(\d+(?:\.\d+){0,2})([a-z][a-z0-9\-]*)?$/i;function b(e,c){var d=(e+"").match(a);return d?(c?(d[1]||"=="):"")+'"'+(d[2]+".0.0").match(/\d+(?:\.\d+){0,2}/)[0].replace(/(?:^|\.)(\d+)/g,function(g,f){return Array(9-f.length).join(0)+f})+(d[3]||"~")+'"':(c?"==0":1)}return function(e){e=b(e);for(var c,d=1;c=arguments[d++];){if(!(new Function("return "+e+b(c,1)))()){return false}}return true}})();
+        var isSemVer=(function(){var a=/^(<|>|[=!<>]=)?\s*(\d+(?:\.\d+){0,2})([a-z][a-z0-9\-]*)?$/i;function b(e,c){var d=(e+"").match(a);return d?(c?(d[1]||"=="):"")+'"'+(d[2]+".0.0").match(/\d+(?:\.\d+){0,2}/)[0].replace(/(?:^|\.)(\d+)/g,function(g,f){return Array(9-f.length).join(0)+f;})+(d[3]||"~")+'"':(c?"==0":1);}return function(e){e=b(e);for(var c,d=1;c=arguments[d++];){if(!(new Function("return "+e+b(c,1)))()){return false;}}return true;};})();
     </script>
     <script>
         if (window.location.protocol != "https:")
@@ -143,7 +143,7 @@ frontend ft_test
                     // http://nginx.org/en/docs/http/ngx_http_core_module.html
                     if (isSemVer(data.serverVersion, ">=0.7.2")) {
                         data.dhparam = '\n    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits' + '\n' +
-                            '    ssl_dhparam /path/to/dhparam.pem;'
+                            '    ssl_dhparam /path/to/dhparam.pem;';
                     }
                     if (isSemVer(data.serverVersion, ">=1.3.7")) {
                         data.ocspstapling = '\n    # OCSP Stapling ---' + '\n' +
@@ -152,40 +152,40 @@ frontend ft_test
                             '    ssl_stapling_verify on;' + '\n' +
                             '\n' +
                             '    ## verify chain of trust of OCSP response using Root CA and Intermediate certs' + '\n' +
-                            '    ssl_trusted_certificate /path/to/root_CA_cert_plus_intermediates;'
+                            '    ssl_trusted_certificate /path/to/root_CA_cert_plus_intermediates;';
                     }
                     if (data.hstsEnabled == "true") {
                         data.hsts = '\n    # HSTS (ngx_http_headers_module is required) (15768000 seconds = 6 months)' + '\n' +
-                            '    add_header Strict-Transport-Security max-age=15768000;'
+                            '    add_header Strict-Transport-Security max-age=15768000;';
                     }
                     if (isSemVer(data.serverVersion, ">=0.7.14")) {
-                        data.listen = '    listen 443 ssl;'
+                        data.listen = '    listen 443 ssl;';
                     } else {
                         data.listen = '    listen 443;' + '\n' +
-                                      '    ssl on;'
+                                      '    ssl on;';
                     }
                     break;
                 case "apache":
                     // http://httpd.apache.org/docs/current/mod/mod_ssl.html
-                    data.compression = isSemVer(data.serverVersion, ">=2.4.3") ? '    SSLCompression          off' : ''
+                    data.compression = isSemVer(data.serverVersion, ">=2.4.3") ? '    SSLCompression          off' : '';
                     if (isSemVer(data.opensslVersion, ">=0.9.8h") && isSemVer(data.serverVersion, '>=2.3.3')) {
                         data.ocspStapling = '\n    # OCSP Stapling, only in httpd 2.3.3 and later' + '\n' +
                             '    SSLUseStapling          on' + '\n' +
                             '    SSLStaplingResponderTimeout 5' + '\n' +
                             '    SSLStaplingReturnResponderErrors off';
-                        data.ocspStaplingCache = 'SSLStaplingCache        shmcb:/var/run/ocsp(128000)' + '\n'
+                        data.ocspStaplingCache = 'SSLStaplingCache        shmcb:/var/run/ocsp(128000)' + '\n';
 
                     }
                     if (data.hstsEnabled == "true") {
                         data.hsts = '\n    # HSTS (mod_headers is required) (15768000 seconds = 6 months)' + '\n' +
-                            '    Header always add Strict-Transport-Security "max-age=15768000"'
+                            '    Header always add Strict-Transport-Security "max-age=15768000"';
                     }
                     break;
                 case "haproxy":
                     // http://www.haproxy.org/download/1.5/doc/configuration.txt
                     if (data.hstsEnabled == "true") {
                         data.hsts = '\n    # HSTS (15768000 seconds = 6 months)' + '\n' +
-                            '    rspadd  Strict-Transport-Security:\\ max-age=15768000'
+                            '    rspadd  Strict-Transport-Security:\\ max-age=15768000';
                     }
                     if (isSemVer(data.serverVersion, "<1.5")) {
                         data.visibility = 'hidden';
@@ -204,11 +204,11 @@ frontend ft_test
                     hstsEnabled: $("input#hsts-enabled:checkbox:checked").val(),
                     server: $("div#server-list input:radio:checked").val(),
                     securityProfile: $("div#security-profile-list input:radio:checked").val()
-                }
+                };
                 var source = $("#" + data.server + "-template").html();
                 var template = Handlebars.compile(source);
                 data.visibility = "visible"; 
-                jQuery.extend(data, getVersionConstrainedDirectives(data))
+                jQuery.extend(data, getVersionConstrainedDirectives(data));
                 jQuery.extend(data, {
                     sslProtocols: sslProtocols[data.securityProfile][data.server],
                     cipherSuites: cipherSuites[data.securityProfile],
@@ -235,7 +235,7 @@ frontend ft_test
     <h1>Mozilla SSL Configuration Generator</h1>
     <div style="width 100px; float:left; padding:1em;">
         <div id="server-list">
-            <input type="radio" name="server" id="apache" value="apache" checked="true">
+            <input type="radio" name="server" id="apache" value="apache" checked="checked">
             <label for="apache">Apache</label>
             <br />
             <input type="radio" name="server" id="nginx" value="nginx">
@@ -249,7 +249,7 @@ frontend ft_test
     <div style="width 100px; float:left; padding:1em;">
 
         <div id="security-profile-list">
-            <input type="radio" name="security-profile" id="modern" value="modern" checked="true">
+            <input type="radio" name="security-profile" id="modern" value="modern" checked="checked">
             <label for="modern">Modern</label>
             <br />
             <input type="radio" name="security-profile" id="intermediate" value="intermediate">
@@ -268,10 +268,10 @@ frontend ft_test
         <input id="openssl-version" type="text" maxlength="15" value="0.9.8h" />
         <br />
         <label for="hsts-enabled"><a href="http://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security">HSTS</a> Enabled</label>
-        <input id="hsts-enabled" type="checkbox" value="true" checked="true" />
+        <input id="hsts-enabled" type="checkbox" value="true" checked="checked" />
     </div>
-    <div style="clear:both;"></div>
-    <div id="server-config-text"></div>
+    <div style="clear:both;" />
+    <div id="server-config-text" />
     <div>
         <p><a href="https://wiki.mozilla.org/Security/Server_Side_TLS">More details on these security profiles</a> - <a href="https://github.com/mozilla/server-side-tls">Report issues, submit pull requests and fork code here</a></p>
     </div>
