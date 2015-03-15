@@ -38,7 +38,7 @@
     </script>
 
     <script id="nginx-template" type="text/x-handlebars-template">
-<h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}}</h2>
+<h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}} | <a href="?{{queryString}}">link</a></h2>
 <p>Oldest compatible clients : {{clientList}}</p>
 <pre>
 server {
@@ -66,7 +66,7 @@ server {
     </script>
 
     <script id="apache-template" type="text/x-handlebars-template">
-<h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}}</h2>
+<h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}} | <a href="?{{queryString}}">link</a></h2>
 <p>Oldest compatible clients : {{clientList}}</p>
 <pre>
 &lt;VirtualHost *:443&gt;
@@ -91,7 +91,7 @@ server {
 </script>
 
 <script id="haproxy-template" type="text/x-handlebars-template">
-<h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}}</h2>
+<h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}} | <a href="?{{queryString}}">link</a></h2>
 <p>Oldest compatible clients : {{clientList}}</p>
 <span class="message">{{message}}</span>
 <pre style="visibility: {{visibility}};">
@@ -197,6 +197,29 @@ frontend ft_test
         }
 
         $(document).ready(function() {
+            function loadFromQueryString() {
+                // http://stackoverflow.com/a/10834119/837015
+                var queries = {};
+                var search = document.location.search.trim();
+
+                if (search === "") {
+                    return
+                }
+
+                $.each(search.substr(1).split('&'),function(c,q){
+                    var i = q.split('=');
+                    queries[i[0].toString()] = i[1].toString();
+                });
+
+                var server = queries["server"].split("-");
+
+                $("#server-version").val(server[1]);
+                $("#openssl-version").val(queries["openssl"]);
+                $("input#hsts-enabled").attr("checked", queries["hsts"] === "yes");
+                $("div#server-list input#"+server[0]).attr("checked", true);
+                $("div#security-profile-list input#"+queries["profile"]).attr("checked", true);
+            }
+
             function renderConfig() {
                 var data = {
                     serverVersion: $("#server-version").val(),
@@ -212,7 +235,13 @@ frontend ft_test
                 jQuery.extend(data, {
                     sslProtocols: sslProtocols[data.securityProfile][data.server],
                     cipherSuites: cipherSuites[data.securityProfile],
-                    clientList: clientList[data.securityProfile]
+                    clientList: clientList[data.securityProfile],
+                    queryString: $.param({
+                        server: $("div#server-list input:radio:checked").val() + "-" + $("#server-version").val(),
+                        openssl: $("#openssl-version").val(),
+                        hsts: $("input#hsts-enabled:checkbox:checked").val() ? "yes" : "no",
+                        profile: $("div#security-profile-list input:radio:checked").val()
+                    })
                 });
                 $("#server-config-text").html(template(data));
             }
@@ -223,6 +252,8 @@ frontend ft_test
             $("input").change(function() {
                 renderConfig();
             });
+
+            loadFromQueryString();
             renderConfig();
         });
     </script>
