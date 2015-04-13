@@ -204,16 +204,16 @@ frontend ft_test
         $(document).ready(function() {
             function loadFromQueryString() {
                 // http://stackoverflow.com/a/10834119/837015
-                var queries = {};
+                var defaults = {"server": "apache-2.2.15",
+                                "openssl": "1.0.1e",
+                                "hsts": "yes",
+                                "profile": "modern"};
+                var queries = defaults;
                 var search = document.location.search.trim();
-
-                if (search === "") {
-                    return
-                }
 
                 $.each(search.substr(1).split('&'),function(c,q){
                     var i = q.split('=');
-                    queries[i[0].toString()] = i[1].toString();
+                    queries[i[0].toString()] = i.length == 2 ? i[1].toString() : "true";
                 });
 
                 var server = queries["server"].split("-");
@@ -271,7 +271,7 @@ frontend ft_test
     <h1>Mozilla SSL Configuration Generator</h1>
     <div style="width 100px; float:left; padding:1em;">
         <div id="server-list">
-            <input type="radio" name="server" id="apache" value="apache" checked="checked">
+            <input type="radio" name="server" id="apache" value="apache">
             <label for="apache">Apache</label>
             <br />
             <input type="radio" name="server" id="nginx" value="nginx">
@@ -285,7 +285,7 @@ frontend ft_test
     <div style="width 100px; float:left; padding:1em;">
 
         <div id="security-profile-list">
-            <input type="radio" name="security-profile" id="modern" value="modern" checked="checked">
+            <input type="radio" name="security-profile" id="modern" value="modern">
             <label for="modern">Modern</label>
             <br />
             <input type="radio" name="security-profile" id="intermediate" value="intermediate">
@@ -298,13 +298,13 @@ frontend ft_test
     </div>
     <div style="width 100px; float:left; padding:1em;">
         <label for="server-version">Server Version</label>
-        <input id="server-version" type="text" maxlength="15" value="1.0" />
+        <input id="server-version" type="text" maxlength="15" />
         <br />
         <label for="openssl-version">OpenSSL Version</label>
-        <input id="openssl-version" type="text" maxlength="15" value="0.9.8h" />
+        <input id="openssl-version" type="text" maxlength="15" />
         <br />
         <label for="hsts-enabled"><a href="http://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security">HSTS</a> Enabled</label>
-        <input id="hsts-enabled" type="checkbox" value="true" checked="checked" />
+        <input id="hsts-enabled" type="checkbox" value="true" />
     </div>
     <div style="clear:both;"></div>
     <div id="server-config-text"></div>
