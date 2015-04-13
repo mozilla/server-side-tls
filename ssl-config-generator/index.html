@@ -187,6 +187,9 @@ frontend ft_test
                         data.hsts = '\n    # HSTS (mod_headers is required) (15768000 seconds = 6 months)' + '\n' +
                             '    Header always add Strict-Transport-Security "max-age=15768000"';
                     }
+                    if (isSemVer(data.serverVersion, '>=2.3.16')) {
+                    	data.sslProtocols = data.sslProtocols.replace(' -SSLv2','');
+                    }
                     break;
                 case "haproxy":
                     // http://www.haproxy.org/download/1.5/doc/configuration.txt
@@ -235,10 +238,10 @@ frontend ft_test
                     server: $("div#server-list input:radio:checked").val(),
                     securityProfile: $("div#security-profile-list input:radio:checked").val()
                 };
+                
                 var source = $("#" + data.server + "-template").html();
                 var template = Handlebars.compile(source);
                 data.visibility = "visible"; 
-                jQuery.extend(data, getVersionConstrainedDirectives(data));
                 jQuery.extend(data, {
                     sslProtocols: sslProtocols[data.securityProfile][data.server],
                     cipherSuites: cipherSuites[data.securityProfile],
@@ -250,12 +253,17 @@ frontend ft_test
                         profile: $("div#security-profile-list input:radio:checked").val()
                     })
                 });
+                jQuery.extend(data, getVersionConstrainedDirectives(data));
 
-                if (isOpenSSLSemVer(data.opensslVersion, "<1.0.1") && data.securityProfile == "modern") {
-                	$("#security-profile-list input#intermediate").prop( "checked", true );
-                	data.securityProfile = "intermediate";
-                	$("#security-profile-list input#modern").prop("disabled", true);
-                	$("#security-profile-list label[for=modern]").attr("title", "Modern profile is not available. TLS v1.1 and v1.2 support is only present in OpenSSL 1.0.1 and newer");
+                if (isOpenSSLSemVer(data.opensslVersion, "<1.0.1")) {
+                	if (data.securityProfile == "modern") {
+	                	$("#security-profile-list input#intermediate").prop( "checked", true );
+	                	data.securityProfile = "intermediate";
+                	}
+                	if ($("#security-profile-list input#modern").prop("disabled") == false) {
+	                	$("#security-profile-list input#modern").prop("disabled", true);
+	                	$("#security-profile-list label[for=modern]").attr("title", "Modern profile is not available. TLS v1.1 and v1.2 support is only present in OpenSSL 1.0.1 and newer");
+                	}
                 } else if (isOpenSSLSemVer(data.opensslVersion, ">=1.0.1") && $("#security-profile-list input#modern").prop("disabled") == true) {
                 	$("#security-profile-list input#modern").prop("disabled", false);
                 	$("#security-profile-list label[for=modern]").removeAttr("title");
