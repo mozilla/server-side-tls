@@ -49,7 +49,7 @@ server {
     # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
     ssl_certificate /path/to/signed_cert_plus_intermediates;
     ssl_certificate_key /path/to/private_key;
-    ssl_session_timeout 5m;
+    ssl_session_timeout 1d;
     ssl_session_cache shared:SSL:50m;
 {{dhparam}}
 
