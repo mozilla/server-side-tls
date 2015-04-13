@@ -72,8 +72,7 @@ server {
 &lt;VirtualHost *:443&gt;
     ...
     SSLEngine on
-    SSLCertificateFile      /path/to/signed_certificate
-    SSLCertificateChainFile /path/to/intermediate_certificate
+{{certFile}}
     SSLCertificateKeyFile   /path/to/private/key
     SSLCACertificateFile    /path/to/all_ca_certs
 
@@ -175,6 +174,12 @@ frontend ft_test
                             '    SSLStaplingReturnResponderErrors off';
                         data.ocspStaplingCache = 'SSLStaplingCache        shmcb:/var/run/ocsp(128000)' + '\n';
 
+                    }
+                    if (isSemVer(data.serverVersion, '>=2.4.8')) {
+                    	data.certFile = '    SSLCertificateFile      /path/to/signed_certificate_followed_by_intermediate_certs';
+                    } else {
+                    	data.certFile = '    SSLCertificateFile      /path/to/signed_certificate\n' +
+							'    SSLCertificateChainFile /path/to/intermediate_certificate';
                     }
                     if (data.hstsEnabled == "true") {
                         data.hsts = '\n    # HSTS (mod_headers is required) (15768000 seconds = 6 months)' + '\n' +
