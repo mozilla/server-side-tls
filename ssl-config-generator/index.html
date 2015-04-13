@@ -255,11 +255,15 @@ frontend ft_test
                 });
                 jQuery.extend(data, getVersionConstrainedDirectives(data));
 
-                if (isOpenSSLSemVer(data.opensslVersion, "<1.0.1") && data.securityProfile == "modern") {
-                	$("#security-profile-list input#intermediate").prop( "checked", true );
-                	data.securityProfile = "intermediate";
-                	$("#security-profile-list input#modern").prop("disabled", true);
-                	$("#security-profile-list label[for=modern]").attr("title", "Modern profile is not available. TLS v1.1 and v1.2 support is only present in OpenSSL 1.0.1 and newer");
+                if (isOpenSSLSemVer(data.opensslVersion, "<1.0.1")) {
+                	if (data.securityProfile == "modern") {
+	                	$("#security-profile-list input#intermediate").prop( "checked", true );
+	                	data.securityProfile = "intermediate";
+                	}
+                	if ($("#security-profile-list input#modern").prop("disabled") == false) {
+	                	$("#security-profile-list input#modern").prop("disabled", true);
+	                	$("#security-profile-list label[for=modern]").attr("title", "Modern profile is not available. TLS v1.1 and v1.2 support is only present in OpenSSL 1.0.1 and newer");
+                	}
                 } else if (isOpenSSLSemVer(data.opensslVersion, ">=1.0.1") && $("#security-profile-list input#modern").prop("disabled") == true) {
                 	$("#security-profile-list input#modern").prop("disabled", false);
                 	$("#security-profile-list label[for=modern]").removeAttr("title");
