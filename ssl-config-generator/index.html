@@ -98,7 +98,7 @@ server {
 <pre style="visibility: {{visibility}};">
 global
     # set default parameters to the {{securityProfile}} configuration
-    tune.ssl.default-dh-param 2048
+    tune.ssl.default-dh-param {{maxDHKeySize}}
     ssl-default-bind-ciphers {{cipherSuites}}
 
 frontend ft_test
@@ -137,6 +137,13 @@ frontend ft_test
             intermediate: 'Firefox 1, Chrome 1, IE 7, Opera 5, Safari 1, Windows XP IE8, Android 2.3, Java 7',
             old: 'Windows XP IE6, Java 6'
         };
+
+		// http://cbonte.github.io/haproxy-dconv/configuration-1.5.html#tune.ssl.default-dh-param
+		var maxDHKeySize = {
+            modern: '2048',
+            intermediate: '1024',
+            old: '1024'
+		};
 
         function getVersionConstrainedDirectives(data) {
             switch (data.server) {
@@ -245,6 +252,7 @@ frontend ft_test
                 jQuery.extend(data, {
                     sslProtocols: sslProtocols[data.securityProfile][data.server],
                     cipherSuites: cipherSuites[data.securityProfile],
+                    maxDHKeySize: maxDHKeySize[data.securityProfile],
                     clientList: clientList[data.securityProfile],
                     queryString: $.param({
                         server: $("div#server-list input:radio:checked").val() + "-" + $("#server-version").val(),
