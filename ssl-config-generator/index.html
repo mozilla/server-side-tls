@@ -23,6 +23,7 @@
         pre {
             overflow-x: auto;
         }
+
     </style>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -109,40 +110,45 @@ frontend ft_test
     </script>
 
     <script>
-        var cipherSuites = {
-            modern: 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK',
-            intermediate: 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA',
-            old: 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-RSA-DES-CBC3-SHA:ECDHE-ECDSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA'
-        };
-        var sslProtocols = {
-            modern: {
-                apache: 'all -SSLv2 -SSLv3 -TLSv1',
-                nginx: 'TLSv1.1 TLSv1.2',
-                haproxy: 'ssl no-sslv3 no-tlsv10'
-            },
-            intermediate: {
-                apache: 'all -SSLv2 -SSLv3',
-                nginx: 'TLSv1 TLSv1.1 TLSv1.2',
-                haproxy: 'ssl no-sslv3'
-            },
-            old: {
-                apache: 'all -SSLv2',
-                nginx: 'SSLv3 TLSv1 TLSv1.1 TLSv1.2',
-                haproxy: 'ssl'
-            }
-        };
+		var profiles = {
+			modern: {
+				cipherSuite: 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK',
+				sslProtocols: {
+	                apache: 'all -SSLv2 -SSLv3 -TLSv1',
+	                nginx: 'TLSv1.1 TLSv1.2',
+	                haproxy: 'ssl no-sslv3 no-tlsv10'
+				},
+				clientList: 'Firefox 27, Chrome 22, IE 11, Opera 14, Safari 7, Android 4.4, Java 8',
+				maxDHKeySize: '2048',
+				messages: []
+			},
+			intermediate: {
+				cipherSuite: 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA',
+				sslProtocols: {
+	                apache: 'all -SSLv2 -SSLv3',
+	                nginx: 'TLSv1 TLSv1.1 TLSv1.2',
+	                haproxy: 'ssl no-sslv3'
+				},
+				clientList: 'Firefox 1, Chrome 1, IE 7, Opera 5, Safari 1, Windows XP IE8, Android 2.3, Java 7',
+				maxDHKeySize: '1024',
+				messages: []
+			},
+			old: {
+				cipherSuite: 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-RSA-DES-CBC3-SHA:ECDHE-ECDSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA',
+				sslProtocols: {
+	                apache: 'all -SSLv2',
+	                nginx: 'SSLv3 TLSv1 TLSv1.1 TLSv1.2',
+	                haproxy: 'ssl'
+				},
+				clientList: 'Windows XP IE6, Java 6',
+				maxDHKeySize: '1024',
+				messages: []
+			}
+		};
 
-        var clientList = {
-            modern: 'Firefox 27, Chrome 22, IE 11, Opera 14, Safari 7, Android 4.4, Java 8',
-            intermediate: 'Firefox 1, Chrome 1, IE 7, Opera 5, Safari 1, Windows XP IE8, Android 2.3, Java 7',
-            old: 'Windows XP IE6, Java 6'
-        };
-
-		// http://cbonte.github.io/haproxy-dconv/configuration-1.5.html#tune.ssl.default-dh-param
-		var maxDHKeySize = {
-            modern: '2048',
-            intermediate: '1024',
-            old: '1024'
+		var messageTypes = {
+			oldOpenSSL: 'TLS v1.1 and v1.2 support is only present in OpenSSL 1.0.1 and newer',
+			oldApache: 'TLS v1.1 and v1.2 support is only present in Apache 2.4 and newer'
 		};
 
         function getVersionConstrainedDirectives(data) {
@@ -219,7 +225,7 @@ frontend ft_test
                 var defaults = {"server": "apache-2.2.15",
                                 "openssl": "1.0.1e",
                                 "hsts": "yes",
-                                "profile": "modern"};
+                                "profile": "intermediate"};
                 var queries = defaults;
                 var search = document.location.search.trim();
 
@@ -237,6 +243,37 @@ frontend ft_test
                 $("div#security-profile-list input#"+queries["profile"]).attr("checked", true);
             }
 
+			function toggleProfileAvailability(disableProfileTest, currentProfile, targetProfile, message) {
+				profileOrder = ["modern", "intermediate", "old"];
+				result = currentProfile;
+                if (disableProfileTest) {
+                	if ($.inArray(message, profiles[targetProfile]["messages"]) == -1) {
+	                	profiles[targetProfile]["messages"].push(message);
+                	}
+                	if ($("#security-profile-list input#" + targetProfile).prop("disabled") == false) {
+	                	$("#security-profile-list input#" + targetProfile).prop("disabled", true);
+	                	if (currentProfile == targetProfile) {
+	                		fallbackProfile = profileOrder[(profileOrder.indexOf(targetProfile) + 1 < profileOrder.length ? 
+	                			profileOrder.indexOf(targetProfile) + 1 : 
+	                			0)];
+		                	$("#security-profile-list input#" + fallbackProfile).prop( "checked", true );
+		                	result = fallbackProfile;
+	                	}
+                	}
+                } else {
+                	if ($.inArray(message, profiles[targetProfile]["messages"]) != -1) {
+                		profiles[targetProfile]["messages"].splice(profiles[targetProfile]["messages"].indexOf(message), 1);
+                	}
+                }
+                if (profiles[targetProfile]["messages"].length == 0) {
+			    	$("#security-profile-list input#" + targetProfile).prop("disabled", false);
+			    	$("#security-profile-list label[for=" + targetProfile + "]").removeAttr("title");
+                } else {
+	            	$("#security-profile-list label[for=" + targetProfile + "]").attr("title", profiles[targetProfile]["messages"].join(" "));
+            	}
+                return result;
+			}
+
             function renderConfig() {
                 var data = {
                     serverVersion: $("#server-version").val(),
@@ -250,10 +287,10 @@ frontend ft_test
                 var template = Handlebars.compile(source);
                 data.visibility = "visible"; 
                 jQuery.extend(data, {
-                    sslProtocols: sslProtocols[data.securityProfile][data.server],
-                    cipherSuites: cipherSuites[data.securityProfile],
-                    maxDHKeySize: maxDHKeySize[data.securityProfile],
-                    clientList: clientList[data.securityProfile],
+                    sslProtocols: profiles[data.securityProfile]["sslProtocols"][data.server],
+                    cipherSuites: profiles[data.securityProfile]["cipherSuites"],
+                    maxDHKeySize: profiles[data.securityProfile]["maxDHKeySize"],
+                    clientList: profiles[data.securityProfile]["clientList"],
                     queryString: $.param({
                         server: $("div#server-list input:radio:checked").val() + "-" + $("#server-version").val(),
                         openssl: $("#openssl-version").val(),
@@ -263,19 +300,17 @@ frontend ft_test
                 });
                 jQuery.extend(data, getVersionConstrainedDirectives(data));
 
-                if (isOpenSSLSemVer(data.opensslVersion, "<1.0.1")) {
-                	if (data.securityProfile == "modern") {
-	                	$("#security-profile-list input#intermediate").prop( "checked", true );
-	                	data.securityProfile = "intermediate";
-                	}
-                	if ($("#security-profile-list input#modern").prop("disabled") == false) {
-	                	$("#security-profile-list input#modern").prop("disabled", true);
-	                	$("#security-profile-list label[for=modern]").attr("title", "Modern profile is not available. TLS v1.1 and v1.2 support is only present in OpenSSL 1.0.1 and newer");
-                	}
-                } else if (isOpenSSLSemVer(data.opensslVersion, ">=1.0.1") && $("#security-profile-list input#modern").prop("disabled") == true) {
-                	$("#security-profile-list input#modern").prop("disabled", false);
-                	$("#security-profile-list label[for=modern]").removeAttr("title");
-                }
+				data.securityProfile = toggleProfileAvailability(
+					isOpenSSLSemVer(data.opensslVersion, "<1.0.1"), 
+                    data.securityProfile, 
+                    "modern", 
+                    messageTypes.oldOpenSSL);
+
+				data.securityProfile = toggleProfileAvailability(
+					data.server == "apache" && isSemVer(data.serverVersion, "<2.4.0"), 
+                    data.securityProfile, 
+                    "modern", 
+                    messageTypes.oldApache);
 
                 $("#server-config-text").html(template(data));
             }
@@ -286,7 +321,6 @@ frontend ft_test
             $("input").change(function() {
                 renderConfig();
             });
-
             loadFromQueryString();
             renderConfig();
         });
