@@ -28,7 +28,7 @@
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
-    <script src="//mozorg.cdn.mozilla.net/tabzilla/tabzilla.js"></script>
+    <script src="//mozorg.cdn.mozilla.net/en-US/tabzilla/tabzilla.js"></script>
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css">
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
     <script>
@@ -92,9 +92,9 @@ server {
 &lt;/VirtualHost&gt;
 {{ocspStaplingCache}}
 </pre>
-</script>
+    </script>
 
-<script id="haproxy-template" type="text/x-handlebars-template">
+    <script id="haproxy-template" type="text/x-handlebars-template">
 <h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}} | <a href="?{{queryString}}">link</a></h2>
 <p>Oldest compatible clients : {{clientList}}</p>
 <span class="message">{{message}}</span>
@@ -111,10 +111,44 @@ frontend ft_test
 </pre>
     </script>
 
+    <script id="elb-template" type="text/x-handlebars-template">
+<h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}} | <a href="?{{queryString}}">link</a></h2>
+<p>Oldest compatible clients : {{clientList}}</p>
+<span class="message">{{message}}</span>
+<pre style="visibility: {{visibility}};">
+{{elbJson}}
+</pre>
+    </script>
+
     <script>
         var profiles = {
             modern: {
                 cipherSuites: 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK',
+                elbPolicy: [
+                    "Protocol-TLSv1.1",
+                    "Protocol-TLSv1.2",
+                    "Server-Defined-Cipher-Order",
+                    "ECDHE-ECDSA-AES128-GCM-SHA256",
+                    "ECDHE-RSA-AES128-GCM-SHA256",
+                    "ECDHE-ECDSA-AES128-SHA256",
+                    "ECDHE-RSA-AES128-SHA256",
+                    "ECDHE-ECDSA-AES128-SHA",
+                    "ECDHE-RSA-AES128-SHA",
+                    "DHE-RSA-AES128-SHA",
+                    "ECDHE-ECDSA-AES256-GCM-SHA384",
+                    "ECDHE-RSA-AES256-GCM-SHA384",
+                    "ECDHE-ECDSA-AES256-SHA384",
+                    "ECDHE-RSA-AES256-SHA384",
+                    "ECDHE-RSA-AES256-SHA",
+                    "ECDHE-ECDSA-AES256-SHA",
+                    "DHE-RSA-AES256-SHA256",
+                    "DHE-RSA-AES256-SHA",
+                    "DHE-DSS-AES256-SHA",
+                    "DHE-DSS-AES128-GCM-SHA256",
+                    "DHE-RSA-AES128-GCM-SHA256",
+                    "DHE-RSA-AES128-SHA256",
+                    "DHE-DSS-AES128-SHA256"
+                ],
                 sslProtocols: {
                     apache: 'all -SSLv2 -SSLv3 -TLSv1',
                     nginx: 'TLSv1.1 TLSv1.2',
@@ -126,6 +160,39 @@ frontend ft_test
             },
             intermediate: {
                 cipherSuites: 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA',
+                elbPolicy: [
+                    "Protocol-TLSv1",
+                    "Protocol-TLSv1.1",
+                    "Protocol-TLSv1.2",
+                    "Server-Defined-Cipher-Order",
+                    "ECDHE-ECDSA-AES128-GCM-SHA256",
+                    "ECDHE-RSA-AES128-GCM-SHA256",
+                    "ECDHE-ECDSA-AES128-SHA256",
+                    "ECDHE-RSA-AES128-SHA256",
+                    "ECDHE-ECDSA-AES128-SHA",
+                    "ECDHE-RSA-AES128-SHA",
+                    "DHE-RSA-AES128-SHA",
+                    "ECDHE-ECDSA-AES256-GCM-SHA384",
+                    "ECDHE-RSA-AES256-GCM-SHA384",
+                    "ECDHE-ECDSA-AES256-SHA384",
+                    "ECDHE-RSA-AES256-SHA384",
+                    "ECDHE-RSA-AES256-SHA",
+                    "ECDHE-ECDSA-AES256-SHA",
+                    "AES128-GCM-SHA256",
+                    "AES128-SHA256",
+                    "AES128-SHA",
+                    "AES256-GCM-SHA384",
+                    "AES256-SHA256",
+                    "AES256-SHA",
+                    "DES-CBC3-SHA",
+                    "DHE-RSA-AES256-SHA256",
+                    "DHE-RSA-AES256-SHA",
+                    "DHE-DSS-AES256-SHA",
+                    "DHE-DSS-AES128-GCM-SHA256",
+                    "DHE-RSA-AES128-GCM-SHA256",
+                    "DHE-RSA-AES128-SHA256",
+                    "DHE-DSS-AES128-SHA256"
+                ],
                 sslProtocols: {
                     apache: 'all -SSLv2 -SSLv3',
                     nginx: 'TLSv1 TLSv1.1 TLSv1.2',
@@ -137,6 +204,40 @@ frontend ft_test
             },
             old: {
                 cipherSuites: 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-RSA-DES-CBC3-SHA:ECDHE-ECDSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA',
+                elbPolicy: [
+                    "Protocol-SSLv3",
+                    "Protocol-TLSv1",
+                    "Protocol-TLSv1.1",
+                    "Protocol-TLSv1.2",
+                    "Server-Defined-Cipher-Order",
+                    "ECDHE-ECDSA-AES128-GCM-SHA256",
+                    "ECDHE-RSA-AES128-GCM-SHA256",
+                    "ECDHE-ECDSA-AES128-SHA256",
+                    "ECDHE-RSA-AES128-SHA256",
+                    "ECDHE-ECDSA-AES128-SHA",
+                    "ECDHE-RSA-AES128-SHA",
+                    "DHE-RSA-AES128-SHA",
+                    "ECDHE-ECDSA-AES256-GCM-SHA384",
+                    "ECDHE-RSA-AES256-GCM-SHA384",
+                    "ECDHE-ECDSA-AES256-SHA384",
+                    "ECDHE-RSA-AES256-SHA384",
+                    "ECDHE-RSA-AES256-SHA",
+                    "ECDHE-ECDSA-AES256-SHA",
+                    "AES128-GCM-SHA256",
+                    "AES128-SHA256",
+                    "AES128-SHA",
+                    "AES256-GCM-SHA384",
+                    "AES256-SHA256",
+                    "AES256-SHA",
+                    "DES-CBC3-SHA",
+                    "DHE-RSA-AES256-SHA256",
+                    "DHE-RSA-AES256-SHA",
+                    "DHE-DSS-AES256-SHA",
+                    "DHE-DSS-AES128-GCM-SHA256",
+                    "DHE-RSA-AES128-GCM-SHA256",
+                    "DHE-RSA-AES128-SHA256",
+                    "DHE-DSS-AES128-SHA256"
+                ],
                 sslProtocols: {
                     apache: 'all -SSLv2',
                     nginx: 'SSLv3 TLSv1 TLSv1.1 TLSv1.2',
@@ -225,7 +326,7 @@ frontend ft_test
                     }
                     if (isSemVer(data.serverVersion, "<1.5")) {
                         data.visibility = 'hidden';
-                        data.message = "HAProxy version " + data.serverVersion + " doesn't support SSL";
+                        data.message = "HAProxy didn't support SSL until version 1.5 and newer";
                     }
                     break;
             }
@@ -301,16 +402,49 @@ frontend ft_test
                 var source = $("#" + data.server + "-template").html();
                 var template = Handlebars.compile(source);
                 data.visibility = "visible";
+
+                // define profile dependent values
                 jQuery.extend(data, {
                     sslProtocols: profiles[data.securityProfile]["sslProtocols"][data.server],
                     cipherSuites: profiles[data.securityProfile]["cipherSuites"],
                     maxDHKeySize: profiles[data.securityProfile]["maxDHKeySize"],
                     clientList: profiles[data.securityProfile]["clientList"]
                 });
+
+                // define version dependent values
                 jQuery.extend(data, getVersionConstrainedDirectives(data));
 
+                // define server dependent values
+                data["elbJson"] = "Fetching JSON...";
+                if (data.server == "elb") {
+                    $.getJSON("blank-elb-cloudformation-template.json")
+                    .done( function( elbTemplate ) {
+                        var elbMozillaPolicyVersion = "2015-03";
+                        var elbPolicyName = "Mozilla-" + data.securityProfile + "-" + elbMozillaPolicyVersion;
+                        elbTemplate["Description"] = "Example ELB with Mozilla recommended ciphersuite";
+                        elbTemplate["Resources"]["ExampleELB"]["Properties"]["Listeners"][0]["PolicyNames"] = [
+                            elbPolicyName
+                        ];
+                        elbTemplate["Resources"]["ExampleELB"]["Properties"]["Policies"] = [
+                            {
+                              "PolicyName": elbPolicyName,
+                              "PolicyType": "SSLNegotiationPolicyType",
+                              "Attributes": $.map( profiles[data.securityProfile]["elbPolicy"], function (n) {
+                                  return {"Name": n,"Value":true };
+                              })
+                            }
+                        ];
+                        data["elbJson"] = JSON.stringify(elbTemplate, undefined, 4);
+                        $("#server-config-text").html(template(data));
+                    })
+                    .fail( function( elbTemplate) {
+                        console.log("JSON fetch failed : " + JSON.stringify(elbTemplate));
+                    });
+                }
+
+                // catch invalid version profile combinations
                 data.securityProfile = toggleProfileAvailability(
-                    isOpenSSLSemVer(data.opensslVersion, "<1.0.1"),
+                    isOpenSSLSemVer(data.opensslVersion, "<1.0.1") && data.server != "elb",
                     data.securityProfile,
                     "modern",
                     messageTypes.oldOpenSSL);
@@ -325,6 +459,7 @@ frontend ft_test
                     source: versions[data.server]
                 });
 
+                // create a permalink
                 jQuery.extend(data, {
                     queryString: $.param({
                         server: data.server + "-" + data.serverVersion,
@@ -333,6 +468,7 @@ frontend ft_test
                         profile: data.securityProfile
                     })
                 });
+                
                 $("#server-config-text").html(template(data));
             }
             $("ul#security-profile-list li button").click(function() {
@@ -366,6 +502,9 @@ frontend ft_test
             <br />
             <input type="radio" name="server" id="haproxy" value="haproxy">
             <label for="haproxy">HAProxy</label>
+            <br />
+            <input type="radio" name="server" id="elb" value="elb">
+            <label for="elb">AWS ELB</label>
             <br />
         </div>
     </div>
