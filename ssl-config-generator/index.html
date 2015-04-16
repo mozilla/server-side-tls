@@ -221,7 +221,7 @@ frontend ft_test
                     }
                     if (isSemVer(data.serverVersion, "<1.5")) {
                         data.visibility = 'hidden';
-                        data.message = "HAProxy version " + data.serverVersion + " doesn't support SSL";
+                        data.message = "HAProxy didn't support SSL until version 1.5 and newer";
                     }
                     break;
             }
