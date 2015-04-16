@@ -115,6 +115,10 @@ frontend ft_test
 <h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}} | <a href="?{{queryString}}">link</a></h2>
 <p>Oldest compatible clients : {{clientList}}</p>
 <span class="message">{{message}}</span>
+<p>This <a href="http://aws.amazon.com/cloudformation/">Amazon Web Services CloudFormation</a> template 
+  will create an <a href="http://aws.amazon.com/elasticloadbalancing/">Elastic Load Balancer</a> which 
+  terminates HTTPS connections using the Mozilla recommended ciphersuites and protocols.
+</p>
 <pre style="visibility: {{visibility}};">
 {{elbJson}}
 </pre>
