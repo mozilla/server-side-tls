@@ -316,7 +316,7 @@ frontend ft_test
                     }
                     if (data.hstsEnabled == "true") {
                         data.hsts = '\n    # HSTS (mod_headers is required) (15768000 seconds = 6 months)' + '\n' +
-                            '    Header always add Strict-Transport-Security "max-age=15768000"';
+                            '    Header always set Strict-Transport-Security "max-age=15768000"';
                     }
                     if (isSemVer(data.serverVersion, '>=2.3.16')) {
                         data.sslProtocols = data.sslProtocols.replace(' -SSLv2', '');
