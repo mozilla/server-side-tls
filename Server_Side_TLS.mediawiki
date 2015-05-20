@@ -877,6 +877,12 @@ Daniel Stenberg (Mozilla, cUrl) has a good description of the exploitability of 
 
 Our guidelines maintain support for SSLv3 in the Old configuration only. This is required for clients on Windows XP service pack 1 & 2 that do not have support for TLSv1.0. Internet Explorer and Chrome on those platforms are impacted. Mozilla wants to be reachable from very old clients, to allow them to download a better browser. Therefore, we maintain SSLv3 compatibility on a limited number of sites. But all sites that do not need that level of compatibility are encouraged to implement the Intermediate configuration
 
+=== Logjam attack
+
+The Logjam attack describes methods of attacking TLS servers supporting DHE export ciphers, and with weak (< 1024 bit) Diffie Hellman groups. Modern TLS servers should not include these configurations. The recommendations in this guide provide configurations that are not impacted by this.
+
+more: https://weakdh.org
+
 == SPDY ==
 
 (see also http://en.wikipedia.org/wiki/SPDY and http://www.chromium.org/spdy/spdy-protocol)
