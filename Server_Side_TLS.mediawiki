@@ -10,6 +10,7 @@ The Operations Security (OpSec) team maintains this document as a reference guid
 ! Document Status !! Major Versions
 |- 
 |  <span style="color:green;">'''READY'''</span> ||
+* Version 3.5: alm: comment on weakdh vulnerability
 * Version 3.4: ulfr: added note about session resumption, HSTS and HPKP
 * Version 3.3: ulfr: fix SHA256 prio, add POODLE details, update various templates
 * Version 3.2: ulfr: Added intermediate compatibility mode, renamed other modes
@@ -877,9 +878,9 @@ Daniel Stenberg (Mozilla, cUrl) has a good description of the exploitability of 
 
 Our guidelines maintain support for SSLv3 in the Old configuration only. This is required for clients on Windows XP service pack 1 & 2 that do not have support for TLSv1.0. Internet Explorer and Chrome on those platforms are impacted. Mozilla wants to be reachable from very old clients, to allow them to download a better browser. Therefore, we maintain SSLv3 compatibility on a limited number of sites. But all sites that do not need that level of compatibility are encouraged to implement the Intermediate configuration
 
-=== Logjam attack ===
+=== Logjam attack on weak Diffie-Hellman ===
 
-The Logjam attack describes methods of attacking TLS servers supporting DHE export ciphers, and with weak (< 1024 bit) Diffie Hellman groups. Modern TLS servers should not include these configurations. The recommendations in this guide provide configurations that are not impacted by this.
+The Logjam attack describes methods of attacking TLS servers supporting DHE export ciphers, and with weak (<= 1024 bit) Diffie Hellman groups. Modern TLS must use DH parameters of 2048 bits and above, or only use ECDHE. The modern configuration in this guide provide configurations that are not impacted by this issue. The intermediate and old configurations are impacted, and administrators are encourage to use DH parameters of 2048 bits wherever possible.
 
 more: https://weakdh.org
 
