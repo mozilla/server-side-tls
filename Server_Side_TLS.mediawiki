@@ -33,6 +33,10 @@ The Operations Security (OpSec) team maintains this document as a reference guid
 </td>
 </tr></table>
 
+Updates to this page should be submitted to the [[https://github.com/mozilla/server-side-tls source repository on github]].
+
+If you are looking for the configuration generator, follow this link: [[https://mozilla.github.io/server-side-tls/ssl-config-generator/ https://mozilla.github.io/server-side-tls/ssl-config-generator/]].
+
 = Recommended configurations =
 Three configurations are recommended. Pick the right configuration depending on your audience. If you do not need backward compatibility, and are building a service for modern clients only (post FF27), then use the Modern configuration. Otherwise, prefer the Intermediate configuration. Use the Old backward compatible configuration only if your service will be accessed by very old clients, such as Windows XP IE6, or ancient libraries & bots.
 
