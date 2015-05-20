@@ -1,0 +1,2832 @@
+The goal of this document is to help operational teams with the configuration of TLS on servers. All Mozilla sites and deployment should follow the recommendations below.
+
+The Operations Security (OpSec) team maintains this document as a reference guide to navigate the TLS landscape. It contains information on TLS protocols, known issues and vulnerabilities, configuration examples and testing tools. Changes are reviewed and merged by the OpSec team, and broadcasted to the various Operational teams.
+
+<table><tr>
+<td><div style="float:left;" class="toclimit-3">__TOC__</div></td>
+<td valign="top">
+{| class="wikitable"
+|-
+! Document Status !! Major Versions
+|- 
+|  <span style="color:green;">'''READY'''</span> ||
+* Version 3.4: ulfr: added note about session resumption, HSTS and HPKP
+* Version 3.3: ulfr: fix SHA256 prio, add POODLE details, update various templates
+* Version 3.2: ulfr: Added intermediate compatibility mode, renamed other modes
+* Version 3.1: ulfr: Added non-backward compatible ciphersuite
+* Version 3: ulfr: Remove RC4 for 3DES, fix ordering in openssl 0.9.8 ([https://bugzilla.mozilla.org/show_bug.cgi?id=1024430 1024430]), various minor updates
+* Version 2.5.1: ulfr: Revisit ELB capabilities
+* Version 2.5: ulfr: Update ZLB information for OCSP Stapling and ciphersuite
+* Version 2.4: ulfr: Moved a couple of aes128 above aes256 in the ciphersuite
+* Version 2.3: ulfr: Precisions on IE 7/8 AES support (thanks to Dobin Rutishauser)
+* Version 2.2: ulfr: Added IANA/OpenSSL/GnuTLS correspondence table and conversion tool
+* Version 2.1: ulfr: RC4 vs 3DES discussion. r=joes r=tinfoil 
+* Version 2: Public release. r=ulfr r=kang
+* Version 1.5: Julien Vehent (ulfr) added details for PFS DHE handshake, added nginx configuration details; Guillaume Destuynder (kang): added Apache recommended conf
+* Version 1.4: ulfr: revised ciphersuite. Prefer AES before RC4. Prefer 128 before 256. Prefer DHE before non-DHE.
+* Version 1.3: ulfr: added netscaler example conf
+* Version 1.2: ulfr: ciphersuite update: bump DHE-AESGCM above ECDH-RC4
+* Version 1.1: ulfr: integrated review comments from Infra; kang: SPDY information
+* Version 1: ulfr: creation
+|}
+[[File:OpSec.png|right|300px]]
+</td>
+</tr></table>
+
+= Recommended configurations =
+Three configurations are recommended. Pick the right configuration depending on your audience. If you do not need backward compatibility, and are building a service for modern clients only (post FF27), then use the Modern configuration. Otherwise, prefer the Intermediate configuration. Use the Old backward compatible configuration only if your service will be accessed by very old clients, such as Windows XP IE6, or ancient libraries & bots.
+
+<table><tr>
+<td><div style="float:left;" class="toclimit-3">__TOC__</div></td>
+<td valign="top">
+{| class="wikitable"
+|-
+! Configuration !! Oldest compatible client
+|- 
+|  <span style="color:green;">'''Modern'''</span> || Firefox 27, Chrome 22, IE 11, Opera 14, Safari 7, Android 4.4, Java 8
+|- 
+|  <span style="color:orange;">'''Intermediate'''</span> || Firefox 1, Chrome 1, IE 7, Opera 5, Safari 1, Windows XP IE8, Android 2.3, Java 7
+|- 
+|  <span style="color:gray;">'''Old'''</span> || Windows XP IE6, Java 6
+|}
+</td>
+</tr></table>
+== <span style="color:green;">'''Modern'''</span> compatibility ==
+For services that don't need backward compatibility, the parameters below provide a higher level of security. This configuration is compatible with Firefox 27, Chrome 22, IE 11, Opera 14 and Safari 7.
+
+* Ciphersuite: '''ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK'''
+* Versions: '''TLSv1.1, TLSv1.2'''
+* RSA key size: '''2048'''
+* DH Parameter size: '''2048'''
+* Elliptic curves: '''secp256r1, secp384r1, secp521r1''' (at a minimum)
+* Certificate signature: '''SHA-256'''
+* HSTS: '''max-age=15724800'''
+
+== <span style="color:orange;">'''Intermediate'''</span> compatibility (default) ==
+For services that don't need compatibility with legacy clients (mostly WinXP), but still need to support a wide range of clients, this configuration is recommended. It is is compatible with Firefox 1, Chrome 1, IE 7, Opera 5 and Safari 1.
+
+* Ciphersuite: '''ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA'''
+* Versions: '''TLSv1, TLSv1.1, TLSv1.2'''
+* RSA key size: '''2048'''
+* DH Parameter size: '''1024'''
+* Elliptic curves: '''secp256r1, secp384r1, secp521r1''' (at a minimum)
+* Certificate signature: '''SHA-256'''
+
+== <span style="color:gray;">'''Old'''</span> backward compatibility ==
+
+This is the old ciphersuite that works with all clients back to Windows XP/IE6. It should be used as a last resort only.
+
+* Ciphersuite: '''ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-RSA-DES-CBC3-SHA:ECDHE-ECDSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA'''
+* Versions: '''SSLv3, TLSv1, TLSv1.1, TLSv1.2'''
+* RSA key size: '''2048'''
+* DH Parameter size: '''1024'''
+* Elliptic curves: '''secp256r1, secp384r1, secp521r1'''
+* Certificate signature: '''SHA-1''' (windows XP pre-sp3 is incompatible with sha-256)
+
+If your version of OpenSSL is old, unavailable ciphers will be discarded automatically. Always use the full ciphersuite above and let OpenSSL pick the ones it supports.
+
+The ordering of a ciphersuite is very important because it decides which algorithms are going to be selected in priority. The recommendation above prioritizes algorithms that provide perfect forward secrecy.
+
+The listing below shows the list of algorithms returned by this ciphersuite. If you have to pick them manually for your application, make sure you keep this ordering.
+
+Older versions of OpenSSL may not return the full list of algorithms. AES-GCM and some ECDHE are fairly recent, and not present on most versions of OpenSSL shipped with Ubuntu or RHEL. This listing below was obtained from a freshly built OpenSSL.
+
+<source lang="bash">
+$ openssl ciphers -V 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-RSA-DES-CBC3-SHA:ECDHE-ECDSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA'|column -t
+0xC0,0x2F  -  ECDHE-RSA-AES128-GCM-SHA256    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(128)    Mac=AEAD
+0xC0,0x2B  -  ECDHE-ECDSA-AES128-GCM-SHA256  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(128)    Mac=AEAD
+0xC0,0x30  -  ECDHE-RSA-AES256-GCM-SHA384    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(256)    Mac=AEAD
+0xC0,0x2C  -  ECDHE-ECDSA-AES256-GCM-SHA384  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(256)    Mac=AEAD
+0x00,0x9E  -  DHE-RSA-AES128-GCM-SHA256      TLSv1.2  Kx=DH    Au=RSA    Enc=AESGCM(128)    Mac=AEAD
+0x00,0xA2  -  DHE-DSS-AES128-GCM-SHA256      TLSv1.2  Kx=DH    Au=DSS    Enc=AESGCM(128)    Mac=AEAD
+0x00,0xA3  -  DHE-DSS-AES256-GCM-SHA384      TLSv1.2  Kx=DH    Au=DSS    Enc=AESGCM(256)    Mac=AEAD
+0x00,0x9F  -  DHE-RSA-AES256-GCM-SHA384      TLSv1.2  Kx=DH    Au=RSA    Enc=AESGCM(256)    Mac=AEAD
+0xC0,0x27  -  ECDHE-RSA-AES128-SHA256        TLSv1.2  Kx=ECDH  Au=RSA    Enc=AES(128)       Mac=SHA256
+0xC0,0x23  -  ECDHE-ECDSA-AES128-SHA256      TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AES(128)       Mac=SHA256
+0xC0,0x13  -  ECDHE-RSA-AES128-SHA           SSLv3    Kx=ECDH  Au=RSA    Enc=AES(128)       Mac=SHA1
+0xC0,0x09  -  ECDHE-ECDSA-AES128-SHA         SSLv3    Kx=ECDH  Au=ECDSA  Enc=AES(128)       Mac=SHA1
+0xC0,0x28  -  ECDHE-RSA-AES256-SHA384        TLSv1.2  Kx=ECDH  Au=RSA    Enc=AES(256)       Mac=SHA384
+0xC0,0x24  -  ECDHE-ECDSA-AES256-SHA384      TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AES(256)       Mac=SHA384
+0xC0,0x14  -  ECDHE-RSA-AES256-SHA           SSLv3    Kx=ECDH  Au=RSA    Enc=AES(256)       Mac=SHA1
+0xC0,0x0A  -  ECDHE-ECDSA-AES256-SHA         SSLv3    Kx=ECDH  Au=ECDSA  Enc=AES(256)       Mac=SHA1
+0x00,0x67  -  DHE-RSA-AES128-SHA256          TLSv1.2  Kx=DH    Au=RSA    Enc=AES(128)       Mac=SHA256
+0x00,0x33  -  DHE-RSA-AES128-SHA             SSLv3    Kx=DH    Au=RSA    Enc=AES(128)       Mac=SHA1
+0x00,0x40  -  DHE-DSS-AES128-SHA256          TLSv1.2  Kx=DH    Au=DSS    Enc=AES(128)       Mac=SHA256
+0x00,0x6B  -  DHE-RSA-AES256-SHA256          TLSv1.2  Kx=DH    Au=RSA    Enc=AES(256)       Mac=SHA256
+0x00,0x38  -  DHE-DSS-AES256-SHA             SSLv3    Kx=DH    Au=DSS    Enc=AES(256)       Mac=SHA1
+0x00,0x39  -  DHE-RSA-AES256-SHA             SSLv3    Kx=DH    Au=RSA    Enc=AES(256)       Mac=SHA1
+0xC0,0x12  -  ECDHE-RSA-DES-CBC3-SHA         SSLv3    Kx=ECDH  Au=RSA    Enc=3DES(168)      Mac=SHA1
+0xC0,0x08  -  ECDHE-ECDSA-DES-CBC3-SHA       SSLv3    Kx=ECDH  Au=ECDSA  Enc=3DES(168)      Mac=SHA1
+0x00,0x9C  -  AES128-GCM-SHA256              TLSv1.2  Kx=RSA   Au=RSA    Enc=AESGCM(128)    Mac=AEAD
+0x00,0x9D  -  AES256-GCM-SHA384              TLSv1.2  Kx=RSA   Au=RSA    Enc=AESGCM(256)    Mac=AEAD
+0x00,0x3C  -  AES128-SHA256                  TLSv1.2  Kx=RSA   Au=RSA    Enc=AES(128)       Mac=SHA256
+0x00,0x3D  -  AES256-SHA256                  TLSv1.2  Kx=RSA   Au=RSA    Enc=AES(256)       Mac=SHA256
+0x00,0x2F  -  AES128-SHA                     SSLv3    Kx=RSA   Au=RSA    Enc=AES(128)       Mac=SHA1
+0x00,0x35  -  AES256-SHA                     SSLv3    Kx=RSA   Au=RSA    Enc=AES(256)       Mac=SHA1
+0x00,0x6A  -  DHE-DSS-AES256-SHA256          TLSv1.2  Kx=DH    Au=DSS    Enc=AES(256)       Mac=SHA256
+0x00,0x32  -  DHE-DSS-AES128-SHA             SSLv3    Kx=DH    Au=DSS    Enc=AES(128)       Mac=SHA1
+0x00,0x0A  -  DES-CBC3-SHA                   SSLv3    Kx=RSA   Au=RSA    Enc=3DES(168)      Mac=SHA1
+0x00,0x88  -  DHE-RSA-CAMELLIA256-SHA        SSLv3    Kx=DH    Au=RSA    Enc=Camellia(256)  Mac=SHA1
+0x00,0x87  -  DHE-DSS-CAMELLIA256-SHA        SSLv3    Kx=DH    Au=DSS    Enc=Camellia(256)  Mac=SHA1
+0x00,0x84  -  CAMELLIA256-SHA                SSLv3    Kx=RSA   Au=RSA    Enc=Camellia(256)  Mac=SHA1
+0x00,0x45  -  DHE-RSA-CAMELLIA128-SHA        SSLv3    Kx=DH    Au=RSA    Enc=Camellia(128)  Mac=SHA1
+0x00,0x44  -  DHE-DSS-CAMELLIA128-SHA        SSLv3    Kx=DH    Au=DSS    Enc=Camellia(128)  Mac=SHA1
+0x00,0x41  -  CAMELLIA128-SHA                SSLv3    Kx=RSA   Au=RSA    Enc=Camellia(128)  Mac=SHA1
+
+</source>
+
+The ciphers are described here: http://www.openssl.org/docs/apps/ciphers.html
+
+= Prioritization logic =
+
+# ECDHE+AESGCM ciphers are selected first. These are TLS 1.2 ciphers and not widely supported at the moment. No known attack currently target these ciphers.
+# [[#Forward_Secrecy|PFS]] ciphersuites are preferred, with ECDHE first, then DHE.
+# SHA256 signature is preferred to SHA-1 in ciphers and certificates. MD5 is disallowed entirely.
+# AES 128 is preferred to AES 256. There has been [[http://www.mail-archive.com/dev-tech-crypto@lists.mozilla.org/msg11247.html discussions]] on whether AES256 extra security was worth the cost, and the result is far from obvious. At the moment, AES128 is preferred, because it provides good security, is really fast, and seems to be more resistant to timing attacks.
+# In the backward compatible ciphersuite, AES is preferred to 3DES. [[#Attacks_on_TLS|BEAST]] attacks on AES are mitigated in TLS 1.1 and above, and difficult to achieve in TLS 1.0. In the non-backward compatible ciphersuite, 3DES is not present.
+# RC4 is removed entirely. 3DES is used for backward compatibility. See discussion in [[#RC4_weaknesses]]
+
+= Mandatory discards =
+
+* aNULL contains non-authenticated Diffie-Hellman key exchanges, that are subject to Man-In-The-Middle (MITM) attacks
+* eNULL contains null-encryption ciphers (cleartext)
+* EXPORT are legacy weak ciphers that were marked as exportable by US law
+* RC4 contains ciphers that use the deprecated ARCFOUR algorithm
+* DES contains ciphers that use the deprecated Data Encryption Standard
+* SSLv2 contains all ciphers that were defined in the old version of the SSL standard, now deprecated
+* MD5 contains all the ciphers that use the deprecated message digest 5 as the hashing algorithm
+
+= Forward Secrecy =
+
+The concept of forward secrecy is simple: client and server negotiate a key that never hits the wire, and is destroyed at the end of the session. The RSA private from the server is used to sign a Diffie-Hellman key exchange between the client and the server. The pre-master key obtained from the Diffie-Hellman handshake is then used for encryption. Since the pre-master key is specific to a connection between a client and a server, and used only for a limited amount of time, it is called Ephemeral.
+
+With Forward Secrecy, if an attacker gets a hold of the server's private key, it will not be able to decrypt past communications. The private key is only used to sign the DH handshake, which does not reveal the pre-master key. Diffie-Hellman ensures that the pre-master keys never leave the client and the server, and cannot be intercepted by a MITM.
+
+== DHE handshake and dhparam ==
+
+When an ephemeral Diffie-Hellman cipher is used, the server and the client negotiate a pre-master key using the Diffie-Hellman algorithm. This algorithm requires that the server sends the client a prime number and a generator. Neither are confidential, and are sent in clear text. However, they must be signed, such that a MITM cannot hijack the handshake.
+
+As an example, TLS_DHE_RSA_WITH_AES_128_CBC_SHA256 works as follow:
+[[File:Dhe_params.png|frame|server key exchange message as displayed in Wireshark]]
+[[File:Dhe_client_params.png|frame|client key exchange message as displayed in Wireshark]]
+# Server sends Client a [[http://tools.ietf.org/html/rfc5246#section-7.4.3 SERVER KEY EXCHANGE]] message during the SSL Handshake. The message contains:
+## Prime number ''p''
+## Generator ''g''
+## Server's Diffie-Hellman public value ''A = g^X mod p'', where ''X'' is a private integer chosen by the server at random, and never shared with the client. (note: A is called ''pubkey'' in wireshark)
+## signature ''S'' of the above (plus two random values) computed using the Server's private RSA key
+# Client verifies the signature ''S''
+# Client sends server a [[http://tools.ietf.org/html/rfc5246#section-7.4.7 CLIENT KEY EXCHANGE]] message. The message contains:
+## Client's Diffie-Hellman public value ''B = g^Y mod p'', where ''Y'' is a private integer chosen at random and never shared. (note: B is called ''pubkey'' in wireshark)
+# The Server and the Client can now calculate the pre-master secret using each other's public values:
+## server calculates ''PMS = B^X mod p''
+## client calculates ''PMS = A^Y mod p''
+# Client sends a [[http://tools.ietf.org/html/rfc5246#section-7.1 CHANGE CIPHER SPEC]] message to the server, and both parties continue the handshake using ENCRYPTED HANDSHAKE MESSAGES
+
+The size of the prime number ''p'' constrains the size of the pre-master key ''PMS'', because of the modulo operation. A smaller prime almost means weaker values of ''A'' and ''B'', which could leak the secret values ''X'' and ''Y''. Thus, the prime ''p'' should not be smaller than the size of the RSA private key.
+<source lang="bash">
+$ openssl dhparam 2048
+Generating DH parameters, 2048 bit long safe prime, generator 2
+..+..+...............+
+-----BEGIN DH PARAMETERS-----
+MBYCEQCHU6UNZoHMF6bPtj21Hn/bAgEC.....
+......
+-----END DH PARAMETERS-----
+</source>
+
+= OCSP Stapling =
+When connecting to a server, clients should verify the validity of the server certificate using either a Certificate Revocation List (CRL), or an Online Certificate Status Protocol (OCSP) record. The problem with CRL is that the lists have grown huge and takes forever to download.
+
+OCSP is much more lightweight, as only one record is retrieved at a time. But the side effect is that OCSP requests must be made to a 3rd party OCSP responder when connecting to a server, which adds latency and potential failures. In fact, the OCSP responders operated by CAs are often so unreliable that browser will fail silently if no response is received in a timely manner. This reduces security, by allowing an attacker to DoS an OCSP responder to disable the validation.
+
+The solution is to allow the server to send its cached OCSP record during the TLS handshake, therefore bypassing the OCSP responder. This mechanism saves a roundtrip between the client and the OCSP responder, and is called OCSP Stapling.
+
+The server will send a cached OCSP response only if the client requests it, by announcing support for the '''status_request''' TLS extension in its CLIENT HELLO.
+
+[[File:OCSP_Stapling.png]]
+
+Most servers will cache OCSP response for up to 48 hours. At regular intervals, the server will connect to the OCSP responder of the CA to retrieve a fresh OCSP record. The location of the OCSP responder is taken from the Authority Information Access field of the signed certificate. For example, with StartSSL:
+
+<pre>
+Authority Information Access: 
+      OCSP - URI:http://ocsp.startssl.com/sub/class1/server/ca
+</pre>
+
+Support for OCSP Stapling can be tested using the '''-status''' option of the OpenSSL client.
+
+<pre>
+$ openssl s_client -connect monitor.mozillalabs.com:443 -status
+...
+======================================
+OCSP Response Data:
+    OCSP Response Status: successful (0x0)
+    Response Type: Basic OCSP Response
+    Version: 1 (0x0)
+...
+</pre>
+
+= Session Resumption =
+
+Session Resumption is the ability to reuse the session secrets previously negotiated between a client and a server for a new TLS connection. This feature greatly increases the speed establishment of TLS connections after the first handshake, and is very useful for connections that use Perfect Forward Secrecy with a slow handshake like DHE.
+
+Session Resumption can be performed using one of two methods:
+
+# session identifier: When establishing a first session, the server generates an arbitrary session ID sent to the client. On subsequent connections, the client sends the session ID in the CLIENT HELLO message, indicating to the server it wants to reuse an existing state. If the server can find a corresponding state in its local cache, it reuse the session secrets and skips directly to exchanging encrypted data with the client. If the cache stored on the server is compromised, session keys from the cache can be used to decrypt past and future sessions.
+# session tickets: Storing a cache on the server might be problematic for systems that handle very large numbers of clients. Session tickets provide an alternative where the server sends the encrypted state (ticket) to the client instead of storing it in its local cache. The client can send back the encrypted state to the server in subsequent connections, thus allowing session resumption. This method requires symmetric keys on the server to encrypt and decrypt session tickets. If the keys are compromised, an attacker obtains access to session keys and can decrypt past and future sessions.
+
+Session resumption is a very useful performance feature of TLS, but also carries a significant amount of risk. Most servers do not purge sessions or ticket keys, thus increasing the risk that a server compromise would leak data from previous (and future) connections.
+
+The current recommendation for web servers is to enable session resumption and benefit from the performance improvement, but to restart servers daily when possible. This ensure that sessions get purged and ticket keys get renewed on a regular basis.
+
+= HSTS: HTTP Strict Transport Security =
+
+[[https://tools.ietf.org/html/rfc6797 HSTS]] is a HTTP header sent by a server to a client, indicating that the current site must only be accessed over HTTPS until expiration of the HSTS value is reached.
+
+The header format is very simple, composed only of a '''max-age''' parameter that indicates when the directive should expire. max-age is expressed in seconds. A typical value is 15724800 seconds, or 6 months.
+<pre>
+Strict-Transport-Security: max-age=15724800
+</pre>
+
+HSTS is becoming more and more of a standard, but should only be used when the site's operators are confident that HTTPS will be available continuously for the duration of max-age. Once the HSTS header is sent to client, HTTPS cannot be disabled on the site until the last client has expired its HSTS record.
+
+= HPKP: Public Key Pinning Extension for HTTP =
+
+See [[http://tools.ietf.org/html/rfc7469 RFC7469]].
+
+HPKP is an '''experimental''' HTTP header sent by a server to a client, to indicate that some certificates related to the site should be pinned in the client. The client would thus refuse to establish a connection to the server if the pining does not comply.
+
+Due to its experimental nature, HPKP is currently '''not''' recommended on production sites. More informations can be found on the [[https://developer.mozilla.org/en-US/docs/Web/Security/Public_Key_Pinning MDN description page]].
+
+= Recommended Server Configurations =
+
+Try out our configuration generator to create a sample configuration file for various servers. Click the image below:
+
+[[Image:Server-side-tls-config-generator.png|link=https://mozilla.github.io/server-side-tls/ssl-config-generator/]]
+
+== Nginx ==
+
+Nginx provides OCSP Stapling, custom DH parameters, and the full flavor of TLS versions (from OpenSSL).
+
+The detail of each configuration parameter, and how to build a recent Nginx with OpenSSL, is [[#Nginx_configuration_details|at the end of this document]].
+
+<pre>
+server {
+    listen 443 ssl;
+
+    # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
+    ssl_certificate /path/to/signed_cert_plus_intermediates;
+    ssl_certificate_key /path/to/private_key;
+    ssl_session_timeout 5m;
+    ssl_session_cache shared:SSL:5m;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    ssl_dhparam /path/to/dhparam.pem;
+
+    # Intermediate configuration. tweak to your needs.
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers '<paste intermediate ciphersuite here>';
+    ssl_prefer_server_ciphers on;
+ 
+    # Enable this if your want HSTS (recommended)
+    # add_header Strict-Transport-Security max-age=15768000;
+ 
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    ## verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /path/to/root_CA_cert_plus_intermediates;
+    resolver <IP DNS resolver>;
+ 
+    ....
+}
+</pre>
+
+== Apache ==
+Apache supports OCSP Stapling, but only in httpd 2.3.3 and later.
+
+Before Apache 2.4.7, the DH parameter is always set to 1024 bits and is not user configurable. This has been fixed in mod_ssl 2.4.7 that Red Hat has backported into their RHEL 6 Apache 2.2 distribution with httpd-2.2.15-32.el6. Future versions of Apache will automatically select a better value for the DH parameter.
+
+<pre>
+<VirtualHost *:443>
+    ...
+    SSLEngine on
+    SSLCertificateFile      /path/to/signed_certificate
+    SSLCertificateChainFile /path/to/intermediate_certificate
+    SSLCertificateKeyFile   /path/to/private/key
+    SSLCACertificateFile    /path/to/all_ca_certs
+
+    # Intermediate configuration, tweak to your needs
+    SSLProtocol             all -SSLv2 -SSLv3
+    SSLCipherSuite          <paste intermediate ciphersuite here>
+    SSLHonorCipherOrder     on
+    SSLCompression          off
+
+    # OCSP Stapling, only in httpd 2.3.3 and later
+    SSLUseStapling          on
+    SSLStaplingResponderTimeout 5
+    SSLStaplingReturnResponderErrors off
+    # On Apache 2.4+, SSLStaplingCache must be set *outside* of the VirtualHost
+    SSLStaplingCache        shmcb:/var/run/ocsp(128000)
+ 
+    # Enable this if your want HSTS (recommended)
+    # Header add Strict-Transport-Security "max-age=15768000"
+ 
+    ...
+</VirtualHost>
+# TLS Session cache, outside of virtual host, apache 2.4+
+# the path doesn't need to exist
+SSLSessionCache         shmcb:/path/to/ssl_gcache_data(5120000)
+</pre>
+
+== Haproxy ==
+
+SSL support in Haproxy is stable in 1.5. Haproxy supports OCSP Stapling and custom DH parameters size. It can be used as a TLS termination in AWS using ELBs and the PROXY protocol. See [https://jve.linuxwall.info/ressources/taf/haproxy-aws/ Guidelines for HAProxy termination in AWS]
+
+<pre>
+global
+    # set default parameters to the Intermediate configuration
+    tune.ssl.default-dh-param 2048
+    ssl-default-bind-ciphers <paste intermediate ciphersuite here>
+
+frontend ft_test
+    mode    http
+    bind    0.0.0.0:443 ssl no-sslv3 crt /path/to/<cert+privkey+intermediate+dhparam>
+    # Enable this if your want HSTS (recommended)
+    # rspadd  Strict-Transport-Security:\ max-age=15768000
+</pre>
+=== OCSP Stapling support ===
+While HAProxy can serve OCSP stapled responses, it cannot fetch and update OCSP records from the CA automatically. The OCSP response must be downloaded by another process and placed next to the certificate, with a '.ocsp' extension.
+<pre>
+/etc/haproxy/certs/
+├── ca.pem
+├── server_cert.pem
+├── server_bundle.pem
+└── server_bundle.pem.ocsp
+</pre>
+The file 'server_bundle.pem.ocsp' must be retrieved and updated at regular intervals. A cronjob can be used for this:
+<pre>
+$ openssl ocsp -noverify -issuer /etc/haproxy/certs/ca.pem \
+-cert /etc/haproxy/certs/server_cert.pem \
+-url http://ocsp.startssl.com/sub/class1/server/ca \
+-no_nonce -header Host ocsp.startssl.com \
+-respout /etc/haproxy/certs/server_bundle.pem.ocsp
+</pre>
+The URL above is taken from the server certificate:
+<pre>
+$ openssl x509 -in server_cert.pem -text | grep OCSP
+OCSP - URI:http://ocsp.startssl.com/sub/class1/server/ca
+</pre>
+
+== Stud ==
+
+Stud is a lightweight SSL termination proxy. It's basically a wrapper for OpenSSL. Stud is not being heavily developed, and features such as OCSP stapling are missing. But it is very lightweight and efficient, and with a recent openssl, supports all the TLS 1.2 ciphers.
+<pre>
+# SSL x509 certificate file. REQUIRED.
+# List multiple certs to use SNI. Certs are used in the order they
+# are listed; the last cert listed will be used if none of the others match
+#
+# type: string
+pem-file = "<concatenate cert + privkey + dhparam>"
+ 
+# SSL protocol.
+#
+tls = on
+ssl = on
+ 
+# List of allowed SSL ciphers.
+#
+# Run openssl ciphers for list of available ciphers.
+# type: string
+ciphers = "<paste intermediate ciphersuite here>"
+ 
+# Enforce server cipher list order
+#
+# type: boolean
+prefer-server-ciphers = on
+</pre>
+
+== Amazon Web Services Elastic Load Balancer (AWS ELB) ==
+
+The ELB service supports TLS 1.2 and ciphers ordering, but lacks support for custom DH parameters and OCSP Stapling.
+
+The default configuration of ELBs has old settings, that can be customized in the Web Console or via the API. We recommend that you use the [[Security/Server_Side_TLS#elb_ciphers.py]] to enforce the right TLS configuration on an elastic load balancer.
+
+Below is a side-by-side comparison of the 'intermediate' recommended configuration versus the default ELB configuration. The top ciphers are the same, but SSLv3 and various deprecated ciphers are removed from the intermediate configuration.
+
+<source>
+= INTERMEDIATE configuration =                                               |  = default ELB configuration =
+                                                                             |
+prio  ciphersuite                  protocols              pfs_keysize        |  prio  ciphersuite                  protocols                    pfs_keysize
+1     ECDHE-RSA-AES128-GCM-SHA256  TLSv1.2                ECDH,P-256,256bits |  1     ECDHE-RSA-AES128-GCM-SHA256  TLSv1.2                      ECDH,P-256,256bits
+2     ECDHE-RSA-AES128-SHA256      TLSv1.2                ECDH,P-256,256bits |  2     ECDHE-RSA-AES128-SHA256      TLSv1.2                      ECDH,P-256,256bits
+3     ECDHE-RSA-AES128-SHA         TLSv1,TLSv1.1,TLSv1.2  ECDH,P-256,256bits |  3     ECDHE-RSA-AES128-SHA         SSLv3,TLSv1,TLSv1.1,TLSv1.2  ECDH,P-256,256bits
+4     ECDHE-RSA-AES256-GCM-SHA384  TLSv1.2                ECDH,P-256,256bits |  4     ECDHE-RSA-AES256-GCM-SHA384  TLSv1.2                      ECDH,P-256,256bits
+5     ECDHE-RSA-AES256-SHA384      TLSv1.2                ECDH,P-256,256bits |  5     ECDHE-RSA-AES256-SHA384      TLSv1.2                      ECDH,P-256,256bits
+6     ECDHE-RSA-AES256-SHA         TLSv1,TLSv1.1,TLSv1.2  ECDH,P-256,256bits |  6     ECDHE-RSA-AES256-SHA         SSLv3,TLSv1,TLSv1.1,TLSv1.2  ECDH,P-256,256bits
+7     AES128-GCM-SHA256            TLSv1.2                                   |  7     AES128-GCM-SHA256            TLSv1.2
+8     AES128-SHA256                TLSv1.2                                   |  8     AES128-SHA256                TLSv1.2
+9     AES128-SHA                   TLSv1,TLSv1.1,TLSv1.2                     |  9     AES128-SHA                   SSLv3,TLSv1,TLSv1.1,TLSv1.2
+10    AES256-GCM-SHA384            TLSv1.2                                   |  10    AES256-GCM-SHA384            TLSv1.2
+11    AES256-SHA256                TLSv1.2                                   |  11    AES256-SHA256                TLSv1.2
+12    AES256-SHA                   TLSv1,TLSv1.1,TLSv1.2                     |  12    AES256-SHA                   SSLv3,TLSv1,TLSv1.1,TLSv1.2
+13    DHE-RSA-AES128-SHA           TLSv1,TLSv1.1,TLSv1.2  DH,1024bits        |  13    DHE-RSA-AES128-SHA           SSLv3,TLSv1,TLSv1.1,TLSv1.2  DH,1024bits
+14    CAMELLIA128-SHA              TLSv1,TLSv1.1,TLSv1.2                     |  14    ECDHE-RSA-RC4-SHA            SSLv3,TLSv1,TLSv1.1,TLSv1.2  ECDH,P-256,256bits
+15    DHE-RSA-AES256-GCM-SHA384    TLSv1.2                DH,1024bits        |  15    RC4-SHA                      SSLv3,TLSv1,TLSv1.1,TLSv1.2
+16    DHE-RSA-AES256-SHA256        TLSv1.2                DH,1024bits        |
+17    DHE-RSA-AES256-SHA           TLSv1,TLSv1.1,TLSv1.2  DH,1024bits        |  Certificate: trusted, 2048 bit, sha256WithRSAEncryption signature
+18    CAMELLIA256-SHA              TLSv1,TLSv1.1,TLSv1.2                     |  TLS ticket lifetime hint: 300
+19    DHE-RSA-AES128-GCM-SHA256    TLSv1.2                DH,1024bits        |  OCSP stapling: not supported
+20    DHE-RSA-AES128-SHA256        TLSv1.2                DH,1024bits        |
+                                                                             |
+Certificate: trusted, 2048 bit, sha256WithRSAEncryption signature            |
+TLS ticket lifetime hint: 300                                                |
+OCSP stapling: not supported                                                 |
+</source>
+
+If you want better control over TLS than ELB provide, another option in AWS is to terminate SSL on HAproxy, using the PROXY protocol between ELB and HAproxy. https://jve.linuxwall.info/ressources/taf/haproxy-aws/
+
+== Zeus Load Balancer(Riverbed Stingray) ==
+ZLB supports TLS1.2 and OCSP Stapling. It lacks support for Elliptic Curves and AES-GCM.
+As of Riverbed Steelhead 9.6, TLS parameters are configurable per site.
+
+The recommended prioritization is:
+# SSL_DHE_RSA_WITH_AES_128_CBC_SHA
+# SSL_DHE_RSA_WITH_AES_256_CBC_SHA
+# SSL_RSA_WITH_AES_128_CBC_SHA
+# SSL_RSA_WITH_AES_256_CBC_SHA
+# SSL_RSA_WITH_3DES_EDE_CBC_SHA
+
+The following strings can be used directly in the ZLB configuration, under global settings > ssl3_ciphers.
+'''with 3DES'''
+<source lang="bash">
+SSL_DHE_RSA_WITH_AES_128_CBC_SHA,SSL_DHE_RSA_WITH_AES_256_CBC_SHA,SSL_RSA_WITH_AES_128_CBC_SHA,SSL_RSA_WITH_AES_256_CBC_SHA,SSL_RSA_WITH_3DES_EDE_CBC_SHA
+</source>
+'''without 3DES'''
+<source lang="bash">
+SSL_DHE_RSA_WITH_AES_128_CBC_SHA,SSL_DHE_RSA_WITH_AES_256_CBC_SHA,SSL_RSA_WITH_AES_128_CBC_SHA,SSL_RSA_WITH_AES_256_CBC_SHA
+</source>
+
+While the recommended DH prime size is 2048, problems with client libraries, such as Java 6/7, make this impossible to deploy for now. Therefore, a DH prime of 1024 bits should be used until all clients are compatible with larger primes.
+
+== Citrix Netscaler ==
+
+There is an issue with Netscaler's TLS1.2 and DHE ciphers. When DHE is used, the TLS handshake fails with a fatal 'Decode error'.
+TLS1.2 works fine with AES and RC4 ciphers.
+
+Netscaler documentation is at http://support.citrix.com/proddocs/topic/netscaler-traffic-management-10-map/ns-ssl-supported-ciphers-list-ref.html
+
+The configuration sample below shows how a default ciphersuite object can be created and attached to a vserver.
+
+First, create a default ciphersuite that can be used in all vservers.
+<pre>
+> add ssl cipher MozillaDefault
+> bind ssl cipher MozillaDefault -cipherName TLS1-DHE-DSS-AES-128-CBC-SHA
+> bind ssl cipher MozillaDefault -cipherName TLS1-DHE-RSA-AES-128-CBC-SHA
+> bind ssl cipher MozillaDefault -cipherName TLS1-DHE-DSS-AES-256-CBC-SHA
+> bind ssl cipher MozillaDefault -cipherName TLS1-DHE-RSA-AES-256-CBC-SHA
+> bind ssl cipher MozillaDefault -cipherName TLS1-AES-128-CBC-SHA
+> bind ssl cipher MozillaDefault -cipherName TLS1-AES-256-CBC-SHA
+> bind ssl cipher MozillaDefault -cipherName SSL3-DES-CBC3-SHA
+</pre>
+
+Second, create a DH parameter. If backward compatibility with Java 6/7 isn't needed, use 2048 instead of 1024.
+<pre>
+> create ssl dhparam /nsconfig/ssl/dh1024.pem 1024 -gen 5
+</pre>
+
+Third, configure the vserver to use the default ciphersuite and DH parameter.
+<pre>
+> add ssl certKey <domain> -cert <cert> -key <key>
+> add ssl certKey <intermediateCertName> -cert <intermediateCertName>
+> link ssl certKey <domain> <intermediateCertName>
+> set ssl vserver <domain>:https -eRSA ENABLED
+> bind ssl vserver <domain>:https -cipherName MozillaDefault
+> set ssl vserver <domain>:https -dh ENABLED -dhFile /nsconfig/ssl/dh1024.pem -dhCount 1000
+</pre>
+
+The resulting configuration can be viewed with 'show ssl'
+<pre>
+> show ssl vserver marketplace.firefox.com:https
+
+    Advanced SSL configuration for VServer marketplace.firefox.com:https:
+    DH: ENABLED    DHParam File: /nsconfig/ssl/dh1024.pem    Refresh Count: 1000
+    Ephemeral RSA: ENABLED        Refresh Count: 0
+    Session Reuse: ENABLED        Timeout: 120 seconds
+    Cipher Redirect: DISABLED
+    SSLv2 Redirect: DISABLED
+    ClearText Port: 0
+    Client Auth: DISABLED
+    SSL Redirect: DISABLED
+    Non FIPS Ciphers: DISABLED
+    SNI: DISABLED
+    SSLv2: DISABLED    SSLv3: ENABLED    TLSv1: ENABLED
+    Push Encryption Trigger: Always
+    Send Close-Notify: YES
+
+1)    CertKey Name: marketplace.mozilla.org.san    Server Certificate
+1)    Cipher Name: MozillaDefault    Description: User Created Cipher Group
+</pre>
+
+== Go ==
+
+The Go standard library supports TLS1.2 and a limited subset of ECDHE and GCM ciphers. To configure a Go program accepting TLS connections, use the following code:
+
+<source lang="python">
+    config := tls.Config{
+        MinVersion:               tls.VersionTLS10,
+        PreferServerCipherSuites: true,
+        CipherSuites: []uint16{
+            tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+            tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+            tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+            tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+            tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+            tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+            tls.TLS_RSA_WITH_AES_128_CBC_SHA,
+            tls.TLS_RSA_WITH_AES_256_CBC_SHA,
+            tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,
+            tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA},
+    }
+</source>
+
+= CipherScan =
+
+See https://github.com/jvehent/cipherscan
+
+Cipherscan is a small Bash script that connects to a target and list the preferred Ciphers. It's an easy way to test a web server for available ciphers, PFS key size, elliptic curves, support for OCSP Stapling, TLS ticket lifetime and certificate trust.
+
+<source lang="bash">
+$ ./cipherscan jve.linuxwall.info
+..........................
+prio  ciphersuite                  protocols              pfs_keysize
+1     ECDHE-RSA-AES128-GCM-SHA256  TLSv1.2                ECDH,P-256,256bits
+2     ECDHE-RSA-AES256-GCM-SHA384  TLSv1.2                ECDH,P-256,256bits
+3     DHE-RSA-AES256-GCM-SHA384    TLSv1.2                DH,4096bits
+4     DHE-RSA-AES128-GCM-SHA256    TLSv1.2                DH,4096bits
+5     ECDHE-RSA-AES128-SHA256      TLSv1.2                ECDH,P-256,256bits
+6     ECDHE-RSA-AES128-SHA         TLSv1,TLSv1.1,TLSv1.2  ECDH,P-256,256bits
+7     ECDHE-RSA-AES256-SHA384      TLSv1.2                ECDH,P-256,256bits
+8     ECDHE-RSA-AES256-SHA         TLSv1,TLSv1.1,TLSv1.2  ECDH,P-256,256bits
+9     DHE-RSA-AES128-SHA256        TLSv1.2                DH,4096bits
+10    DHE-RSA-AES128-SHA           TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
+11    DHE-RSA-AES256-SHA256        TLSv1.2                DH,4096bits
+12    AES128-GCM-SHA256            TLSv1.2
+13    AES256-GCM-SHA384            TLSv1.2
+14    ECDHE-RSA-DES-CBC3-SHA       TLSv1,TLSv1.1,TLSv1.2  ECDH,P-256,256bits
+15    EDH-RSA-DES-CBC3-SHA         TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
+16    DES-CBC3-SHA                 TLSv1,TLSv1.1,TLSv1.2
+17    DHE-RSA-AES256-SHA           TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
+18    DHE-RSA-CAMELLIA256-SHA      TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
+19    AES256-SHA256                TLSv1.2
+20    AES256-SHA                   TLSv1,TLSv1.1,TLSv1.2
+21    CAMELLIA256-SHA              TLSv1,TLSv1.1,TLSv1.2
+22    DHE-RSA-CAMELLIA128-SHA      TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
+23    AES128-SHA256                TLSv1.2
+24    AES128-SHA                   TLSv1,TLSv1.1,TLSv1.2
+25    CAMELLIA128-SHA              TLSv1,TLSv1.1,TLSv1.2
+
+Certificate: trusted, 2048 bit, sha1WithRSAEncryption signature
+TLS ticket lifetime hint: 300
+OCSP stapling: supported
+</source>
+
+= SSL Labs (Qualys) =
+
+Available here: https://www.ssllabs.com/ssltest/
+
+Qualys SSL Labs provides a comprehensive SSL testing suite.
+
+GlobalSign has a modified interface of SSL Labs that is interesting as well: https://sslcheck.globalsign.com/
+
+= elb_ciphers.py =
+This python script uses boto to create a TLS policy and apply it to a given load balancer. Make sure you have an AWS access key configured in ~/.boto to use this script, then invoke it as follow:
+<source lang="bash">
+$ python cipher.py us-east-1 stooge-lb-prod-1 modern
+New Policy 'Mozilla-OpSec-TLS-Modern-v-3-2' created and applied to load balancer stooge-lb-prod-1 in us-east-1
+</source>
+If no mode is specified, the intermediate mode will be used. The modes are 'old', 'intermediate' and 'modern', and map to the recommended configurations.
+<source lang="python">
+#!/usr/bin/env python
+
+# Apply recommendation from https://wiki.mozilla.org/Security/Server_Side_TLS
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Contributors:
+# Gene Wood [:gene]
+# Julien Vehent [:ulfr]
+# JP Schneider [:jp]
+
+import boto.ec2.elb
+import sys
+
+if len(sys.argv) < 3:
+  print "usage : %s REGION ELB-NAME <MODE>" % sys.argv[0]
+  print ""
+  print "Example : %s us-west-2 persona-org-0810" % sys.argv[0]
+  print "MODE can be 'old', 'intermediate' (default) or 'modern'"
+  print "see https://wiki.mozilla.org/Security/Server_Side_TLS"
+  sys.exit(1)
+
+region = sys.argv[1]
+load_balancer_name = sys.argv[2]
+try:
+    conf_mode = sys.argv[3]
+except IndexError:
+    conf_mode = 'intermediate'
+conn_elb = boto.ec2.elb.connect_to_region(region)
+
+#import logging
+#logging.basicConfig(level=logging.DEBUG)
+
+policy = {'old':{},
+          'intermediate':{},
+          'modern':{}}
+
+policy['old']['name'] = 'Mozilla-OpSec-TLS-Old-v-3-3'
+policy['old']['ciphersuite'] = {
+                "ECDHE-ECDSA-AES128-GCM-SHA256": True,
+                "ECDHE-RSA-AES128-GCM-SHA256": True,
+                "ECDHE-ECDSA-AES128-SHA256": True,
+                "ECDHE-RSA-AES128-SHA256": True,
+                "ECDHE-ECDSA-AES128-SHA": True,
+                "ECDHE-RSA-AES128-SHA": True,
+                "ECDHE-ECDSA-AES256-GCM-SHA384": True,
+                "ECDHE-RSA-AES256-GCM-SHA384": True,
+                "ECDHE-ECDSA-AES256-SHA384": True,
+                "ECDHE-RSA-AES256-SHA384": True,
+                "ECDHE-RSA-AES256-SHA": True,
+                "ECDHE-ECDSA-AES256-SHA": True,
+                "ADH-AES128-GCM-SHA256": False,
+                "ADH-AES256-GCM-SHA384": False,
+                "ADH-AES128-SHA": False,
+                "ADH-AES128-SHA256": False,
+                "ADH-AES256-SHA": False,
+                "ADH-AES256-SHA256": False,
+                "ADH-CAMELLIA128-SHA": False,
+                "ADH-CAMELLIA256-SHA": False,
+                "ADH-DES-CBC3-SHA": False,
+                "ADH-DES-CBC-SHA": False,
+                "ADH-RC4-MD5": False,
+                "ADH-SEED-SHA": False,
+                "AES128-GCM-SHA256": True,
+                "AES256-GCM-SHA384": True,
+                "AES128-SHA": True,
+                "AES128-SHA256": True,
+                "AES256-SHA": True,
+                "AES256-SHA256": True,
+                "CAMELLIA128-SHA": True,
+                "CAMELLIA256-SHA": True,
+                "DES-CBC3-MD5": False,
+                "DES-CBC3-SHA": True,
+                "DES-CBC-MD5": False,
+                "DES-CBC-SHA": False,
+                "DHE-DSS-AES128-GCM-SHA256": True,
+                "DHE-DSS-AES256-GCM-SHA384": True,
+                "DHE-DSS-AES128-SHA": True,
+                "DHE-DSS-AES128-SHA256": True,
+                "DHE-DSS-AES256-SHA": True,
+                "DHE-DSS-AES256-SHA256": True,
+                "DHE-DSS-CAMELLIA128-SHA": False,
+                "DHE-DSS-CAMELLIA256-SHA": False,
+                "DHE-DSS-SEED-SHA": False,
+                "DHE-RSA-AES128-GCM-SHA256": True,
+                "DHE-RSA-AES256-GCM-SHA384": True,
+                "DHE-RSA-AES128-SHA": True,
+                "DHE-RSA-AES128-SHA256": True,
+                "DHE-RSA-AES256-SHA": True,
+                "DHE-RSA-AES256-SHA256": True,
+                "DHE-RSA-CAMELLIA128-SHA": False,
+                "DHE-RSA-CAMELLIA256-SHA": False,
+                "DHE-RSA-SEED-SHA": False,
+                "EDH-DSS-DES-CBC3-SHA": False,
+                "EDH-DSS-DES-CBC-SHA": False,
+                "EDH-RSA-DES-CBC3-SHA": False,
+                "EDH-RSA-DES-CBC-SHA": False,
+                "EXP-ADH-DES-CBC-SHA": False,
+                "EXP-ADH-RC4-MD5": False,
+                "EXP-DES-CBC-SHA": False,
+                "EXP-EDH-DSS-DES-CBC-SHA": False,
+                "EXP-EDH-RSA-DES-CBC-SHA": False,
+                "EXP-KRB5-DES-CBC-MD5": False,
+                "EXP-KRB5-DES-CBC-SHA": False,
+                "EXP-KRB5-RC2-CBC-MD5": False,
+                "EXP-KRB5-RC2-CBC-SHA": False,
+                "EXP-KRB5-RC4-MD5": False,
+                "EXP-KRB5-RC4-SHA": False,
+                "EXP-RC2-CBC-MD5": False,
+                "EXP-RC4-MD5": False,
+                "IDEA-CBC-SHA": False,
+                "KRB5-DES-CBC3-MD5": False,
+                "KRB5-DES-CBC3-SHA": False,
+                "KRB5-DES-CBC-MD5": False,
+                "KRB5-DES-CBC-SHA": False,
+                "KRB5-RC4-MD5": False,
+                "KRB5-RC4-SHA": False,
+                "PSK-3DES-EDE-CBC-SHA": False,
+                "PSK-AES128-CBC-SHA": False,
+                "PSK-AES256-CBC-SHA": False,
+                "PSK-RC4-SHA": False,
+                "RC2-CBC-MD5": False,
+                "RC4-MD5": False,
+                "RC4-SHA": False,
+                "SEED-SHA": False,
+                "Protocol-SSLv2": False,
+                "Protocol-SSLv3": True,
+                "Protocol-TLSv1": True,
+                "Protocol-TLSv1.1": True,
+                "Protocol-TLSv1.2": True,
+                "Server-Defined-Cipher-Order": True
+                }
+
+# reuse the Old policy minus SSLv3 and 3DES
+policy['intermediate']['name'] = 'Mozilla-OpSec-TLS-Intermediate-v-3-3'
+policy['intermediate']['ciphersuite'] = policy['old']['ciphersuite'].copy()
+policy['intermediate']['ciphersuite'].update(
+    {"Protocol-SSLv3": False})
+
+# reuse the intermediate policy minus TLSv1 and non PFS ciphers
+policy['modern']['name'] = 'Mozilla-OpSec-TLS-Modern-v-3-3'
+policy['modern']['ciphersuite'] = policy['intermediate']['ciphersuite'].copy()
+policy['modern']['ciphersuite'].update(
+    {"Protocol-TLSv1": False,
+    "AES128-GCM-SHA256": False,
+    "AES256-GCM-SHA384": False,
+    "DHE-DSS-AES128-SHA": False,
+    "AES128-SHA256": False,
+    "AES128-SHA": False,
+    "DHE-DSS-AES256-SHA256": False,
+    "AES256-SHA256": False,
+    "AES256-SHA": False,
+    "CAMELLIA128-SHA": False,
+    "CAMELLIA256-SHA": False,
+    "DES-CBC3-SHA": False})
+
+if not conf_mode in policy.keys():
+    print "Invalid policy name, must be one of %s" % policy.keys()
+    sys.exit(1)
+
+# Create the Ciphersuite Policy
+params = {'LoadBalancerName': load_balancer_name,
+          'PolicyName': policy[conf_mode]['name'],
+          'PolicyTypeName': 'SSLNegotiationPolicyType'}
+conn_elb.build_complex_list_params(
+    params,
+    [(x, policy[conf_mode]['ciphersuite'][x]) for x in policy[conf_mode]['ciphersuite'].keys()],
+    'PolicyAttributes.member',
+    ('AttributeName', 'AttributeValue'))
+policy_result = conn_elb.get_list('CreateLoadBalancerPolicy', params, None, verb='POST')
+
+# Apply the Ciphersuite Policy to your ELB
+params = {'LoadBalancerName': load_balancer_name,
+          'LoadBalancerPort': 443,
+          'PolicyNames.member.1': policy[conf_mode]['name']}
+
+result = conn_elb.get_list('SetLoadBalancerPoliciesOfListener', params, None)
+print "New Policy '%s' created and applied to load balancer %s in %s" % (
+    policy[conf_mode]['name'],
+    load_balancer_name,
+    region)
+</source>
+
+= Appendices =
+== Supported ciphers on various systems ==
+
+On a variety of ~900 systems (RHEL5 & 6, CentOS 5 & 6 and Ubuntu), the following versions of OpenSSL were found:
+{| class="wikitable"
+|-
+| 37 || OpenSSL 0.9.8e-fips-rhel5 01 Jul 2008
+|-
+| 35 || OpenSSL 0.9.8k 25 Mar 2009
+|-
+| 777 || OpenSSL 1.0.0-fips 29 Mar 2010
+|-
+| 18 || OpenSSL 1.0.1 14 Mar 2012
+|}
+
+The recommended ciphersuite was tested on each system. The list below shows the ciphersuites supported by all tested systems. However old your setup may be, it is safe to assume that the following ciphers are going to be available:
+* RC4-SHA
+* DHE-RSA-AES128-SHA
+* DHE-RSA-AES256-SHA
+* AES128-SHA
+* AES256-SHA
+* DHE-DSS-AES128-SHA
+* DHE-DSS-AES256-SHA
+
+== Attacks on SSL and TLS ==
+=== BEAST CVE-2011-3389 ===
+
+Beast is a vulnerability in the Initialization Vector (IV) of the CBC mode of AES, Camellia and a few other ciphers that use CBC mode. The attack allows a  MITM attacker to recover plaintext values by encrypting the same message multiple times.
+
+BEAST is mitigated in TLS1.1 and above.
+
+more: https://blog.torproject.org/blog/tor-and-beast-ssl-attack
+
+=== LUCKY13 ===
+
+Lucky13 is another attack on CBC mode that listen for padding checks to decrypt ciphertext.
+
+more: https://www.imperialviolet.org/2013/02/04/luckythirteen.html
+
+=== RC4 weaknesses ===
+
+As of February 2015, the IETF explicitely prohibits the use of RC4: [[http://www.ietf.org/rfc/rfc7465.txt RFC 7465]].
+
+It has been proven that RC4 biases in the first 256 bytes of a cipherstream can be used to recover encrypted text. If the same data is encrypted a very large number of times, then an attacker can apply statistical analysis to the results and recover the encrypted text. While hard to perform, this attack shows that it is time to remove RC4 from the list of trusted ciphers.
+
+In a public discussion ([[https://bugzilla.mozilla.org/show_bug.cgi?id=927045 bug 927045]]), it has been recommended to replace RC4 with 3DES. This would impact Internet Explorer 7 and 8 users that, depending on the OS, do not support AES, and will negotiate only RC4 or 3DES ciphers. Internet Explorer uses the cryptographic library “schannel”, which is OS dependent. schannel supports AES in Windows Vista, but not in Windows XP.
+ 
+While 3DES provides more resistant cryptography, it is also 30 times slower and more cpu intensive than RC4. For large web infrastructure, the CPU cost of replacing 3DES with RC4 is non-zero. For this reason, we recommend that administrators evaluate their traffic patterns, and make the decision of replacing RC4 with 3DES on a per-case basis. At Mozilla, we evaluated that the impact on CPU usage is minor, and thus decided to replace RC4 with 3DES where backward compatibility is required.
+
+=== CRIME CVE-2012-4929 ===
+
+The root cause of the problem is information leakage that occurs when data is compressed prior to encryption. If someone can repeatedly inject and mix arbitrary content with some sensitive and relatively predictable data, and observe the resulting encrypted stream, then he will be able to extract the unknown data from it.
+
+more: https://community.qualys.com/blogs/securitylabs/2012/09/14/crime-information-leakage-attack-against-ssltls
+
+=== BREACH ===
+
+This is a more complex attack than CRIME, which does not require TLS-level compression (it still needs HTTP-level compression).
+
+In order to be successful, it requires to:
+
+# Be served from a server that uses HTTP-level compression
+# Reflect user-input in HTTP response bodies
+# Reflect a secret (such as a CSRF token) in HTTP response bodies
+
+more: http://breachattack.com/
+
+=== POODLE [http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-3566 CVE-2014-3566] ===
+
+POODLE is an attack on the padding used by SSLv3. It is a significant improvement of the BEAST attack which led the cryptography community to recommend disabling SSLv3 globally.
+
+<blockquote>
+''If you can arrange the message to be the correct length then the last block is 15 arbitrary bytes and the padding length (15). Then you arrange an interesting byte to be in the last position of a different block and duplicate that block to the end. If the record is accepted, then you know what the last byte contained because it decrypted to 15.''
+''Thus the attacker needs to be able to control some of the plaintext in order to align things in the messages and needs to be able to burn lots of connections (256 per byte, roughly). Thus a secret needs to be repeated in connection after connection (i.e. a cookie).''
+
+source: Adam Langley in https://bugzilla.mozilla.org/show_bug.cgi?id=1076983#c29
+</blockquote>
+
+Daniel Stenberg (Mozilla, cUrl) has a good description of the exploitability of POODLE in http://daniel.haxx.se/blog/2014/10/17/curl-is-no-poodle/
+
+Our guidelines maintain support for SSLv3 in the Old configuration only. This is required for clients on Windows XP service pack 1 & 2 that do not have support for TLSv1.0. Internet Explorer and Chrome on those platforms are impacted. Mozilla wants to be reachable from very old clients, to allow them to download a better browser. Therefore, we maintain SSLv3 compatibility on a limited number of sites. But all sites that do not need that level of compatibility are encouraged to implement the Intermediate configuration
+
+== SPDY ==
+
+(see also http://en.wikipedia.org/wiki/SPDY and http://www.chromium.org/spdy/spdy-protocol)
+
+SPDY is a protocol that incorporate TLS, which attempts to reduce latency when loading pages. It is currently not an HTTP standard (albeit it is being drafted for HTTP 2.0), but is widely supported.
+
+SPDY version 3 is vulnerable to the CRIME attack (see also http://zoompf.com/2012/09/explaining-the-crime-weakness-in-spdy-and-ssl) - this is due to the use of compression. Clients currently implement a non-standard hack in with gzip in order to circumvent the vulnerability. SPDY version 4 is planned to include a proper fix.
+
+== TLS tickets (RFC 5077) ==
+
+Once a TLS handshake has been negociated between the server and the client, both may exchange a session ticket, which contains an AES-CBC 128bit key which can decrypt the session. This key is generally static and only regenerated when the web server is restarted (with recent versions of Apache, it's stored in a file and also kept upon restarts).
+
+The current work-around is to disable RFC 5077 support.
+
+more: https://media.blackhat.com/us-13/US-13-Daigniere-TLS-Secrets-Slides.pdf
+
+== Cipher names correspondence table ==
+IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table below matches some of these ciphers:
+{|  class=wikitable
+|-
+! scope="col" | hex value
+! scope="col" | IANA
+! scope="col" | OpenSSL
+! scope="col" | GnuTLS
+! scope="col" | NSS
+|-
+! scope=row | 0x00,0x00
+| TLS_NULL_WITH_NULL_NULL
+| 
+| 
+| SSL_NULL_WITH_NULL_NULL
+|-
+! scope=row | 0x00,0x01
+| TLS_RSA_WITH_NULL_MD5
+| NULL-MD5
+| TLS_RSA_NULL_MD5
+| SSL_RSA_WITH_NULL_MD5
+|-
+! scope=row | 0x00,0x02
+| TLS_RSA_WITH_NULL_SHA
+| NULL-SHA
+| TLS_RSA_NULL_SHA1
+| SSL_RSA_WITH_NULL_SHA
+|-
+! scope=row | 0x00,0x03
+| TLS_RSA_EXPORT_WITH_RC4_40_MD5
+| EXP-RC4-MD5
+| TLS_RSA_EXPORT_ARCFOUR_40_MD5
+| SSL_RSA_EXPORT_WITH_RC4_40_MD5
+|-
+! scope=row | 0x00,0x04
+| TLS_RSA_WITH_RC4_128_MD5
+| RC4-MD5
+| TLS_RSA_ARCFOUR_MD5
+| SSL_RSA_WITH_RC4_128_MD5
+|-
+! scope=row | 0x00,0x05
+| TLS_RSA_WITH_RC4_128_SHA
+| RC4-SHA
+| TLS_RSA_ARCFOUR_SHA1
+| SSL_RSA_WITH_RC4_128_SHA
+|-
+! scope=row | 0x00,0x06
+| TLS_RSA_EXPORT_WITH_RC2_CBC_40_MD5
+| EXP-RC2-CBC-MD5
+| 
+| SSL_RSA_EXPORT_WITH_RC2_CBC_40_MD5
+|-
+! scope=row | 0x00,0x07
+| TLS_RSA_WITH_IDEA_CBC_SHA
+| IDEA-CBC-SHA
+| 
+| SSL_RSA_WITH_IDEA_CBC_SHA
+|-
+! scope=row | 0x00,0x08
+| TLS_RSA_EXPORT_WITH_DES40_CBC_SHA
+| EXP-DES-CBC-SHA
+| 
+| SSL_RSA_EXPORT_WITH_DES40_CBC_SHA
+|-
+! scope=row | 0x00,0x09
+| TLS_RSA_WITH_DES_CBC_SHA
+| DES-CBC-SHA
+| 
+| SSL_RSA_WITH_DES_CBC_SHA
+|-
+! scope=row | 0x00,0x0A
+| TLS_RSA_WITH_3DES_EDE_CBC_SHA
+| DES-CBC3-SHA
+| TLS_RSA_3DES_EDE_CBC_SHA1
+| 
+|-
+! scope=row | 0x00,0x0B
+| TLS_DH_DSS_EXPORT_WITH_DES40_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x0C
+| TLS_DH_DSS_WITH_DES_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x0D
+| TLS_DH_DSS_WITH_3DES_EDE_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x0E
+| TLS_DH_RSA_EXPORT_WITH_DES40_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x0F
+| TLS_DH_RSA_WITH_DES_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x10
+| TLS_DH_RSA_WITH_3DES_EDE_CBC_SHA
+| 
+| 
+| SSL_DH_RSA_WITH_3DES_EDE_CBC_SHA
+|-
+! scope=row | 0x00,0x11
+| TLS_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA
+| EXP-EDH-DSS-DES-CBC-SHA
+| 
+| SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA
+|-
+! scope=row | 0x00,0x12
+| TLS_DHE_DSS_WITH_DES_CBC_SHA
+| EDH-DSS-DES-CBC-SHA
+| 
+| SSL_DHE_DSS_WITH_DES_CBC_SHA
+|-
+! scope=row | 0x00,0x13
+| TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA
+| EDH-DSS-DES-CBC3-SHA
+| TLS_DHE_DSS_3DES_EDE_CBC_SHA1
+| SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA
+|-
+! scope=row | 0x00,0x14
+| TLS_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA
+| EXP-EDH-RSA-DES-CBC-SHA
+| 
+| SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA
+|-
+! scope=row | 0x00,0x15
+| TLS_DHE_RSA_WITH_DES_CBC_SHA
+| EDH-RSA-DES-CBC-SHA
+| 
+| SSL_DHE_RSA_WITH_DES_CBC_SHA
+|-
+! scope=row | 0x00,0x16
+| TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA
+| EDH-RSA-DES-CBC3-SHA
+| TLS_DHE_RSA_3DES_EDE_CBC_SHA1
+| SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA
+|-
+! scope=row | 0x00,0x17
+| TLS_DH_anon_EXPORT_WITH_RC4_40_MD5
+| EXP-ADH-RC4-MD5
+| 
+| SSL_DH_ANON_EXPORT_WITH_RC4_40_MD5
+|-
+! scope=row | 0x00,0x18
+| TLS_DH_anon_WITH_RC4_128_MD5
+| ADH-RC4-MD5
+| TLS_DH_ANON_ARCFOUR_MD5
+| SSL_DH_ANON_WITH_RC4_128_MD5
+|-
+! scope=row | 0x00,0x19
+| TLS_DH_anon_EXPORT_WITH_DES40_CBC_SHA
+| EXP-ADH-DES-CBC-SHA
+| 
+| SSL_DH_ANON_EXPORT_WITH_DES40_CBC_SHA
+|-
+! scope=row | 0x00,0x1A
+| TLS_DH_anon_WITH_DES_CBC_SHA
+| ADH-DES-CBC-SHA
+| 
+| 
+|-
+! scope=row | 0x00,0x1B
+| TLS_DH_anon_WITH_3DES_EDE_CBC_SHA
+| ADH-DES-CBC3-SHA
+| TLS_DH_ANON_3DES_EDE_CBC_SHA1
+| 
+|-
+! scope=row | 0x00,0x1E
+| TLS_KRB5_WITH_DES_CBC_SHA
+| KRB5-DES-CBC-SHA
+| 
+| 
+|-
+! scope=row | 0x00,0x1F
+| TLS_KRB5_WITH_3DES_EDE_CBC_SHA
+| KRB5-DES-CBC3-SHA
+| 
+| 
+|-
+! scope=row | 0x00,0x20
+| TLS_KRB5_WITH_RC4_128_SHA
+| KRB5-RC4-SHA
+| 
+| 
+|-
+! scope=row | 0x00,0x21
+| TLS_KRB5_WITH_IDEA_CBC_SHA
+| KRB5-IDEA-CBC-SHA
+| 
+| 
+|-
+! scope=row | 0x00,0x22
+| TLS_KRB5_WITH_DES_CBC_MD5
+| KRB5-DES-CBC-MD5
+| 
+| 
+|-
+! scope=row | 0x00,0x23
+| TLS_KRB5_WITH_3DES_EDE_CBC_MD5
+| KRB5-DES-CBC3-MD5
+| 
+| 
+|-
+! scope=row | 0x00,0x24
+| TLS_KRB5_WITH_RC4_128_MD5
+| KRB5-RC4-MD5
+| 
+| 
+|-
+! scope=row | 0x00,0x25
+| TLS_KRB5_WITH_IDEA_CBC_MD5
+| KRB5-IDEA-CBC-MD5
+| 
+| 
+|-
+! scope=row | 0x00,0x26
+| TLS_KRB5_EXPORT_WITH_DES_CBC_40_SHA
+| EXP-KRB5-DES-CBC-SHA
+| 
+| 
+|-
+! scope=row | 0x00,0x27
+| TLS_KRB5_EXPORT_WITH_RC2_CBC_40_SHA
+| EXP-KRB5-RC2-CBC-SHA
+| 
+| 
+|-
+! scope=row | 0x00,0x28
+| TLS_KRB5_EXPORT_WITH_RC4_40_SHA
+| EXP-KRB5-RC4-SHA
+| 
+| 
+|-
+! scope=row | 0x00,0x29
+| TLS_KRB5_EXPORT_WITH_DES_CBC_40_MD5
+| EXP-KRB5-DES-CBC-MD5
+| 
+| 
+|-
+! scope=row | 0x00,0x2A
+| TLS_KRB5_EXPORT_WITH_RC2_CBC_40_MD5
+| EXP-KRB5-RC2-CBC-MD5
+| 
+| 
+|-
+! scope=row | 0x00,0x2B
+| TLS_KRB5_EXPORT_WITH_RC4_40_MD5
+| EXP-KRB5-RC4-MD5
+| 
+| 
+|-
+! scope=row | 0x00,0x2C
+| TLS_PSK_WITH_NULL_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x2D
+| TLS_DHE_PSK_WITH_NULL_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x2E
+| TLS_RSA_PSK_WITH_NULL_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x2F
+| TLS_RSA_WITH_AES_128_CBC_SHA
+| AES128-SHA
+| TLS_RSA_AES_128_CBC_SHA1
+| TLS_RSA_WITH_AES_128_CBC_SHA
+|-
+! scope=row | 0x00,0x30
+| TLS_DH_DSS_WITH_AES_128_CBC_SHA
+| 
+| 
+| TLS_DH_DSS_WITH_AES_128_CBC_SHA
+|-
+! scope=row | 0x00,0x31
+| TLS_DH_RSA_WITH_AES_128_CBC_SHA
+| 
+| 
+| TLS_DH_RSA_WITH_AES_128_CBC_SHA
+|-
+! scope=row | 0x00,0x32
+| TLS_DHE_DSS_WITH_AES_128_CBC_SHA
+| DHE-DSS-AES128-SHA
+| TLS_DHE_DSS_AES_128_CBC_SHA1
+| TLS_DHE_DSS_WITH_AES_128_CBC_SHA
+|-
+! scope=row | 0x00,0x33
+| TLS_DHE_RSA_WITH_AES_128_CBC_SHA
+| DHE-RSA-AES128-SHA
+| TLS_DHE_RSA_AES_128_CBC_SHA1
+| TLS_DHE_RSA_WITH_AES_128_CBC_SHA
+|-
+! scope=row | 0x00,0x34
+| TLS_DH_anon_WITH_AES_128_CBC_SHA
+| ADH-AES128-SHA
+| TLS_DH_ANON_AES_128_CBC_SHA1
+| TLS_DH_ANON_WITH_AES_128_CBC_SHA
+|-
+! scope=row | 0x00,0x35
+| TLS_RSA_WITH_AES_256_CBC_SHA
+| AES256-SHA
+| TLS_RSA_AES_256_CBC_SHA1
+| TLS_RSA_WITH_AES_256_CBC_SHA
+|-
+! scope=row | 0x00,0x36
+| TLS_DH_DSS_WITH_AES_256_CBC_SHA
+| 
+| 
+| TLS_DH_DSS_WITH_AES_256_CBC_SHA
+|-
+! scope=row | 0x00,0x37
+| TLS_DH_RSA_WITH_AES_256_CBC_SHA
+| 
+| 
+| TLS_DH_RSA_WITH_AES_256_CBC_SHA
+|-
+! scope=row | 0x00,0x38
+| TLS_DHE_DSS_WITH_AES_256_CBC_SHA
+| DHE-DSS-AES256-SHA
+| TLS_DHE_DSS_AES_256_CBC_SHA1
+| TLS_DHE_DSS_WITH_AES_256_CBC_SHA
+|-
+! scope=row | 0x00,0x39
+| TLS_DHE_RSA_WITH_AES_256_CBC_SHA
+| DHE-RSA-AES256-SHA
+| TLS_DHE_RSA_AES_256_CBC_SHA1
+| TLS_DHE_RSA_WITH_AES_256_CBC_SHA
+|-
+! scope=row | 0x00,0x3A
+| TLS_DH_anon_WITH_AES_256_CBC_SHA
+| ADH-AES256-SHA
+| TLS_DH_ANON_AES_256_CBC_SHA1
+| TLS_DH_ANON_WITH_AES_256_CBC_SHA
+|-
+! scope=row | 0x00,0x3B
+| TLS_RSA_WITH_NULL_SHA256
+| NULL-SHA256
+| TLS_RSA_NULL_SHA256
+| TLS_RSA_WITH_NULL_SHA256
+|-
+! scope=row | 0x00,0x3C
+| TLS_RSA_WITH_AES_128_CBC_SHA256
+| AES128-SHA256
+| TLS_RSA_AES_128_CBC_SHA256
+| TLS_RSA_WITH_AES_128_CBC_SHA256
+|-
+! scope=row | 0x00,0x3D
+| TLS_RSA_WITH_AES_256_CBC_SHA256
+| AES256-SHA256
+| TLS_RSA_AES_256_CBC_SHA256
+| TLS_RSA_WITH_AES_256_CBC_SHA256
+|-
+! scope=row | 0x00,0x3E
+| TLS_DH_DSS_WITH_AES_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x3F
+| TLS_DH_RSA_WITH_AES_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x40
+| TLS_DHE_DSS_WITH_AES_128_CBC_SHA256
+| DHE-DSS-AES128-SHA256
+DES-CBC-MD5
+| TLS_DHE_DSS_AES_128_CBC_SHA256
+| 
+|-
+! scope=row | 0x00,0x41
+| TLS_RSA_WITH_CAMELLIA_128_CBC_SHA
+| CAMELLIA128-SHA
+| TLS_RSA_CAMELLIA_128_CBC_SHA1
+| TLS_RSA_WITH_CAMELLIA_128_CBC_SHA
+|-
+! scope=row | 0x00,0x42
+| TLS_DH_DSS_WITH_CAMELLIA_128_CBC_SHA
+| 
+| 
+| TLS_DH_DSS_WITH_CAMELLIA_128_CBC_SHA
+|-
+! scope=row | 0x00,0x43
+| TLS_DH_RSA_WITH_CAMELLIA_128_CBC_SHA
+| 
+| 
+| TLS_DH_RSA_WITH_CAMELLIA_128_CBC_SHA
+|-
+! scope=row | 0x00,0x44
+| TLS_DHE_DSS_WITH_CAMELLIA_128_CBC_SHA
+| DHE-DSS-CAMELLIA128-SHA
+| TLS_DHE_DSS_CAMELLIA_128_CBC_SHA1
+| TLS_DHE_DSS_WITH_CAMELLIA_128_CBC_SHA
+|-
+! scope=row | 0x00,0x45
+| TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA
+| DHE-RSA-CAMELLIA128-SHA
+| TLS_DHE_RSA_CAMELLIA_128_CBC_SHA1
+| TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA
+|-
+! scope=row | 0x00,0x46
+| TLS_DH_anon_WITH_CAMELLIA_128_CBC_SHA
+| ADH-CAMELLIA128-SHA
+| TLS_DH_ANON_CAMELLIA_128_CBC_SHA1
+| TLS_DH_ANON_WITH_CAMELLIA_128_CBC_SHA
+|-
+! scope=row | 0x00,0x67
+| TLS_DHE_RSA_WITH_AES_128_CBC_SHA256
+| DHE-RSA-AES128-SHA256
+| TLS_DHE_RSA_AES_128_CBC_SHA256
+| TLS_DHE_RSA_WITH_AES_128_CBC_SHA256
+|-
+! scope=row | 0x00,0x68
+| TLS_DH_DSS_WITH_AES_256_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x69
+| TLS_DH_RSA_WITH_AES_256_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x6A
+| TLS_DHE_DSS_WITH_AES_256_CBC_SHA256
+| DHE-DSS-AES256-SHA256
+| TLS_DHE_DSS_AES_256_CBC_SHA256
+| 
+|-
+! scope=row | 0x00,0x6B
+| TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
+| DHE-RSA-AES256-SHA256
+| TLS_DHE_RSA_AES_256_CBC_SHA256
+| TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
+|-
+! scope=row | 0x00,0x6C
+| TLS_DH_anon_WITH_AES_128_CBC_SHA256
+| ADH-AES128-SHA256
+| TLS_DH_ANON_AES_128_CBC_SHA256
+| 
+|-
+! scope=row | 0x00,0x6D
+| TLS_DH_anon_WITH_AES_256_CBC_SHA256
+| ADH-AES256-SHA256
+| TLS_DH_ANON_AES_256_CBC_SHA256
+| 
+|-
+! scope=row | 0x00,0x84
+| TLS_RSA_WITH_CAMELLIA_256_CBC_SHA
+| CAMELLIA256-SHA
+| TLS_RSA_CAMELLIA_256_CBC_SHA1
+| TLS_RSA_WITH_CAMELLIA_256_CBC_SHA
+|-
+! scope=row | 0x00,0x85
+| TLS_DH_DSS_WITH_CAMELLIA_256_CBC_SHA
+| 
+| 
+| TLS_DH_DSS_WITH_CAMELLIA_256_CBC_SHA
+|-
+! scope=row | 0x00,0x86
+| TLS_DH_RSA_WITH_CAMELLIA_256_CBC_SHA
+| 
+| 
+| TLS_DH_RSA_WITH_CAMELLIA_256_CBC_SHA
+|-
+! scope=row | 0x00,0x87
+| TLS_DHE_DSS_WITH_CAMELLIA_256_CBC_SHA
+| DHE-DSS-CAMELLIA256-SHA
+| TLS_DHE_DSS_CAMELLIA_256_CBC_SHA1
+| TLS_DHE_DSS_WITH_CAMELLIA_256_CBC_SHA
+|-
+! scope=row | 0x00,0x88
+| TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA
+| DHE-RSA-CAMELLIA256-SHA
+| TLS_DHE_RSA_CAMELLIA_256_CBC_SHA1
+| TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA
+|-
+! scope=row | 0x00,0x89
+| TLS_DH_anon_WITH_CAMELLIA_256_CBC_SHA
+| ADH-CAMELLIA256-SHA
+| TLS_DH_ANON_CAMELLIA_256_CBC_SHA1
+| TLS_DH_ANON_WITH_CAMELLIA_256_CBC_SHA
+|-
+! scope=row | 0x00,0x8A
+| TLS_PSK_WITH_RC4_128_SHA
+| PSK-RC4-SHA
+| TLS_PSK_SHA_ARCFOUR_SHA1
+| 
+|-
+! scope=row | 0x00,0x8B
+| TLS_PSK_WITH_3DES_EDE_CBC_SHA
+| PSK-3DES-EDE-CBC-SHA
+| TLS_PSK_SHA_3DES_EDE_CBC_SHA1
+| 
+|-
+! scope=row | 0x00,0x8C
+| TLS_PSK_WITH_AES_128_CBC_SHA
+| PSK-AES128-CBC-SHA
+| TLS_PSK_SHA_AES_128_CBC_SHA1
+| 
+|-
+! scope=row | 0x00,0x8D
+| TLS_PSK_WITH_AES_256_CBC_SHA
+| PSK-AES256-CBC-SHA
+| TLS_PSK_SHA_AES_256_CBC_SHA1
+| 
+|-
+! scope=row | 0x00,0x8E
+| TLS_DHE_PSK_WITH_RC4_128_SHA
+| 
+| TLS_DHE_PSK_SHA_ARCFOUR_SHA1
+| 
+|-
+! scope=row | 0x00,0x8F
+| TLS_DHE_PSK_WITH_3DES_EDE_CBC_SHA
+| 
+| TLS_DHE_PSK_SHA_3DES_EDE_CBC_SHA1
+| 
+|-
+! scope=row | 0x00,0x90
+| TLS_DHE_PSK_WITH_AES_128_CBC_SHA
+| 
+| TLS_DHE_PSK_SHA_AES_128_CBC_SHA1
+| 
+|-
+! scope=row | 0x00,0x91
+| TLS_DHE_PSK_WITH_AES_256_CBC_SHA
+| 
+| TLS_DHE_PSK_SHA_AES_256_CBC_SHA1
+| 
+|-
+! scope=row | 0x00,0x92
+| TLS_RSA_PSK_WITH_RC4_128_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x93
+| TLS_RSA_PSK_WITH_3DES_EDE_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x94
+| TLS_RSA_PSK_WITH_AES_128_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x95
+| TLS_RSA_PSK_WITH_AES_256_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x96
+| TLS_RSA_WITH_SEED_CBC_SHA
+| SEED-SHA
+| 
+| TLS_RSA_WITH_SEED_CBC_SHA
+|-
+! scope=row | 0x00,0x97
+| TLS_DH_DSS_WITH_SEED_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x98
+| TLS_DH_RSA_WITH_SEED_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0x99
+| TLS_DHE_DSS_WITH_SEED_CBC_SHA
+| DHE-DSS-SEED-SHA
+| 
+| 
+|-
+! scope=row | 0x00,0x9A
+| TLS_DHE_RSA_WITH_SEED_CBC_SHA
+| DHE-RSA-SEED-SHA
+| 
+| 
+|-
+! scope=row | 0x00,0x9B
+| TLS_DH_anon_WITH_SEED_CBC_SHA
+| ADH-SEED-SHA
+| 
+| 
+|-
+! scope=row | 0x00,0x9C
+| TLS_RSA_WITH_AES_128_GCM_SHA256
+| AES128-GCM-SHA256
+| TLS_RSA_AES_128_GCM_SHA256
+| TLS_RSA_WITH_AES_128_GCM_SHA256
+|-
+! scope=row | 0x00,0x9D
+| TLS_RSA_WITH_AES_256_GCM_SHA384
+| AES256-GCM-SHA384
+| 
+| 
+|-
+! scope=row | 0x00,0x9E
+| TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+| DHE-RSA-AES128-GCM-SHA256
+| TLS_DHE_RSA_AES_128_GCM_SHA256
+| TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+|-
+! scope=row | 0x00,0x9F
+| TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+| DHE-RSA-AES256-GCM-SHA384
+| 
+| 
+|-
+! scope=row | 0x00,0xA0
+| TLS_DH_RSA_WITH_AES_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xA1
+| TLS_DH_RSA_WITH_AES_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xA2
+| TLS_DHE_DSS_WITH_AES_128_GCM_SHA256
+| DHE-DSS-AES128-GCM-SHA256
+| TLS_DHE_DSS_AES_128_GCM_SHA256
+| TLS_DHE_DSS_WITH_AES_128_GCM_SHA256
+|-
+! scope=row | 0x00,0xA3
+| TLS_DHE_DSS_WITH_AES_256_GCM_SHA384
+| DHE-DSS-AES256-GCM-SHA384
+| 
+| 
+|-
+! scope=row | 0x00,0xA4
+| TLS_DH_DSS_WITH_AES_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xA5
+| TLS_DH_DSS_WITH_AES_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xA6
+| TLS_DH_anon_WITH_AES_128_GCM_SHA256
+| ADH-AES128-GCM-SHA256
+| TLS_DH_ANON_AES_128_GCM_SHA256
+| 
+|-
+! scope=row | 0x00,0xA7
+| TLS_DH_anon_WITH_AES_256_GCM_SHA384
+| ADH-AES256-GCM-SHA384
+| 
+| 
+|-
+! scope=row | 0x00,0xA8
+| TLS_PSK_WITH_AES_128_GCM_SHA256
+| 
+| TLS_PSK_AES_128_GCM_SHA256
+| 
+|-
+! scope=row | 0x00,0xA9
+| TLS_PSK_WITH_AES_256_GCM_SHA384
+| 
+| TLS_PSK_WITH_AES_256_GCM_SHA384
+| 
+|-
+! scope=row | 0x00,0xAA
+| TLS_DHE_PSK_WITH_AES_128_GCM_SHA256
+| 
+| TLS_DHE_PSK_AES_128_GCM_SHA256
+| 
+|-
+! scope=row | 0x00,0xAB
+| TLS_DHE_PSK_WITH_AES_256_GCM_SHA384
+| 
+| TLS_DHE_PSK_WITH_AES_256_GCM_SHA384
+| 
+|-
+! scope=row | 0x00,0xAC
+| TLS_RSA_PSK_WITH_AES_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xAD
+| TLS_RSA_PSK_WITH_AES_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xAE
+| TLS_PSK_WITH_AES_128_CBC_SHA256
+| 
+| TLS_PSK_AES_128_CBC_SHA256
+| 
+|-
+! scope=row | 0x00,0xAF
+| TLS_PSK_WITH_AES_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xB0
+| TLS_PSK_WITH_NULL_SHA256
+| 
+| TLS_PSK_NULL_SHA256
+| 
+|-
+! scope=row | 0x00,0xB1
+| TLS_PSK_WITH_NULL_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xB2
+| TLS_DHE_PSK_WITH_AES_128_CBC_SHA256
+| 
+| TLS_DHE_PSK_AES_128_CBC_SHA256
+| 
+|-
+! scope=row | 0x00,0xB3
+| TLS_DHE_PSK_WITH_AES_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xB4
+| TLS_DHE_PSK_WITH_NULL_SHA256
+| 
+| TLS_DHE_PSK_NULL_SHA256
+| 
+|-
+! scope=row | 0x00,0xB5
+| TLS_DHE_PSK_WITH_NULL_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xB6
+| TLS_RSA_PSK_WITH_AES_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xB7
+| TLS_RSA_PSK_WITH_AES_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xB8
+| TLS_RSA_PSK_WITH_NULL_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xB9
+| TLS_RSA_PSK_WITH_NULL_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xBA
+| TLS_RSA_WITH_CAMELLIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xBB
+| TLS_DH_DSS_WITH_CAMELLIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xBC
+| TLS_DH_RSA_WITH_CAMELLIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xBD
+| TLS_DHE_DSS_WITH_CAMELLIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xBE
+| TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xBF
+| TLS_DH_anon_WITH_CAMELLIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xC0
+| TLS_RSA_WITH_CAMELLIA_256_CBC_SHA256
+| DES-CBC3-MD5
+| 
+| 
+|-
+! scope=row | 0x00,0xC1
+| TLS_DH_DSS_WITH_CAMELLIA_256_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xC2
+| TLS_DH_RSA_WITH_CAMELLIA_256_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xC3
+| TLS_DHE_DSS_WITH_CAMELLIA_256_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xC4
+| TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xC5
+| TLS_DH_anon_WITH_CAMELLIA_256_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0x00,0xFF
+| TLS_EMPTY_RENEGOTIATION_INFO_SCSV
+| 
+| 
+| TLS_EMPTY_RENEGOTIATION_INFO_SCSV
+|-
+! scope=row | 0xC0,0x01
+| TLS_ECDH_ECDSA_WITH_NULL_SHA
+| ECDH-ECDSA-NULL-SHA
+| 
+| TLS_ECDH_ECDSA_WITH_NULL_SHA
+|-
+! scope=row | 0xC0,0x02
+| TLS_ECDH_ECDSA_WITH_RC4_128_SHA
+| ECDH-ECDSA-RC4-SHA
+| 
+| TLS_ECDH_ECDSA_WITH_RC4_128_SHA
+|-
+! scope=row | 0xC0,0x03
+| TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA
+| ECDH-ECDSA-DES-CBC3-SHA
+| 
+| TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA
+|-
+! scope=row | 0xC0,0x04
+| TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA
+| ECDH-ECDSA-AES128-SHA
+| 
+| TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA
+|-
+! scope=row | 0xC0,0x05
+| TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA
+| ECDH-ECDSA-AES256-SHA
+| 
+| TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA
+|-
+! scope=row | 0xC0,0x06
+| TLS_ECDHE_ECDSA_WITH_NULL_SHA
+| ECDHE-ECDSA-NULL-SHA
+| TLS_ECDHE_ECDSA_NULL_SHA1
+| TLS_ECDHE_ECDSA_WITH_NULL_SHA
+|-
+! scope=row | 0xC0,0x07
+| TLS_ECDHE_ECDSA_WITH_RC4_128_SHA
+| ECDHE-ECDSA-RC4-SHA
+| 
+| TLS_ECDHE_ECDSA_WITH_RC4_128_SHA
+|-
+! scope=row | 0xC0,0x08
+| TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA
+| ECDHE-ECDSA-DES-CBC3-SHA
+| TLS_ECDHE_ECDSA_3DES_EDE_CBC_SHA1
+| TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA
+|-
+! scope=row | 0xC0,0x09
+| TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+| ECDHE-ECDSA-AES128-SHA
+| TLS_ECDHE_ECDSA_AES_128_CBC_SHA1
+| TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+|-
+! scope=row | 0xC0,0x0A
+| TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+| ECDHE-ECDSA-AES256-SHA
+| TLS_ECDHE_ECDSA_AES_256_CBC_SHA1
+| TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+|-
+! scope=row | 0xC0,0x0B
+| TLS_ECDH_RSA_WITH_NULL_SHA
+| ECDH-RSA-NULL-SHA
+| 
+| TLS_ECDH_RSA_WITH_NULL_SHA
+|-
+! scope=row | 0xC0,0x0C
+| TLS_ECDH_RSA_WITH_RC4_128_SHA
+| ECDH-RSA-RC4-SHA
+| 
+| TLS_ECDH_RSA_WITH_RC4_128_SHA
+|-
+! scope=row | 0xC0,0x0D
+| TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA
+| ECDH-RSA-DES-CBC3-SHA
+| 
+| TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA
+|-
+! scope=row | 0xC0,0x0E
+| TLS_ECDH_RSA_WITH_AES_128_CBC_SHA
+| ECDH-RSA-AES128-SHA
+| 
+| TLS_ECDH_RSA_WITH_AES_128_CBC_SHA
+|-
+! scope=row | 0xC0,0x0F
+| TLS_ECDH_RSA_WITH_AES_256_CBC_SHA
+| ECDH-RSA-AES256-SHA
+| 
+| TLS_ECDH_RSA_WITH_AES_256_CBC_SHA
+|-
+! scope=row | 0xC0,0x10
+| TLS_ECDHE_RSA_WITH_NULL_SHA
+| ECDHE-RSA-NULL-SHA
+| TLS_ECDHE_RSA_NULL_SHA1
+| TLS_ECDHE_RSA_WITH_NULL_SHA
+|-
+! scope=row | 0xC0,0x11
+| TLS_ECDHE_RSA_WITH_RC4_128_SHA
+| ECDHE-RSA-RC4-SHA
+| 
+| TLS_ECDHE_RSA_WITH_RC4_128_SHA
+|-
+! scope=row | 0xC0,0x12
+| TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA
+| ECDHE-RSA-DES-CBC3-SHA
+| TLS_ECDHE_RSA_3DES_EDE_CBC_SHA1
+| TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA
+|-
+! scope=row | 0xC0,0x13
+| TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+| ECDHE-RSA-AES128-SHA
+| TLS_ECDHE_RSA_AES_128_CBC_SHA1
+| TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+|-
+! scope=row | 0xC0,0x14
+| TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+| ECDHE-RSA-AES256-SHA
+| TLS_ECDHE_RSA_AES_256_CBC_SHA1
+| TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+|-
+! scope=row | 0xC0,0x15
+| TLS_ECDH_anon_WITH_NULL_SHA
+| AECDH-NULL-SHA
+| TLS_ECDH_ANON_NULL_SHA1
+| TLS_ECDH_anon_WITH_NULL_SHA
+|-
+! scope=row | 0xC0,0x16
+| TLS_ECDH_anon_WITH_RC4_128_SHA
+| AECDH-RC4-SHA
+| 
+| TLS_ECDH_anon_WITH_RC4_128_SHA
+|-
+! scope=row | 0xC0,0x17
+| TLS_ECDH_anon_WITH_3DES_EDE_CBC_SHA
+| AECDH-DES-CBC3-SHA
+| TLS_ECDH_ANON_3DES_EDE_CBC_SHA1
+| TLS_ECDH_anon_WITH_3DES_EDE_CBC_SHA
+|-
+! scope=row | 0xC0,0x18
+| TLS_ECDH_anon_WITH_AES_128_CBC_SHA
+| AECDH-AES128-SHA
+| TLS_ECDH_ANON_AES_128_CBC_SHA1
+| TLS_ECDH_anon_WITH_AES_128_CBC_SHA
+|-
+! scope=row | 0xC0,0x19
+| TLS_ECDH_anon_WITH_AES_256_CBC_SHA
+| AECDH-AES256-SHA
+| TLS_ECDH_ANON_AES_256_CBC_SHA1
+| TLS_ECDH_anon_WITH_AES_256_CBC_SHA
+|-
+! scope=row | 0xC0,0x1A
+| TLS_SRP_SHA_WITH_3DES_EDE_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x1B
+| TLS_SRP_SHA_RSA_WITH_3DES_EDE_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x1C
+| TLS_SRP_SHA_DSS_WITH_3DES_EDE_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x1D
+| TLS_SRP_SHA_WITH_AES_128_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x1E
+| TLS_SRP_SHA_RSA_WITH_AES_128_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x1F
+| TLS_SRP_SHA_DSS_WITH_AES_128_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x20
+| TLS_SRP_SHA_WITH_AES_256_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x21
+| TLS_SRP_SHA_RSA_WITH_AES_256_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x22
+| TLS_SRP_SHA_DSS_WITH_AES_256_CBC_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x23
+| TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+| ECDHE-ECDSA-AES128-SHA256
+| TLS_ECDHE_ECDSA_AES_128_CBC_SHA256
+| TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+|-
+! scope=row | 0xC0,0x24
+| TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384
+| ECDHE-ECDSA-AES256-SHA384
+| TLS_ECDHE_ECDSA_AES_256_CBC_SHA384
+| 
+|-
+! scope=row | 0xC0,0x25
+| TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256
+| ECDH-ECDSA-AES128-SHA256
+| 
+| 
+|-
+! scope=row | 0xC0,0x26
+| TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384
+| ECDH-ECDSA-AES256-SHA384
+| 
+| 
+|-
+! scope=row | 0xC0,0x27
+| TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
+| ECDHE-RSA-AES128-SHA256
+| TLS_ECDHE_RSA_AES_128_CBC_SHA256
+| TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
+|-
+! scope=row | 0xC0,0x28
+| TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+| ECDHE-RSA-AES256-SHA384
+| 
+| 
+|-
+! scope=row | 0xC0,0x29
+| TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256
+| ECDH-RSA-AES128-SHA256
+| 
+| 
+|-
+! scope=row | 0xC0,0x2A
+| TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384
+| ECDH-RSA-AES256-SHA384
+| 
+| 
+|-
+! scope=row | 0xC0,0x2B
+| TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+| ECDHE-ECDSA-AES128-GCM-SHA256
+| TLS_ECDHE_ECDSA_AES_128_GCM_SHA256
+| TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+|-
+! scope=row | 0xC0,0x2C
+| TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+| ECDHE-ECDSA-AES256-GCM-SHA384
+| TLS_ECDHE_ECDSA_AES_256_GCM_SHA384
+| 
+|-
+! scope=row | 0xC0,0x2D
+| TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256
+| ECDH-ECDSA-AES128-GCM-SHA256
+| 
+| TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256
+|-
+! scope=row | 0xC0,0x2E
+| TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384
+| ECDH-ECDSA-AES256-GCM-SHA384
+| 
+| 
+|-
+! scope=row | 0xC0,0x2F
+| TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+| ECDHE-RSA-AES128-GCM-SHA256
+| TLS_ECDHE_RSA_AES_128_GCM_SHA256
+| TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+|-
+! scope=row | 0xC0,0x30
+| TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+| ECDHE-RSA-AES256-GCM-SHA384
+| TLS_ECDHE_RSA_AES_256_GCM_SHA384
+| 
+|-
+! scope=row | 0xC0,0x31
+| TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256
+| ECDH-RSA-AES128-GCM-SHA256
+| 
+| TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256
+|-
+! scope=row | 0xC0,0x32
+| TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384
+| ECDH-RSA-AES256-GCM-SHA384
+| 
+| 
+|-
+! scope=row | 0xC0,0x33
+| TLS_ECDHE_PSK_WITH_RC4_128_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x34
+| TLS_ECDHE_PSK_WITH_3DES_EDE_CBC_SHA
+| 
+| TLS_ECDHE_PSK_3DES_EDE_CBC_SHA1
+| 
+|-
+! scope=row | 0xC0,0x35
+| TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA
+| 
+| TLS_ECDHE_PSK_AES_128_CBC_SHA1
+| 
+|-
+! scope=row | 0xC0,0x36
+| TLS_ECDHE_PSK_WITH_AES_256_CBC_SHA
+| 
+| TLS_ECDHE_PSK_AES_256_CBC_SHA1
+| 
+|-
+! scope=row | 0xC0,0x37
+| TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA256
+| 
+| TLS_ECDHE_PSK_AES_128_CBC_SHA256
+| 
+|-
+! scope=row | 0xC0,0x38
+| TLS_ECDHE_PSK_WITH_AES_256_CBC_SHA384
+| 
+| TLS_ECDHE_PSK_AES_256_CBC_SHA384
+| 
+|-
+! scope=row | 0xC0,0x39
+| TLS_ECDHE_PSK_WITH_NULL_SHA
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x3A
+| TLS_ECDHE_PSK_WITH_NULL_SHA256
+| 
+| TLS_ECDHE_PSK_NULL_SHA256
+| 
+|-
+! scope=row | 0xC0,0x3B
+| TLS_ECDHE_PSK_WITH_NULL_SHA384
+| 
+| TLS_ECDHE_PSK_NULL_SHA384
+| 
+|-
+! scope=row | 0xC0,0x3C
+| TLS_RSA_WITH_ARIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x3D
+| TLS_RSA_WITH_ARIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x3E
+| TLS_DH_DSS_WITH_ARIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x3F
+| TLS_DH_DSS_WITH_ARIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x40
+| TLS_DH_RSA_WITH_ARIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x41
+| TLS_DH_RSA_WITH_ARIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x42
+| TLS_DHE_DSS_WITH_ARIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x43
+| TLS_DHE_DSS_WITH_ARIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x44
+| TLS_DHE_RSA_WITH_ARIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x45
+| TLS_DHE_RSA_WITH_ARIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x46
+| TLS_DH_anon_WITH_ARIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x47
+| TLS_DH_anon_WITH_ARIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x48
+| TLS_ECDHE_ECDSA_WITH_ARIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x49
+| TLS_ECDHE_ECDSA_WITH_ARIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x4A
+| TLS_ECDH_ECDSA_WITH_ARIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x4B
+| TLS_ECDH_ECDSA_WITH_ARIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x4C
+| TLS_ECDHE_RSA_WITH_ARIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x4D
+| TLS_ECDHE_RSA_WITH_ARIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x4E
+| TLS_ECDH_RSA_WITH_ARIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x4F
+| TLS_ECDH_RSA_WITH_ARIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x50
+| TLS_RSA_WITH_ARIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x51
+| TLS_RSA_WITH_ARIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x52
+| TLS_DHE_RSA_WITH_ARIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x53
+| TLS_DHE_RSA_WITH_ARIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x54
+| TLS_DH_RSA_WITH_ARIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x55
+| TLS_DH_RSA_WITH_ARIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x56
+| TLS_DHE_DSS_WITH_ARIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x57
+| TLS_DHE_DSS_WITH_ARIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x58
+| TLS_DH_DSS_WITH_ARIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x59
+| TLS_DH_DSS_WITH_ARIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x5A
+| TLS_DH_anon_WITH_ARIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x5B
+| TLS_DH_anon_WITH_ARIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x5C
+| TLS_ECDHE_ECDSA_WITH_ARIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x5D
+| TLS_ECDHE_ECDSA_WITH_ARIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x5E
+| TLS_ECDH_ECDSA_WITH_ARIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x5F
+| TLS_ECDH_ECDSA_WITH_ARIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x60
+| TLS_ECDHE_RSA_WITH_ARIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x61
+| TLS_ECDHE_RSA_WITH_ARIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x62
+| TLS_ECDH_RSA_WITH_ARIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x63
+| TLS_ECDH_RSA_WITH_ARIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x64
+| TLS_PSK_WITH_ARIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x65
+| TLS_PSK_WITH_ARIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x66
+| TLS_DHE_PSK_WITH_ARIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x67
+| TLS_DHE_PSK_WITH_ARIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x68
+| TLS_RSA_PSK_WITH_ARIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x69
+| TLS_RSA_PSK_WITH_ARIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x6A
+| TLS_PSK_WITH_ARIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x6B
+| TLS_PSK_WITH_ARIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x6C
+| TLS_DHE_PSK_WITH_ARIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x6D
+| TLS_DHE_PSK_WITH_ARIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x6E
+| TLS_RSA_PSK_WITH_ARIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x6F
+| TLS_RSA_PSK_WITH_ARIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x70
+| TLS_ECDHE_PSK_WITH_ARIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x71
+| TLS_ECDHE_PSK_WITH_ARIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x72
+| TLS_ECDHE_ECDSA_WITH_CAMELLIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x73
+| TLS_ECDHE_ECDSA_WITH_CAMELLIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x74
+| TLS_ECDH_ECDSA_WITH_CAMELLIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x75
+| TLS_ECDH_ECDSA_WITH_CAMELLIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x76
+| TLS_ECDHE_RSA_WITH_CAMELLIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x77
+| TLS_ECDHE_RSA_WITH_CAMELLIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x78
+| TLS_ECDH_RSA_WITH_CAMELLIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x79
+| TLS_ECDH_RSA_WITH_CAMELLIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x7A
+| TLS_RSA_WITH_CAMELLIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x7B
+| TLS_RSA_WITH_CAMELLIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x7C
+| TLS_DHE_RSA_WITH_CAMELLIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x7D
+| TLS_DHE_RSA_WITH_CAMELLIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x7E
+| TLS_DH_RSA_WITH_CAMELLIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x7F
+| TLS_DH_RSA_WITH_CAMELLIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x80
+| TLS_DHE_DSS_WITH_CAMELLIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x81
+| TLS_DHE_DSS_WITH_CAMELLIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x82
+| TLS_DH_DSS_WITH_CAMELLIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x83
+| TLS_DH_DSS_WITH_CAMELLIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x84
+| TLS_DH_anon_WITH_CAMELLIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x85
+| TLS_DH_anon_WITH_CAMELLIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x86
+| TLS_ECDHE_ECDSA_WITH_CAMELLIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x87
+| TLS_ECDHE_ECDSA_WITH_CAMELLIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x88
+| TLS_ECDH_ECDSA_WITH_CAMELLIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x89
+| TLS_ECDH_ECDSA_WITH_CAMELLIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x8A
+| TLS_ECDHE_RSA_WITH_CAMELLIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x8B
+| TLS_ECDHE_RSA_WITH_CAMELLIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x8C
+| TLS_ECDH_RSA_WITH_CAMELLIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x8D
+| TLS_ECDH_RSA_WITH_CAMELLIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x8E
+| TLS_PSK_WITH_CAMELLIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x8F
+| TLS_PSK_WITH_CAMELLIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x90
+| TLS_DHE_PSK_WITH_CAMELLIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x91
+| TLS_DHE_PSK_WITH_CAMELLIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x92
+| TLS_RSA_PSK_WITH_CAMELLIA_128_GCM_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x93
+| TLS_RSA_PSK_WITH_CAMELLIA_256_GCM_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x94
+| TLS_PSK_WITH_CAMELLIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x95
+| TLS_PSK_WITH_CAMELLIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x96
+| TLS_DHE_PSK_WITH_CAMELLIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x97
+| TLS_DHE_PSK_WITH_CAMELLIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x98
+| TLS_RSA_PSK_WITH_CAMELLIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x99
+| TLS_RSA_PSK_WITH_CAMELLIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x9A
+| TLS_ECDHE_PSK_WITH_CAMELLIA_128_CBC_SHA256
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x9B
+| TLS_ECDHE_PSK_WITH_CAMELLIA_256_CBC_SHA384
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x9C
+| TLS_RSA_WITH_AES_128_CCM
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x9D
+| TLS_RSA_WITH_AES_256_CCM
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x9E
+| TLS_DHE_RSA_WITH_AES_128_CCM
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0x9F
+| TLS_DHE_RSA_WITH_AES_256_CCM
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0xA0
+| TLS_RSA_WITH_AES_128_CCM_8
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0xA1
+| TLS_RSA_WITH_AES_256_CCM_8
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0xA2
+| TLS_DHE_RSA_WITH_AES_128_CCM_8
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0xA3
+| TLS_DHE_RSA_WITH_AES_256_CCM_8
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0xA4
+| TLS_PSK_WITH_AES_128_CCM
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0xA5
+| TLS_PSK_WITH_AES_256_CCM
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0xA6
+| TLS_DHE_PSK_WITH_AES_128_CCM
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0xA7
+| TLS_DHE_PSK_WITH_AES_256_CCM
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0xA8
+| TLS_PSK_WITH_AES_128_CCM_8
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0xA9
+| TLS_PSK_WITH_AES_256_CCM_8
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0xAA
+| TLS_PSK_DHE_WITH_AES_128_CCM_8
+| 
+| 
+| 
+|-
+! scope=row | 0xC0,0xAB
+| TLS_PSK_DHE_WITH_AES_256_CCM_8
+| 
+| 
+| 
+|}
+
+The table above was automatically generated by the script at https://github.com/jvehent/tlsnames/blob/master/build_correspondence_table.sh
+
+== GnuTLS ciphersuite ==
+
+Unlike OpenSSL, GnuTLS will panic if you give it ciphers aren't supported by the library. That makes it very difficult to share a default ciphersuite to use in GnuTLS. The next best thing is using the following ciphersuite, and removing the components that break on your own version:
+
+'''NONE:+VERS-TLS1.2:+VERS-TLS1.1:+VERS-TLS1.0:+ECDHE-RSA:+DHE-RSA:+RSA:+AES-128-GCM:+AES-128-CBC:+AES-256-CBC:+SIGN-RSA-SHA256:+SIGN-RSA-SHA384:+SIGN-RSA-SHA512:+SIGN-RSA-SHA224:+SIGN-RSA-SHA1:+SIGN-DSA-SHA256:+SIGN-DSA-SHA224:+SIGN-DSA-SHA1:+CURVE-ALL:+AEAD:+SHA256:+SHA384:+SHA1:+COMP-NULL'''
+
+A ciphersuite can be tested in GnuTLS using '''gnutls-cli'''.
+
+<source code=bash>
+$ gnutls-cli --version
+gnutls-cli 3.1.26
+
+$ gnutls-cli -l --priority NONE:+VERS-TLS1.2:+VERS-TLS1.1:+VERS-TLS1.0:+ECDHE-RSA:+DHE-RSA:+RSA:+AES-128-GCM:+AES-128-CBC:+AES-256-CBC:+SIGN-RSA-SHA256:+SIGN-RSA-SHA384:+SIGN-RSA-SHA512:+SIGN-RSA-SHA224:+SIGN-RSA-SHA1:+SIGN-DSA-SHA256:+SIGN-DSA-SHA224:+SIGN-DSA-SHA1:+CURVE-ALL:+AEAD:+SHA256:+SHA384:+SHA1:+COMP-NULLCipher suites for NONE:+VERS-TLS1.2:+VERS-TLS1.1:+VERS-TLS1.0:+ECDHE-RSA:+DHE-RSA:+RSA:+AES-128-GCM:+AES-128-CBC:+AES-256-CBC:+SIGN-RSA-SHA256:+SIGN-RSA-SHA384:+SIGN-RSA-SHA512:+SIGN-RSA-SHA224:+SIGN-RSA-SHA1:+SIGN-DSA-SHA256:+SIGN-DSA-SHA224:+SIGN-DSA-SHA1:+CURVE-ALL:+AEAD:+SHA256:+SHA384:+SHA1:+COMP-NULL
+TLS_ECDHE_RSA_AES_128_GCM_SHA256                    0xc0, 0x2f  TLS1.2
+TLS_ECDHE_RSA_AES_128_CBC_SHA256                    0xc0, 0x27  TLS1.0
+TLS_ECDHE_RSA_AES_128_CBC_SHA1                      0xc0, 0x13  SSL3.0
+TLS_ECDHE_RSA_AES_256_CBC_SHA1                      0xc0, 0x14  SSL3.0
+TLS_DHE_RSA_AES_128_GCM_SHA256                      0x00, 0x9e  TLS1.2
+TLS_DHE_RSA_AES_128_CBC_SHA256                      0x00, 0x67  TLS1.0
+TLS_DHE_RSA_AES_128_CBC_SHA1                        0x00, 0x33  SSL3.0
+TLS_DHE_RSA_AES_256_CBC_SHA256                      0x00, 0x6b  TLS1.0
+TLS_DHE_RSA_AES_256_CBC_SHA1                        0x00, 0x39  SSL3.0
+TLS_RSA_AES_128_GCM_SHA256                          0x00, 0x9c  TLS1.2
+TLS_RSA_AES_128_CBC_SHA256                          0x00, 0x3c  TLS1.0
+TLS_RSA_AES_128_CBC_SHA1                            0x00, 0x2f  SSL3.0
+TLS_RSA_AES_256_CBC_SHA256                          0x00, 0x3d  TLS1.0
+TLS_RSA_AES_256_CBC_SHA1                            0x00, 0x35  SSL3.0
+
+Certificate types: none
+Protocols: VERS-TLS1.2, VERS-TLS1.1, VERS-TLS1.0
+Compression: COMP-NULL
+Elliptic curves: CURVE-SECP256R1, CURVE-SECP384R1, CURVE-SECP521R1
+PK-signatures: SIGN-RSA-SHA256, SIGN-RSA-SHA384, SIGN-RSA-SHA512, SIGN-RSA-SHA224, SIGN-RSA-SHA1, SIGN-DSA-SHA256, SIGN-DSA-SHA224, SIGN-DSA-SHA1
+</source>
+
+A good way to debug the ciphersuite is by performing a test connection. If the ciphersuite isn't supported, gnutls-cli will stop reading it at the component that is causing the issue.
+<source code=bash>
+$ gnutls-cli --debug 9999 google.com --priority 'NONE:+VERS-TLS1.2:+VERS-TLS1.1:+VERS-TLS1.0:+ECDHE-RSA:+DHE-RSA:+RSA:+AES-128-GCM:+AES-128-CBC:+AES-256-CBC:+SIGN-RSA-SHA256:+SIGN-RSA-SHA384:+SIGN-RSA-SHA512:+SIGN-RSA-SHA224:+SIGN-RSA-SHA1:+SIGN-DSA-SHA256:+SIGN-DSA-SHA224:+SIGN-DSA-SHA1:+CURVE-ALL:+AEAD:+SHA256:+SHA384:+SHA1:+COMP-NULL'
+|<2>| ASSERT: gnutls_priority.c:812
+Syntax error at: +SIGN-RSA-SHA224:+SIGN-RSA-SHA1:+SIGN-DSA-SHA256:+SIGN-DSA-SHA224:+SIGN-DSA-SHA1:+SHA256:+SHA384:+SHA1:+COMP-NULL
+</source>
+In the example above, the component SIGN-RSA-SHA224 is not supported by this version of gnutls and should be removed from the ciphersuite.
+
