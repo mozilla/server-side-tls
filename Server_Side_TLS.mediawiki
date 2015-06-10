@@ -5,11 +5,8 @@ The Operations Security (OpSec) team maintains this document as a reference guid
 <table><tr>
 <td><div style="float:left;" class="toclimit-3">__TOC__</div></td>
 <td valign="top">
-<<<<<<< HEAD
 {| class="wikitable"
 |-
-=======
->>>>>>> origin/gh-pages
 ! Version
 ! Editor
 ! Changes
