@@ -5,8 +5,11 @@ The Operations Security (OpSec) team maintains this document as a reference guid
 <table><tr>
 <td><div style="float:left;" class="toclimit-3">__TOC__</div></td>
 <td valign="top">
+<<<<<<< HEAD
 {| class="wikitable"
 |-
+=======
+>>>>>>> origin/gh-pages
 ! Version
 ! Editor
 ! Changes
@@ -14,6 +17,14 @@ The Operations Security (OpSec) team maintains this document as a reference guid
 | style="text-align: center;" | 3.6
 | style="text-align: center;" | ulfr
 | bump intermediate DHE to 2048, add note about java compatibility
+|-
+| style="text-align: center;" | 3.5
+| style="text-align: center;" | alm
+| comment on weakdh vulnerability
+|-
+| style="text-align: center;" | 3.4
+| style="text-align: center;" | ulfr
+| added note about session resumption, HSTS, and HPKP
 |-
 | style="text-align: center;" | 3.3
 | style="text-align: center;" | ulfr
