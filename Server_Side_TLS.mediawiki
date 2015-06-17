@@ -600,6 +600,59 @@ To apply this new profile to an existing virtual server use either the managemen
 
 <pre>modify /ltm virtual my_virtual_server profiles add { moz_modern }</pre>
 
+To confirm the configuration of your new SSL profile and to ensure that it is correctly applied to your virtual server use the '''list''' command.
+
+View your SSL profile:
+
+<pre>list ltm profile client-ssl moz_modern</pre>
+
+Which outputs all configuration paratmers of the profile called '''moz_modern''':
+
+<source>ltm profile client-ssl moz_modern {
+    app-service none
+    cert-key-chain {
+        default {
+            cert default.crt
+            key default.key
+        }
+    }
+    ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:DHE+AES-GCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-CBC-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-CBC-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!EXPORT:!DES:!RC4:!3DES:!MD5
+    inherit-certkeychain true
+    session-ticket enabled
+}
+</source>
+
+And to check it is correctly applied to your virtual server:
+
+<pre>list ltm virtual vs_myWebsite</pre>
+
+Which should list the SSL profile by name:
+
+<source>ltm virtual vs_myWebsite {
+    destination 10.0.0.100:https
+    ip-protocol tcp
+    mask 255.255.255.255
+    pool pool_webServers
+    profiles {
+        http { }
+        http2 { }
+        manual_profile { }
+        moz_modern {
+            context clientside
+        }
+        spdy { }
+        tcp { }
+        wan-optimized-compression { }
+    }
+    rules { }
+    source 0.0.0.0/0
+    source-address-translation {
+        type automap
+    }
+    vs-index 4
+}
+</source>
+
 === Session Resumption ===
 
 To enable session resumption using Session Tickets enable the option in the SSL profile via the management web interface or use the '''session-ticket enabled''' parameter when creating the profile at the command line.
@@ -610,21 +663,9 @@ For example:
 tmsh create /ltm profile client-ssl moz_useTickets session-ticket enabled
 </pre>
 
-=== OCSP Stapling support ===
-
-You can enable OCSP stapling by selecting an OCSP Stapling profile, when you create a Client SSL profile. There is no default OCSP Stapling profile, so you must create one that specifies the parameters you want to use. For example, the default OCSP stapling profile setting is to use a DNS resolver to fetch the OCSP response, and you must specify the DNS resolver to use. Alternatively, you can choose to use a proxy server to fetch the OCSP response, and then you must specify the proxy server pool. After you create and save an OSCP Stapling profile, it appears in the OCSP Stapling Parameters list on the Client SSL profile screen.
-
 === Enabling HSTS ===
 
-iRules are F5's flexible scripting language and can be used to easily enable HSTS for any TLS website. The standard HTTP should have redirection configured to send users to the HTTPS site. This can be done via the management web interface using Content Policy Matching or by applying this short iRule:
-
-<source>
-when HTTP_REQUEST { 
-   HTTP::respond 301 Location "https://[HTTP::host][HTTP::uri]" 
-}
-</source>
-
-The following iRule is then applied to the HTTPS site to insert the HSTS header. In this example we dymanically adjust the expiry date of the HSTS header to match that of the TLS certificate minus 1 day:
+iRules are F5's flexible scripting language and can be used to easily enable HSTS for any TLS website. The standard HTTP should have redirection configured to send users to the HTTPS site. The following iRule is then applied to the HTTPS virtual server to insert the HSTS header. In this example we dymanically adjust the expiry date of the HSTS header to match that of the TLS certificate minus 1 day:
 
 <source>
 when RULE_INIT {
