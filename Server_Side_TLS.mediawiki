@@ -577,6 +577,65 @@ The Go standard library supports TLS1.2 and a limited subset of ECDHE and GCM ci
     }
 </source>
 
+== F5 BIG-IP ==
+
+=== Configuring Recommended Cipher-suites ===
+BIG-IP uses SSL profiles which may be applied to one or multiple 'virtual servers' (VIPs). SSL profiles may use F5's default recommended cipher suites or may be manually configured to explicitly state which, and in what order, they are applied. SSL profiles can make use of multiple key types and support alternate key chains for each type (RSA, DSA and ECDSA). This can be performed either via the management web interface or via the TMOS command line (console or SSH). 
+
+To create a new SSL profile to conform to the '''Modern Compatibility''' cipher suite use the tmsh create profile command as follows...
+
+<pre>
+tmsh create /ltm profile client-ssl moz_modern ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:
+ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:DHE+AES-GCM:
+ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-CBC-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:
+ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-CBC-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:
+DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!EXPORT:!DES:!RC4:!3DES:!MD5
+</pre>
+
+Note that Null ciphers are automatically rejected and are only made available if explicitly allowed by the F5 administrator.
+
+Currently DHE-RSA-AES128-SHA256 & DHE-RSA-AES256-SHA256 are not available in TMOS v11.6.x. This is expected to be resolved in an upcoming hotfix and the next major release of TMOS. The full list of support ciphers is available here: https://support.f5.com/kb/en-us/solutions/public/13000/100/sol13163.html
+
+To apply this new profile to an existing virtual server use either the management web interface or the following command line:
+
+<pre>modify /ltm virtual my_virtual_server profiles add { moz_modern }</pre>
+
+=== Session Resumption ===
+
+To enable session resumption using Session Tickets enable the option in the SSL profile via the management web interface or use the '''session-ticket enabled''' parameter when creating the profile at the command line.
+
+For example:
+
+<pre>
+tmsh create /ltm profile client-ssl moz_useTickets session-ticket enabled
+</pre>
+
+=== OCSP Stapling support ===
+
+You can enable OCSP stapling by selecting an OCSP Stapling profile, when you create a Client SSL profile. There is no default OCSP Stapling profile, so you must create one that specifies the parameters you want to use. For example, the default OCSP stapling profile setting is to use a DNS resolver to fetch the OCSP response, and you must specify the DNS resolver to use. Alternatively, you can choose to use a proxy server to fetch the OCSP response, and then you must specify the proxy server pool. After you create and save an OSCP Stapling profile, it appears in the OCSP Stapling Parameters list on the Client SSL profile screen.
+
+=== Enabling HSTS ===
+
+iRules are F5's flexible scripting language and can be used to easily enable HSTS for any TLS website. The standard HTTP should have redirection configured to send users to the HTTPS site. This can be done via the management web interface using Content Policy Matching or by applying this short iRule:
+
+<source>
+when HTTP_REQUEST { 
+   HTTP::respond 301 Location "https://[HTTP::host][HTTP::uri]" 
+}
+</source>
+
+The following iRule is then applied to the HTTPS site to insert the HSTS header. In this example we dymanically adjust the expiry date of the HSTS header to match that of the TLS certificate minus 1 day:
+
+<source>
+when RULE_INIT {
+   set static::expires [clock scan 20160131]
+}
+
+when HTTP_RESPONSE {
+   HTTP::header insert Strict-Transport-Security "max-age=[expr {$static::expires - [clock seconds]}]; includeSubDomains"
+}
+</source>
+
 = CipherScan =
 
 See https://github.com/jvehent/cipherscan
