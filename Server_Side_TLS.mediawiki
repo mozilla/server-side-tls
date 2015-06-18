@@ -577,6 +577,125 @@ The Go standard library supports TLS1.2 and a limited subset of ECDHE and GCM ci
     }
 </source>
 
+== F5 BIG-IP ==
+
+BIG-IP uses SSL profiles which may be applied to one or multiple 'virtual servers' (VIPs). SSL profiles may use F5's default recommended cipher suites or may be manually configured to explicitly state which, and in what order, they are applied. SSL profiles can make use of multiple key types and support alternate key chains for each type (RSA, DSA and ECDSA). This can be performed either via the management web interface or via the TMOS command line (console or SSH). 
+
+=== Configuring Recommended Cipher-suites ===
+
+To create a new SSL profile to conform to the '''Modern Compatibility''' cipher suite use the tmsh create profile command as follows...
+
+<pre>
+tmsh create /ltm profile client-ssl moz_modern ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:
+ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:DHE+AES-GCM:
+ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-CBC-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:
+ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-CBC-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:
+DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!EXPORT:!DES:!RC4:!3DES:!MD5
+</pre>
+
+Note that Null ciphers are automatically rejected and are only made available if explicitly allowed by the F5 administrator.
+
+Currently DHE-RSA-AES128-SHA256 & DHE-RSA-AES256-SHA256 are not available in TMOS v11.6.x. This is expected to be resolved in an upcoming hotfix and the next major release of TMOS. The full list of support ciphers is available here: https://support.f5.com/kb/en-us/solutions/public/13000/100/sol13163.html
+
+To apply this new profile to an existing virtual server use either the management web interface or the following command line:
+
+<pre>tmsh modify /ltm virtual my_virtual_server profiles add { moz_modern }</pre>
+
+Any subsequenty changes to the SSL profile do not need to be manually re-applied to the LTM virtual server.
+
+=== OCSP Stapling ===
+
+Using the '''modify''' command allows us to easily add settings to our new SSL profile. Adding OCSP stapling is a 3 step process. First we must create a DNS resolver for outbound queries. Secondly we create our OCSP Stapling profile making use of this DNS resolver. Finally we add the OCSP Stapling profile to our SSL profile.
+
+'''1. Creating the DNS resolver'''
+This command creates a DNS resolver for all domains (.) and uses Googles public DNS servers
+
+<pre>tmsh create net dns-resolver myResolver forward-zones add { . { nameservers add { 8.8.8.8:53 } nameservers add { 8.8.4.4:53 } } }</pre>
+
+'''2. Creating the OCSP Stapling profile'''
+The following command is used to create an OCSP stapling profile called '''myOCSP''' with our new DNS resolver '''myResolver'''
+
+<pre>tmsh create ltm profile ocsp-stapling-params myOCSP dns-resolver myResolver trusted-ca ca-bundle.crt</pre>
+
+'''3. Applying the OCSP Stapling profile to the DNS profile'''
+Using the '''modify''' command we will replace the default certificate and key in our existing SSL profile with the same default cert/key but, this time, making using of our new OCSP profile.
+
+<pre>tmsh modify ltm profile client-ssl moz_modern cert-key-chain replace-all-with { default { cert default.crt key default.key ocsp-stapling-params myOCSP } }</pre>
+
+=== Session Resumption ===
+
+To enable session resumption using Session Tickets enable the option in the SSL profile via the management web interface or use the '''session-ticket enabled''' parameter when creating the profile at the command line. Again, we can use the '''modify''' command to append this to our existing '''moz_modern''' SSL profile.
+
+For example:
+
+<pre>tmsh modify /ltm profile client-ssl moz_modern session-ticket enabled</pre>
+
+=== Viewing the config ===
+
+To confirm the configuration of your new SSL profile and to ensure that it is correctly applied to your virtual server use the '''list''' command.
+
+View your SSL profile:
+
+<pre>tmsh list ltm profile client-ssl moz_modern</pre>
+
+Which outputs all configuration paratmers of the profile called '''moz_modern''':
+
+<source>ltm profile client-ssl moz_modern {
+    app-service none
+    cert-key-chain {
+        default {
+            cert default.crt
+            key default.key
+            ocsp-stapling-params myOCSP
+        }
+    }
+    ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:DHE+AES-GCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-CBC-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-CBC-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!EXPORT:!DES:!RC4:!3DES:!MD5
+    inherit-certkeychain true
+    session-ticket enabled
+}
+</source>
+
+And to check it is correctly applied to your virtual server:
+
+<pre>list ltm virtual vs_myWebsite</pre>
+
+Which should list the SSL profile by name:
+
+<source>ltm virtual vs_myWebsite {
+    destination 10.0.0.100:https
+    ip-protocol tcp
+    mask 255.255.255.255
+    pool pool_webServers
+    profiles {
+        http { }
+        http2 { }
+        manual_profile { }
+        moz_modern {
+            context clientside
+        }
+        spdy { }
+        tcp { }
+        wan-optimized-compression { }
+    }
+    rules { }
+    source 0.0.0.0/0
+    source-address-translation {
+        type automap
+    }
+    vs-index 4
+}
+</source>
+
+=== Enabling HSTS ===
+
+iRules are F5's flexible scripting language and can be used to easily enable HSTS for any TLS website. The standard HTTP should have redirection configured to send users to the HTTPS site. The following simple iRule is then applied to the HTTPS virtual server to insert the HSTS header enabling the maximum allowed age and including sub domains.
+
+<source>
+when HTTP_RESPONSE {
+   HTTP::header insert Strict-Transport-Security "max-age=15768000; includeSubDomains"
+}
+</source>
+
 = CipherScan =
 
 See https://github.com/jvehent/cipherscan
