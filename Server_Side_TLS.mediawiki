@@ -3,14 +3,18 @@ The goal of this document is to help operational teams with the configuration of
 The Operations Security (OpSec) team maintains this document as a reference guide to navigate the TLS landscape. It contains information on TLS protocols, known issues and vulnerabilities, configuration examples and testing tools. Changes are reviewed and merged by the OpSec team, and broadcasted to the various Operational teams.
 
 <table><tr>
-<td><div style="float:left;" class="toclimit-3">__TOC__</div></td>
+<td valign="top"><div style="float:left;" class="toclimit-3">__TOC__</div></td>
 <td valign="top">
 {| class="wikitable"
 |-
 ! Version
 ! Editor
 ! Changes
-|- 
+|-
+| style="text-align: center;" | 3.7
+| style="text-align: center;" | ulfr
+| cleanup version table (marumari), add F5 conf samples (warburtron), add notes about DHE (rgacogne)
+|-
 | style="text-align: center;" | 3.6
 | style="text-align: center;" | ulfr
 | bump intermediate DHE to 2048, add note about java compatibility
