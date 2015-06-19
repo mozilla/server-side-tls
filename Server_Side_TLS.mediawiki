@@ -85,7 +85,7 @@ This is the old ciphersuite that works with all clients back to Windows XP/IE6. 
 * Ciphersuite: '''ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-RSA-DES-CBC3-SHA:ECDHE-ECDSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA'''
 * Versions: '''SSLv3, TLSv1, TLSv1.1, TLSv1.2'''
 * RSA key size: '''2048'''
-* DH Parameter size: '''1024'''
+* DH Parameter size: '''1024''' (see [[#Pre-defined_DHE_groups|Pre-defined DHE groups]])
 * Elliptic curves: '''secp256r1, secp384r1, secp521r1'''
 * Certificate signature: '''SHA-1''' (windows XP pre-sp3 is incompatible with sha-256)
 
@@ -199,9 +199,34 @@ MBYCEQCHU6UNZoHMF6bPtj21Hn/bAgEC.....
 -----END DH PARAMETERS-----
 </source>
 
+== Pre-defined DHE groups ==
+In order to lower the burden of system administrators, several servers provide pre-computed DH groups. Unfortunately, the [[https://weakdh.org|logjam] report showed that it is very likely that a state-level adversary may have broken the most widely used 1024-bit DH group, Oakley group 2, standardized in [[https://tools.ietf.org/html/rfc2409#section-6.2|rfc2409]].
+
+For this reason, the use of this group is considered unsafe and you should either:
+* use a larger group, with a minimum size of 2048-bit, as recommended in the intermediate and modern configurations ;
+* keep using a 1024-bit DH group if you need to (see [[#DHE_and_Java]]), but move away from Oakley group 2 and use a custom DH group instead, generated via the openssl dhparam 1024 command ;
+* disable DHE altogether, relying on ECHDE for PFS if you don't support legacy clients lacking ECDHE support (see [[#DHE_and_ECHDE_support]]).
+
+It is currently assumed that standardized 2048 bits DH groups provide sufficient security to resist factorization attacks. However, the careful administrator should generate a random DH group instead of using a 
+standardized one when setting up a new server, as advised by the [[https://weakdh.org|logjam]] authors.
+
+== DHE and ECDHE support ==
+Most modern clients that support both ECDHE and DHE typically prefer the former, because ECDHE provides faster handshakes than DHE ([[http://vincent.bernat.im/en/blog/2011-ssl-perfect-forward-secrecy.html]], [[http://nmav.gnutls.org/2011/12/price-to-pay-for-perfect-forward.html]]).
+
+Unfortunately, some widely used clients lack support for ECDHE and must then rely on DHE to provide perfect forward secrecy:
+* Android < 3.0.0
+* Java < 7
+* OpenSSL < 1.0.0
+
+Note that schannel on Windows XP technically support DHE, but only with DSA keys, making it unusable on the internet in practice.
 
 == DHE and Java ==
 Java 6 and 7 do not support Diffie-Hellman parameters larger than 1024 bits. If your server expects to receive connections from java 6 clients and wants to enable PFS, it must provide a DHE parameter of 1024 bits.
+
+If keeping the compatibility with Java < 7 is a necessity, thus preventing the use of large DH keys, three solutions are available:
+* using custom 1024-bit DH parameters, different from Oakley group 2 ;
+* if the software used does not support custom DH parameters, like Apache HTTPd < 2.2.30, it is possible to keep using the 1024-bit DH Oakley group 2, knowing these clients will be at risk from a state-level adversary ;
+* it is also possible to completely disable DHE. This means that clients not supporting ECDHE will be reverting to static RSA, giving up Forward Secrecy.
 
 The case of Java 7 is a bit different. Java 7 supports ECDHE ciphers, so if the server provides ECDHE and prioritizes it before DHE ciphers using server side ordering, then Java 7 will use ECDHE and not care about the size of the DHE parameter. In this situation, the server can use 2048 bits DHE parameters for all other clients.
 
