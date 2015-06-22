@@ -269,7 +269,7 @@ MBYCEQCHU6UNZoHMF6bPtj21Hn/bAgEC.....
 </source>
 
 == Pre-defined DHE groups ==
-In order to lower the burden of system administrators, several servers provide pre-computed DH groups. Unfortunately, the [[https://weakdh.org|logjam] report showed that it is very likely that a state-level adversary may have broken the most widely used 1024-bit DH group, Oakley group 2, standardized in [[https://tools.ietf.org/html/rfc2409#section-6.2|rfc2409]].
+In order to lower the burden of system administrators, several servers provide pre-computed DH groups. Unfortunately, the [https://weakdh.org/ logjam] report showed that it is very likely that a state-level adversary may have broken the most widely used 1024-bit DH group, Oakley group 2, standardized in [https://tools.ietf.org/html/rfc2409#section-6.2 rfc2409].
 
 For this reason, the use of this group is considered unsafe and you should either:
 * use a larger group, with a minimum size of 2048-bit, as recommended in the intermediate and modern configurations ;
