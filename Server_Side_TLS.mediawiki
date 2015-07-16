@@ -269,7 +269,7 @@ MBYCEQCHU6UNZoHMF6bPtj21Hn/bAgEC.....
 </source>
 
 == Pre-defined DHE groups ==
-In order to lower the burden of system administrators, several servers provide pre-computed DH groups. Unfortunately, the [[https://weakdh.org|logjam] report showed that it is very likely that a state-level adversary may have broken the most widely used 1024-bit DH group, Oakley group 2, standardized in [[https://tools.ietf.org/html/rfc2409#section-6.2|rfc2409]].
+In order to lower the burden of system administrators, several servers provide pre-computed DH groups. Unfortunately, the [https://weakdh.org/ logjam] report showed that it is very likely that a state-level adversary may have broken the most widely used 1024-bit DH group, Oakley group 2, standardized in [https://tools.ietf.org/html/rfc2409#section-6.2 rfc2409].
 
 For this reason, the use of this group is considered unsafe and you should either:
 * use a larger group, with a minimum size of 2048-bit, as recommended in the intermediate and modern configurations ;
@@ -277,10 +277,10 @@ For this reason, the use of this group is considered unsafe and you should eithe
 * disable DHE altogether, relying on ECDHE for PFS if you don't support legacy clients lacking ECDHE support (see [[#DHE_and_ECDHE_support]]).
 
 It is currently assumed that standardized 2048 bits DH groups provide sufficient security to resist factorization attacks. However, the careful administrator should generate a random DH group instead of using a 
-standardized one when setting up a new server, as advised by the [[https://weakdh.org|logjam]] authors.
+standardized one when setting up a new server, as advised by the [https://weakdh.org/ logjam] authors.
 
 == DHE and ECDHE support ==
-Most modern clients that support both ECDHE and DHE typically prefer the former, because ECDHE provides faster handshakes than DHE ([[http://vincent.bernat.im/en/blog/2011-ssl-perfect-forward-secrecy.html]], [[http://nmav.gnutls.org/2011/12/price-to-pay-for-perfect-forward.html]]).
+Most modern clients that support both ECDHE and DHE typically prefer the former, because ECDHE provides faster handshakes than DHE ([http://vincent.bernat.im/en/blog/2011-ssl-perfect-forward-secrecy.html], [http://nmav.gnutls.org/2011/12/price-to-pay-for-perfect-forward.html]).
 
 Unfortunately, some widely used clients lack support for ECDHE and must then rely on DHE to provide perfect forward secrecy:
 * Android < 3.0.0
@@ -361,7 +361,7 @@ The current recommendation for web servers is to enable session resumption and b
 
 = HSTS: HTTP Strict Transport Security =
 
-[[https://tools.ietf.org/html/rfc6797 HSTS]] is a HTTP header sent by a server to a client, indicating that the current site must only be accessed over HTTPS until expiration of the HSTS value is reached.
+[https://tools.ietf.org/html/rfc6797 HSTS] is a HTTP header sent by a server to a client, indicating that the current site must only be accessed over HTTPS until expiration of the HSTS value is reached.
 
 The header format is very simple, composed only of a '''max-age''' parameter that indicates when the directive should expire. max-age is expressed in seconds. A typical value is 15724800 seconds, or 6 months.
 <pre>
@@ -372,11 +372,11 @@ HSTS is becoming more and more of a standard, but should only be used when the s
 
 = HPKP: Public Key Pinning Extension for HTTP =
 
-See [[http://tools.ietf.org/html/rfc7469 RFC7469]].
+See [http://tools.ietf.org/html/rfc7469 RFC7469].
 
 HPKP is an '''experimental''' HTTP header sent by a server to a client, to indicate that some certificates related to the site should be pinned in the client. The client would thus refuse to establish a connection to the server if the pining does not comply.
 
-Due to its experimental nature, HPKP is currently '''not''' recommended on production sites. More informations can be found on the [[https://developer.mozilla.org/en-US/docs/Web/Security/Public_Key_Pinning MDN description page]].
+Due to its experimental nature, HPKP is currently '''not''' recommended on production sites. More informations can be found on the [https://developer.mozilla.org/en-US/docs/Web/Security/Public_Key_Pinning MDN description page].
 
 = Recommended Server Configurations =
 
