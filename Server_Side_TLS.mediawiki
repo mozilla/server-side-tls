@@ -39,7 +39,7 @@ The Operations Security (OpSec) team maintains this document as a reference guid
 | style="text-align: center;" | ulfr
 | Added non-backward compatible ciphersuite
 |-
-| style="text-align: center;" | 3
+| style="text-align: center;" | 3.0
 | style="text-align: center;" | ulfr
 | Remove RC4 for 3DES, fix ordering in openssl 0.9.8 ([https://bugzilla.mozilla.org/show_bug.cgi?id=1024430 1024430]), various minor updates
 |-
@@ -274,7 +274,7 @@ In order to lower the burden of system administrators, several servers provide p
 For this reason, the use of this group is considered unsafe and you should either:
 * use a larger group, with a minimum size of 2048-bit, as recommended in the intermediate and modern configurations ;
 * keep using a 1024-bit DH group if you need to (see [[#DHE_and_Java]]), but move away from Oakley group 2 and use a custom DH group instead, generated via the openssl dhparam 1024 command ;
-* disable DHE altogether, relying on ECHDE for PFS if you don't support legacy clients lacking ECDHE support (see [[#DHE_and_ECHDE_support]]).
+* disable DHE altogether, relying on ECDHE for PFS if you don't support legacy clients lacking ECDHE support (see [[#DHE_and_ECDHE_support]]).
 
 It is currently assumed that standardized 2048 bits DH groups provide sufficient security to resist factorization attacks. However, the careful administrator should generate a random DH group instead of using a 
 standardized one when setting up a new server, as advised by the [[https://weakdh.org|logjam]] authors.
