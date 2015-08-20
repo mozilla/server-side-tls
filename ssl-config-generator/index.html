@@ -275,6 +275,7 @@ frontend ft_test
                     // http://nginx.org/en/docs/http/ngx_http_core_module.html
                     if (isSemVer(data.serverVersion, ">=0.7.2")) {
                         data.dhparam = '\n    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits' + '\n' +
+                            '    # generate with: openssl dhparam -out /path/to/dhparam.pem 2048' + '\n' +
                             '    ssl_dhparam /path/to/dhparam.pem;';
                     }
                     if (isSemVer(data.serverVersion, ">=1.3.7")) {
