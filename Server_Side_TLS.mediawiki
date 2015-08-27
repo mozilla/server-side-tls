@@ -1,119 +1,22 @@
-The goal of this document is to help operational teams with the configuration of TLS on servers. All Mozilla sites and deployment should follow the recommendations below.
+<span style="float: right;">[[File:OpSec.png|300px]]</span>
+<table>
+  <tr>
+    <td>__TOC__</td>
+    <td style="vertical-align: top; padding-left: 1em;">The goal of this document is to help operational teams with the configuration of TLS on servers. All Mozilla sites and deployment should follow the recommendations below.
 
 The Operations Security (OpSec) team maintains this document as a reference guide to navigate the TLS landscape. It contains information on TLS protocols, known issues and vulnerabilities, configuration examples and testing tools. Changes are reviewed and merged by the OpSec team, and broadcasted to the various Operational teams.
 
-<table><tr>
-<td valign="top"><div style="float:left;" class="toclimit-3">__TOC__</div></td>
-<td valign="top">
-{| class="wikitable"
-|-
-! Version
-! Editor
-! Changes
-|-
-| style="text-align: center;" | 3.7
-| style="text-align: center;" | ulfr
-| cleanup version table (marumari), add F5 conf samples (warburtron), add notes about DHE (rgacogne)
-|-
-| style="text-align: center;" | 3.6
-| style="text-align: center;" | ulfr
-| bump intermediate DHE to 2048, add note about java compatibility
-|-
-| style="text-align: center;" | 3.5
-| style="text-align: center;" | alm
-| comment on weakdh vulnerability
-|-
-| style="text-align: center;" | 3.4
-| style="text-align: center;" | ulfr
-| added note about session resumption, HSTS, and HPKP
-|-
-| style="text-align: center;" | 3.3
-| style="text-align: center;" | ulfr
-| fix SHA256 prio, add POODLE details, update various templates
-|-
-| style="text-align: center;" | 3.2
-| style="text-align: center;" | ulfr
-| Added intermediate compatibility mode, renamed other modes
-|-
-| style="text-align: center;" | 3.1
-| style="text-align: center;" | ulfr
-| Added non-backward compatible ciphersuite
-|-
-| style="text-align: center;" | 3.0
-| style="text-align: center;" | ulfr
-| Remove RC4 for 3DES, fix ordering in openssl 0.9.8 ([https://bugzilla.mozilla.org/show_bug.cgi?id=1024430 1024430]), various minor updates
-|-
-| style="text-align: center;" | 2.5.1
-| style="text-align: center;" | ulfr
-| Revisit ELB capabilities
-|-
-| style="text-align: center;" | 2.5
-| style="text-align: center;" | ulfr
-| Update ZLB information for OCSP Stapling and ciphersuite
-|-
-| style="text-align: center;" | 2.4
-| style="text-align: center;" | ulfr
-| Moved a couple of aes128 above aes256 in the ciphersuite
-|-
-| style="text-align: center;" | 2.3
-| style="text-align: center;" | ulfr
-| Precisions on IE 7/8 AES support (thanks to Dobin Rutishauser)
-|-
-| style="text-align: center;" | 2.2
-| style="text-align: center;" | ulfr
-| Added IANA/OpenSSL/GnuTLS correspondence table and conversion tool
-|-
-| style="text-align: center;" | 2.1
-| style="text-align: center;" | ulfr
-| RC4 vs 3DES discussion. r=joes r=tinfoil
-|-
-| style="text-align: center;" | 2.0
-| style="text-align: center;" | ulfr, kang
-| Public release.
-|-
-| style="text-align: center;" | 1.5
-| style="text-align: center;" | ulfr, kang
-| added details for PFS DHE handshake, added nginx configuration details; added Apache recommended conf
-|-
-| style="text-align: center;" | 1.4
-| style="text-align: center;" | ulfr
-| revised ciphersuite. Prefer AES before RC4. Prefer 128 before 256. Prefer DHE before non-DHE.
-|-
-| style="text-align: center;" | 1.3
-| style="text-align: center;" | ulfr
-| added netscaler example conf
-|-
-| style="text-align: center;" | 1.2
-| style="text-align: center;" | ulfr
-| ciphersuite update, bump DHE-AESGCM above ECDH-RC4
-|-
-| style="text-align: center;" | 1.1
-| style="text-align: center;" | ulfr, kang
-| integrated review comments from Infra; SPDY information
-|-
-| style="text-align: center;" | 1.0
-| style="text-align: center;" | ulfr
-| creation
-|-
-| colspan="3" | &nbsp;
-|-
-| colspan="2" style="border-right: none;" | '''Document Status:'''
-| style="border-left: none; color:green; text-align: center;" | '''READY'''
-|}
-[[File:OpSec.png|center|300px]]
-</td>
-</tr></table>
-
 Updates to this page should be submitted to the [https://github.com/mozilla/server-side-tls source repository on github].
 
-If you are looking for the configuration generator, follow this link: [https://mozilla.github.io/server-side-tls/ssl-config-generator/ https://mozilla.github.io/server-side-tls/ssl-config-generator/].
+If you are looking for the configuration generator, follow this link:
+[https://mozilla.github.io/server-side-tls/ssl-config-generator/ https://mozilla.github.io/server-side-tls/ssl-config-generator/].
+    </td>
+  </tr>
+</table>
 
 = Recommended configurations =
 Three configurations are recommended. Pick the right configuration depending on your audience. If you do not need backward compatibility, and are building a service for modern clients only (post FF27), then use the Modern configuration. Otherwise, prefer the Intermediate configuration. Use the Old backward compatible configuration only if your service will be accessed by very old clients, such as Windows XP IE6, or ancient libraries & bots.
 
-<table><tr>
-<td><div style="float:left;" class="toclimit-3">__TOC__</div></td>
-<td valign="top">
 {| class="wikitable"
 |-
 ! Configuration !! Oldest compatible client
@@ -124,8 +27,7 @@ Three configurations are recommended. Pick the right configuration depending on 
 |- 
 |  <span style="color:gray;">'''Old'''</span> || Windows XP IE6, Java 6
 |}
-</td>
-</tr></table>
+
 == <span style="color:green;">'''Modern'''</span> compatibility ==
 For services that don't need backward compatibility, the parameters below provide a higher level of security. This configuration is compatible with Firefox 27, Chrome 22, IE 11, Opera 14 and Safari 7.
 
@@ -269,18 +171,18 @@ MBYCEQCHU6UNZoHMF6bPtj21Hn/bAgEC.....
 </source>
 
 == Pre-defined DHE groups ==
-In order to lower the burden of system administrators, several servers provide pre-computed DH groups. Unfortunately, the [https://weakdh.org/ logjam] report showed that it is very likely that a state-level adversary may have broken the most widely used 1024-bit DH group, Oakley group 2, standardized in [https://tools.ietf.org/html/rfc2409#section-6.2 rfc2409].
+In order to lower the burden of system administrators, several servers provide pre-computed DH groups. Unfortunately, the [[https://weakdh.org|logjam] report showed that it is very likely that a state-level adversary may have broken the most widely used 1024-bit DH group, Oakley group 2, standardized in [[https://tools.ietf.org/html/rfc2409#section-6.2|rfc2409]].
 
 For this reason, the use of this group is considered unsafe and you should either:
 * use a larger group, with a minimum size of 2048-bit, as recommended in the intermediate and modern configurations ;
 * keep using a 1024-bit DH group if you need to (see [[#DHE_and_Java]]), but move away from Oakley group 2 and use a custom DH group instead, generated via the openssl dhparam 1024 command ;
-* disable DHE altogether, relying on ECDHE for PFS if you don't support legacy clients lacking ECDHE support (see [[#DHE_and_ECDHE_support]]).
+* disable DHE altogether, relying on ECHDE for PFS if you don't support legacy clients lacking ECDHE support (see [[#DHE_and_ECHDE_support]]).
 
 It is currently assumed that standardized 2048 bits DH groups provide sufficient security to resist factorization attacks. However, the careful administrator should generate a random DH group instead of using a 
-standardized one when setting up a new server, as advised by the [https://weakdh.org/ logjam] authors.
+standardized one when setting up a new server, as advised by the [[https://weakdh.org|logjam]] authors.
 
 == DHE and ECDHE support ==
-Most modern clients that support both ECDHE and DHE typically prefer the former, because ECDHE provides faster handshakes than DHE ([http://vincent.bernat.im/en/blog/2011-ssl-perfect-forward-secrecy.html], [http://nmav.gnutls.org/2011/12/price-to-pay-for-perfect-forward.html]).
+Most modern clients that support both ECDHE and DHE typically prefer the former, because ECDHE provides faster handshakes than DHE ([[http://vincent.bernat.im/en/blog/2011-ssl-perfect-forward-secrecy.html]], [[http://nmav.gnutls.org/2011/12/price-to-pay-for-perfect-forward.html]]).
 
 Unfortunately, some widely used clients lack support for ECDHE and must then rely on DHE to provide perfect forward secrecy:
 * Android < 3.0.0
@@ -361,7 +263,7 @@ The current recommendation for web servers is to enable session resumption and b
 
 = HSTS: HTTP Strict Transport Security =
 
-[https://tools.ietf.org/html/rfc6797 HSTS] is a HTTP header sent by a server to a client, indicating that the current site must only be accessed over HTTPS until expiration of the HSTS value is reached.
+[[https://tools.ietf.org/html/rfc6797 HSTS]] is a HTTP header sent by a server to a client, indicating that the current site must only be accessed over HTTPS until expiration of the HSTS value is reached.
 
 The header format is very simple, composed only of a '''max-age''' parameter that indicates when the directive should expire. max-age is expressed in seconds. A typical value is 15724800 seconds, or 6 months.
 <pre>
@@ -372,11 +274,11 @@ HSTS is becoming more and more of a standard, but should only be used when the s
 
 = HPKP: Public Key Pinning Extension for HTTP =
 
-See [http://tools.ietf.org/html/rfc7469 RFC7469].
+See [[http://tools.ietf.org/html/rfc7469 RFC7469]].
 
 HPKP is an '''experimental''' HTTP header sent by a server to a client, to indicate that some certificates related to the site should be pinned in the client. The client would thus refuse to establish a connection to the server if the pining does not comply.
 
-Due to its experimental nature, HPKP is currently '''not''' recommended on production sites. More informations can be found on the [https://developer.mozilla.org/en-US/docs/Web/Security/Public_Key_Pinning MDN description page].
+Due to its experimental nature, HPKP is currently '''not''' recommended on production sites. More informations can be found on the [[https://developer.mozilla.org/en-US/docs/Web/Security/Public_Key_Pinning MDN description page]].
 
 = Recommended Server Configurations =
 
@@ -476,7 +378,7 @@ frontend ft_test
     # Enable this if your want HSTS (recommended)
     # rspadd  Strict-Transport-Security:\ max-age=15768000
 </pre>
-=== OCSP Stapling support ===
+<div style="font-family: 'Fira Sans','Trebuchet MS',sans-serif !important; font-size: 140%; font-weight: bold; line-height: 1.6">OCSP Stapling support</div>
 While HAProxy can serve OCSP stapled responses, it cannot fetch and update OCSP records from the CA automatically. The OCSP response must be downloaded by another process and placed next to the certificate, with a '.ocsp' extension.
 <pre>
 /etc/haproxy/certs/
@@ -567,7 +469,7 @@ OCSP stapling: not supported                                                 |
 
 If you want better control over TLS than ELB provide, another option in AWS is to terminate SSL on HAproxy, using the PROXY protocol between ELB and HAproxy. https://jve.linuxwall.info/ressources/taf/haproxy-aws/
 
-== Zeus Load Balancer(Riverbed Stingray) ==
+== Zeus Load Balancer (Riverbed Stingray) ==
 ZLB supports TLS1.2 and OCSP Stapling. It lacks support for Elliptic Curves and AES-GCM.
 As of Riverbed Steelhead 9.6, TLS parameters are configurable per site.
 
@@ -675,7 +577,7 @@ The Go standard library supports TLS1.2 and a limited subset of ECDHE and GCM ci
 
 BIG-IP uses SSL profiles which may be applied to one or multiple 'virtual servers' (VIPs). SSL profiles may use F5's default recommended cipher suites or may be manually configured to explicitly state which, and in what order, they are applied. SSL profiles can make use of multiple key types and support alternate key chains for each type (RSA, DSA and ECDSA). This can be performed either via the management web interface or via the TMOS command line (console or SSH). 
 
-=== Configuring Recommended Cipher-suites ===
+<div style="font-family: 'Fira Sans','Trebuchet MS',sans-serif !important; font-size: 140%; font-weight: bold; line-height: 1.6">Configuring Recommended Cipher-suites</div>
 
 To create a new SSL profile to conform to the '''Modern Compatibility''' cipher suite use the tmsh create profile command as follows...
 
@@ -697,7 +599,7 @@ To apply this new profile to an existing virtual server use either the managemen
 
 Any subsequenty changes to the SSL profile do not need to be manually re-applied to the LTM virtual server.
 
-=== OCSP Stapling ===
+<div style="font-family: 'Fira Sans','Trebuchet MS',sans-serif !important; font-size: 140%; font-weight: bold; line-height: 1.6">OCSP Stapling</div>
 
 Using the '''modify''' command allows us to easily add settings to our new SSL profile. Adding OCSP stapling is a 3 step process. First we must create a DNS resolver for outbound queries. Secondly we create our OCSP Stapling profile making use of this DNS resolver. Finally we add the OCSP Stapling profile to our SSL profile.
 
@@ -716,7 +618,7 @@ Using the '''modify''' command we will replace the default certificate and key i
 
 <pre>tmsh modify ltm profile client-ssl moz_modern cert-key-chain replace-all-with { default { cert default.crt key default.key ocsp-stapling-params myOCSP } }</pre>
 
-=== Session Resumption ===
+<div style="font-family: 'Fira Sans','Trebuchet MS',sans-serif !important; font-size: 140%; font-weight: bold; line-height: 1.6">Session Resumption</div>
 
 To enable session resumption using Session Tickets enable the option in the SSL profile via the management web interface or use the '''session-ticket enabled''' parameter when creating the profile at the command line. Again, we can use the '''modify''' command to append this to our existing '''moz_modern''' SSL profile.
 
@@ -724,7 +626,7 @@ For example:
 
 <pre>tmsh modify /ltm profile client-ssl moz_modern session-ticket enabled</pre>
 
-=== Viewing the config ===
+<div style="font-family: 'Fira Sans','Trebuchet MS',sans-serif !important; font-size: 140%; font-weight: bold; line-height: 1.6">Viewing the config</div>
 
 To confirm the configuration of your new SSL profile and to ensure that it is correctly applied to your virtual server use the '''list''' command.
 
@@ -780,7 +682,7 @@ Which should list the SSL profile by name:
 }
 </source>
 
-=== Enabling HSTS ===
+<div style="font-family: 'Fira Sans','Trebuchet MS',sans-serif !important; font-size: 140%; font-weight: bold; line-height: 1.6">Enabling HSTS</div>
 
 iRules are F5's flexible scripting language and can be used to easily enable HSTS for any TLS website. The standard HTTP should have redirection configured to send users to the HTTPS site. The following simple iRule is then applied to the HTTPS virtual server to insert the HSTS header enabling the maximum allowed age and including sub domains.
 
@@ -1057,7 +959,7 @@ The recommended ciphersuite was tested on each system. The list below shows the 
 * DHE-DSS-AES256-SHA
 
 == Attacks on SSL and TLS ==
-=== BEAST CVE-2011-3389 ===
+=== BEAST (CVE-2011-3389) ===
 
 Beast is a vulnerability in the Initialization Vector (IV) of the CBC mode of AES, Camellia and a few other ciphers that use CBC mode. The attack allows a  MITM attacker to recover plaintext values by encrypting the same message multiple times.
 
@@ -1081,7 +983,7 @@ In a public discussion ([[https://bugzilla.mozilla.org/show_bug.cgi?id=927045 bu
  
 While 3DES provides more resistant cryptography, it is also 30 times slower and more cpu intensive than RC4. For large web infrastructure, the CPU cost of replacing 3DES with RC4 is non-zero. For this reason, we recommend that administrators evaluate their traffic patterns, and make the decision of replacing RC4 with 3DES on a per-case basis. At Mozilla, we evaluated that the impact on CPU usage is minor, and thus decided to replace RC4 with 3DES where backward compatibility is required.
 
-=== CRIME CVE-2012-4929 ===
+=== CRIME (CVE-2012-4929) ===
 
 The root cause of the problem is information leakage that occurs when data is compressed prior to encryption. If someone can repeatedly inject and mix arbitrary content with some sensitive and relatively predictable data, and observe the resulting encrypted stream, then he will be able to extract the unknown data from it.
 
@@ -1099,7 +1001,7 @@ In order to be successful, it requires to:
 
 more: http://breachattack.com/
 
-=== POODLE [http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-3566 CVE-2014-3566] ===
+=== POODLE ([http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-3566 CVE-2014-3566]) ===
 
 POODLE is an attack on the padding used by SSLv3. It is a significant improvement of the BEAST attack which led the cryptography community to recommend disabling SSLv3 globally.
 
@@ -3077,3 +2979,103 @@ Syntax error at: +SIGN-RSA-SHA224:+SIGN-RSA-SHA1:+SIGN-DSA-SHA256:+SIGN-DSA-SHA2
 </source>
 In the example above, the component SIGN-RSA-SHA224 is not supported by this version of gnutls and should be removed from the ciphersuite.
 
+= Version History =
+{| class="wikitable"
+|-
+! Version
+! Editor
+! Changes
+|-
+| style="text-align: center;" | 3.8
+| style="text-align: center;" | marumari
+| document cleanup
+|-
+| style="text-align: center;" | 3.7
+| style="text-align: center;" | ulfr
+| cleanup version table (marumari), add F5 conf samples (warburtron), add notes about DHE (rgacogne)
+|-
+| style="text-align: center;" | 3.6
+| style="text-align: center;" | ulfr
+| bump intermediate DHE to 2048, add note about java compatibility
+|-
+| style="text-align: center;" | 3.5
+| style="text-align: center;" | alm
+| comment on weakdh vulnerability
+|-
+| style="text-align: center;" | 3.4
+| style="text-align: center;" | ulfr
+| added note about session resumption, HSTS, and HPKP
+|-
+| style="text-align: center;" | 3.3
+| style="text-align: center;" | ulfr
+| fix SHA256 prio, add POODLE details, update various templates
+|-
+| style="text-align: center;" | 3.2
+| style="text-align: center;" | ulfr
+| Added intermediate compatibility mode, renamed other modes
+|-
+| style="text-align: center;" | 3.1
+| style="text-align: center;" | ulfr
+| Added non-backward compatible ciphersuite
+|-
+| style="text-align: center;" | 3
+| style="text-align: center;" | ulfr
+| Remove RC4 for 3DES, fix ordering in openssl 0.9.8 ([https://bugzilla.mozilla.org/show_bug.cgi?id=1024430 1024430]), various minor updates
+|-
+| style="text-align: center;" | 2.5.1
+| style="text-align: center;" | ulfr
+| Revisit ELB capabilities
+|-
+| style="text-align: center;" | 2.5
+| style="text-align: center;" | ulfr
+| Update ZLB information for OCSP Stapling and ciphersuite
+|-
+| style="text-align: center;" | 2.4
+| style="text-align: center;" | ulfr
+| Moved a couple of aes128 above aes256 in the ciphersuite
+|-
+| style="text-align: center;" | 2.3
+| style="text-align: center;" | ulfr
+| Precisions on IE 7/8 AES support (thanks to Dobin Rutishauser)
+|-
+| style="text-align: center;" | 2.2
+| style="text-align: center;" | ulfr
+| Added IANA/OpenSSL/GnuTLS correspondence table and conversion tool
+|-
+| style="text-align: center;" | 2.1
+| style="text-align: center;" | ulfr
+| RC4 vs 3DES discussion. r=joes r=tinfoil
+|-
+| style="text-align: center;" | 2.0
+| style="text-align: center;" | ulfr, kang
+| Public release.
+|-
+| style="text-align: center;" | 1.5
+| style="text-align: center;" | ulfr, kang
+| added details for PFS DHE handshake, added nginx configuration details; added Apache recommended conf
+|-
+| style="text-align: center;" | 1.4
+| style="text-align: center;" | ulfr
+| revised ciphersuite. Prefer AES before RC4. Prefer 128 before 256. Prefer DHE before non-DHE.
+|-
+| style="text-align: center;" | 1.3
+| style="text-align: center;" | ulfr
+| added netscaler example conf
+|-
+| style="text-align: center;" | 1.2
+| style="text-align: center;" | ulfr
+| ciphersuite update, bump DHE-AESGCM above ECDH-RC4
+|-
+| style="text-align: center;" | 1.1
+| style="text-align: center;" | ulfr, kang
+| integrated review comments from Infra; SPDY information
+|-
+| style="text-align: center;" | 1.0
+| style="text-align: center;" | ulfr
+| creation
+|-
+| colspan="3" | &nbsp;
+|-
+| colspan="2" style="border-right: none;" | '''Document Status:'''
+| style="border-left: none; color:green; text-align: center;" | '''READY'''
+|}
