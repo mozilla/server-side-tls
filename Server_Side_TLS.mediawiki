@@ -119,7 +119,7 @@ The ciphers are described here: http://www.openssl.org/docs/apps/ciphers.html
 # ECDHE+AESGCM ciphers are selected first. These are TLS 1.2 ciphers and not widely supported at the moment. No known attack currently target these ciphers.
 # [[#Forward_Secrecy|PFS]] ciphersuites are preferred, with ECDHE first, then DHE.
 # SHA256 signature is preferred to SHA-1 in ciphers and certificates. MD5 is disallowed entirely.
-# AES 128 is preferred to AES 256. There has been [[http://www.mail-archive.com/dev-tech-crypto@lists.mozilla.org/msg11247.html discussions]] on whether AES256 extra security was worth the cost, and the result is far from obvious. At the moment, AES128 is preferred, because it provides good security, is really fast, and seems to be more resistant to timing attacks.
+# AES 128 is preferred to AES 256. There has been [http://www.mail-archive.com/dev-tech-crypto@lists.mozilla.org/msg11247.html discussions] on whether AES256 extra security was worth the cost, and the result is far from obvious. At the moment, AES128 is preferred, because it provides good security, is really fast, and seems to be more resistant to timing attacks.
 # In the backward compatible ciphersuite, AES is preferred to 3DES. [[#Attacks_on_TLS|BEAST]] attacks on AES are mitigated in TLS 1.1 and above, and difficult to achieve in TLS 1.0. In the non-backward compatible ciphersuite, 3DES is not present.
 # RC4 is removed entirely. 3DES is used for backward compatibility. See discussion in [[#RC4_weaknesses]]
 
@@ -146,18 +146,18 @@ When an ephemeral Diffie-Hellman cipher is used, the server and the client negot
 As an example, TLS_DHE_RSA_WITH_AES_128_CBC_SHA256 works as follow:
 [[File:Dhe_params.png|frame|server key exchange message as displayed in Wireshark]]
 [[File:Dhe_client_params.png|frame|client key exchange message as displayed in Wireshark]]
-# Server sends Client a [[http://tools.ietf.org/html/rfc5246#section-7.4.3 SERVER KEY EXCHANGE]] message during the SSL Handshake. The message contains:
+# Server sends Client a [http://tools.ietf.org/html/rfc5246#section-7.4.3 SERVER KEY EXCHANGE] message during the SSL Handshake. The message contains:
 ## Prime number ''p''
 ## Generator ''g''
 ## Server's Diffie-Hellman public value ''A = g^X mod p'', where ''X'' is a private integer chosen by the server at random, and never shared with the client. (note: A is called ''pubkey'' in wireshark)
 ## signature ''S'' of the above (plus two random values) computed using the Server's private RSA key
 # Client verifies the signature ''S''
-# Client sends server a [[http://tools.ietf.org/html/rfc5246#section-7.4.7 CLIENT KEY EXCHANGE]] message. The message contains:
+# Client sends server a [http://tools.ietf.org/html/rfc5246#section-7.4.7 CLIENT KEY EXCHANGE] message. The message contains:
 ## Client's Diffie-Hellman public value ''B = g^Y mod p'', where ''Y'' is a private integer chosen at random and never shared. (note: B is called ''pubkey'' in wireshark)
 # The Server and the Client can now calculate the pre-master secret using each other's public values:
 ## server calculates ''PMS = B^X mod p''
 ## client calculates ''PMS = A^Y mod p''
-# Client sends a [[http://tools.ietf.org/html/rfc5246#section-7.1 CHANGE CIPHER SPEC]] message to the server, and both parties continue the handshake using ENCRYPTED HANDSHAKE MESSAGES
+# Client sends a [http://tools.ietf.org/html/rfc5246#section-7.1 CHANGE CIPHER SPEC] message to the server, and both parties continue the handshake using ENCRYPTED HANDSHAKE MESSAGES
 
 The size of the prime number ''p'' constrains the size of the pre-master key ''PMS'', because of the modulo operation. A smaller prime almost means weaker values of ''A'' and ''B'', which could leak the secret values ''X'' and ''Y''. Thus, the prime ''p'' should not be smaller than the size of the RSA private key.
 <source lang="bash">
@@ -171,18 +171,18 @@ MBYCEQCHU6UNZoHMF6bPtj21Hn/bAgEC.....
 </source>
 
 == Pre-defined DHE groups ==
-In order to lower the burden of system administrators, several servers provide pre-computed DH groups. Unfortunately, the [[https://weakdh.org|logjam] report showed that it is very likely that a state-level adversary may have broken the most widely used 1024-bit DH group, Oakley group 2, standardized in [[https://tools.ietf.org/html/rfc2409#section-6.2|rfc2409]].
+In order to lower the burden of system administrators, several servers provide pre-computed DH groups. Unfortunately, the [https://weakdh.org/ logjam] report showed that it is very likely that a state-level adversary may have broken the most widely used 1024-bit DH group, Oakley group 2, standardized in [https://tools.ietf.org/html/rfc2409#section-6.2 rfc2409]].
 
 For this reason, the use of this group is considered unsafe and you should either:
 * use a larger group, with a minimum size of 2048-bit, as recommended in the intermediate and modern configurations ;
 * keep using a 1024-bit DH group if you need to (see [[#DHE_and_Java]]), but move away from Oakley group 2 and use a custom DH group instead, generated via the openssl dhparam 1024 command ;
-* disable DHE altogether, relying on ECHDE for PFS if you don't support legacy clients lacking ECDHE support (see [[#DHE_and_ECHDE_support]]).
+* disable DHE altogether, relying on ECDHE for PFS if you don't support legacy clients lacking ECDHE support (see [[#DHE_and_ECDHE_support]]).
 
 It is currently assumed that standardized 2048 bits DH groups provide sufficient security to resist factorization attacks. However, the careful administrator should generate a random DH group instead of using a 
-standardized one when setting up a new server, as advised by the [[https://weakdh.org|logjam]] authors.
+standardized one when setting up a new server, as advised by the [https://weakdh.org|logjam] authors.
 
 == DHE and ECDHE support ==
-Most modern clients that support both ECDHE and DHE typically prefer the former, because ECDHE provides faster handshakes than DHE ([[http://vincent.bernat.im/en/blog/2011-ssl-perfect-forward-secrecy.html]], [[http://nmav.gnutls.org/2011/12/price-to-pay-for-perfect-forward.html]]).
+Most modern clients that support both ECDHE and DHE typically prefer the former, because ECDHE provides faster handshakes than DHE ([http://vincent.bernat.im/en/blog/2011-ssl-perfect-forward-secrecy.html], [http://nmav.gnutls.org/2011/12/price-to-pay-for-perfect-forward.html]).
 
 Unfortunately, some widely used clients lack support for ECDHE and must then rely on DHE to provide perfect forward secrecy:
 * Android < 3.0.0
@@ -263,7 +263,7 @@ The current recommendation for web servers is to enable session resumption and b
 
 = HSTS: HTTP Strict Transport Security =
 
-[[https://tools.ietf.org/html/rfc6797 HSTS]] is a HTTP header sent by a server to a client, indicating that the current site must only be accessed over HTTPS until expiration of the HSTS value is reached.
+[https://tools.ietf.org/html/rfc6797 HSTS] is a HTTP header sent by a server to a client, indicating that the current site must only be accessed over HTTPS until expiration of the HSTS value is reached.
 
 The header format is very simple, composed only of a '''max-age''' parameter that indicates when the directive should expire. max-age is expressed in seconds. A typical value is 15724800 seconds, or 6 months.
 <pre>
@@ -274,11 +274,11 @@ HSTS is becoming more and more of a standard, but should only be used when the s
 
 = HPKP: Public Key Pinning Extension for HTTP =
 
-See [[http://tools.ietf.org/html/rfc7469 RFC7469]].
+See [http://tools.ietf.org/html/rfc7469 RFC7469].
 
 HPKP is an '''experimental''' HTTP header sent by a server to a client, to indicate that some certificates related to the site should be pinned in the client. The client would thus refuse to establish a connection to the server if the pining does not comply.
 
-Due to its experimental nature, HPKP is currently '''not''' recommended on production sites. More informations can be found on the [[https://developer.mozilla.org/en-US/docs/Web/Security/Public_Key_Pinning MDN description page]].
+Due to its experimental nature, HPKP is currently '''not''' recommended on production sites. More informations can be found on the [https://developer.mozilla.org/en-US/docs/Web/Security/Public_Key_Pinning MDN description page].
 
 = Recommended Server Configurations =
 
@@ -975,11 +975,11 @@ more: https://www.imperialviolet.org/2013/02/04/luckythirteen.html
 
 === RC4 weaknesses ===
 
-As of February 2015, the IETF explicitely prohibits the use of RC4: [[http://www.ietf.org/rfc/rfc7465.txt RFC 7465]].
+As of February 2015, the IETF explicitely prohibits the use of RC4: [http://www.ietf.org/rfc/rfc7465.txt RFC 7465].
 
 It has been proven that RC4 biases in the first 256 bytes of a cipherstream can be used to recover encrypted text. If the same data is encrypted a very large number of times, then an attacker can apply statistical analysis to the results and recover the encrypted text. While hard to perform, this attack shows that it is time to remove RC4 from the list of trusted ciphers.
 
-In a public discussion ([[https://bugzilla.mozilla.org/show_bug.cgi?id=927045 bug 927045]]), it has been recommended to replace RC4 with 3DES. This would impact Internet Explorer 7 and 8 users that, depending on the OS, do not support AES, and will negotiate only RC4 or 3DES ciphers. Internet Explorer uses the cryptographic library “schannel”, which is OS dependent. schannel supports AES in Windows Vista, but not in Windows XP.
+In a public discussion ([https://bugzilla.mozilla.org/show_bug.cgi?id=927045 bug 927045]), it has been recommended to replace RC4 with 3DES. This would impact Internet Explorer 7 and 8 users that, depending on the OS, do not support AES, and will negotiate only RC4 or 3DES ciphers. Internet Explorer uses the cryptographic library “schannel”, which is OS dependent. schannel supports AES in Windows Vista, but not in Windows XP.
  
 While 3DES provides more resistant cryptography, it is also 30 times slower and more cpu intensive than RC4. For large web infrastructure, the CPU cost of replacing 3DES with RC4 is non-zero. For this reason, we recommend that administrators evaluate their traffic patterns, and make the decision of replacing RC4 with 3DES on a per-case basis. At Mozilla, we evaluated that the impact on CPU usage is minor, and thus decided to replace RC4 with 3DES where backward compatibility is required.
 
