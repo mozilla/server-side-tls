@@ -2986,10 +2986,6 @@ In the example above, the component SIGN-RSA-SHA224 is not supported by this ver
 ! Editor
 ! Changes
 |-
-| style="text-align: center;" | 3.8
-| style="text-align: center;" | marumari
-| document cleanup
-|-
 | style="text-align: center;" | 3.7
 | style="text-align: center;" | ulfr
 | cleanup version table (marumari), add F5 conf samples (warburtron), add notes about DHE (rgacogne)
