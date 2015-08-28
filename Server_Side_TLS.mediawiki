@@ -3336,7 +3336,6 @@ In the example above, the component SIGN-RSA-SHA224 is not supported by this ver
 ! Version
 ! Editor
 ! Changes
-|
 |-
 | style="text-align: center;" | 3.8
 | style="text-align: center;" | ulfr
