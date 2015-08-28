@@ -1,7 +1,6 @@
-<span style="float: right;">[[File:OpSec.png|300px]]</span>
 <table>
   <tr>
-    <td>__TOC__</td>
+    <td style="min-width: 25em;">__TOC__</td>
     <td style="vertical-align: top; padding-left: 1em;">The goal of this document is to help operational teams with the configuration of TLS on servers. All Mozilla sites and deployment should follow the recommendations below.
 
 The Operations Security (OpSec) team maintains this document as a reference guide to navigate the TLS landscape. It contains information on TLS protocols, known issues and vulnerabilities, configuration examples and testing tools. Changes are reviewed and merged by the OpSec team, and broadcasted to the various Operational teams.
@@ -10,6 +9,8 @@ Updates to this page should be submitted to the [https://github.com/mozilla/serv
 
 If you are looking for the configuration generator, follow this link:
 [https://mozilla.github.io/server-side-tls/ssl-config-generator/ https://mozilla.github.io/server-side-tls/ssl-config-generator/].
+
+<span style="float: right; padding-top: 3em;">[[File:OpSec.png|300px]]</span>
     </td>
   </tr>
 </table>
