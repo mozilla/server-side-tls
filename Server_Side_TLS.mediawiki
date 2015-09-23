@@ -38,7 +38,7 @@ For services that don't need backward compatibility, the parameters below provid
 * DH Parameter size: '''2048'''
 * Elliptic curves: '''secp256r1, secp384r1, secp521r1''' (at a minimum)
 * Certificate signature: '''SHA-256'''
-* HSTS: '''max-age=15724800'''
+* HSTS: '''max-age=15768000'''
 
 == <span style="color:orange;">'''Intermediate'''</span> compatibility (default) ==
 For services that don't need compatibility with legacy clients (mostly WinXP), but still need to support a wide range of clients, this configuration is recommended. It is is compatible with Firefox 1, Chrome 1, IE 7, Opera 5 and Safari 1.
@@ -266,9 +266,9 @@ The current recommendation for web servers is to enable session resumption and b
 
 [https://tools.ietf.org/html/rfc6797 HSTS] is a HTTP header sent by a server to a client, indicating that the current site must only be accessed over HTTPS until expiration of the HSTS value is reached.
 
-The header format is very simple, composed only of a '''max-age''' parameter that indicates when the directive should expire. max-age is expressed in seconds. A typical value is 15724800 seconds, or 6 months.
+The header format is very simple, composed only of a '''max-age''' parameter that indicates when the directive should expire. max-age is expressed in seconds. A typical value is 15768000 seconds, or 6 months.
 <pre>
-Strict-Transport-Security: max-age=15724800
+Strict-Transport-Security: max-age=15768000
 </pre>
 
 HSTS is becoming more and more of a standard, but should only be used when the site's operators are confident that HTTPS will be available continuously for the duration of max-age. Once the HSTS header is sent to client, HTTPS cannot be disabled on the site until the last client has expired its HSTS record.
