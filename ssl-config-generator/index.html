@@ -302,7 +302,7 @@ $SERVER["socket"] == ":443" {
 
         var messageTypes = {
             oldOpenSSL: 'TLS v1.1 and v1.2 support is only present in OpenSSL 1.0.1 and newer',
-            oldApache: 'TLS v1.1 and v1.2 support is only present in Apache 2.4 and newer',
+            oldApache: 'TLS v1.1 and v1.2 support is only present in Apache 2.4 and newer'
         };
         
         $(function() {
@@ -380,9 +380,6 @@ $SERVER["socket"] == ":443" {
                             '    setenv.add-response-header  = (\n' +
                             '        "Strict-Transport-Security" => "max-age=15768000;"\n' +
                             '    )';
-                    }
-                    if (isSemVer(data.serverVersion, '>=2.3.16')) {
-                        data.sslProtocols = data.sslProtocols.replace(' -SSLv2', '');
                     }
                     break;
             }
