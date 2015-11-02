@@ -291,8 +291,6 @@ Try out our configuration generator to create a sample configuration file for va
 
 Nginx provides OCSP Stapling, custom DH parameters, and the full flavor of TLS versions (from OpenSSL).
 
-The detail of each configuration parameter, and how to build a recent Nginx with OpenSSL, is [[#Nginx_configuration_details|at the end of this document]].
-
 <pre>
 server {
     listen 443 ssl;
