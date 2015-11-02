@@ -460,7 +460,7 @@ frontend ft_test
                     messageTypes.oldOpenSSL);
 
                 data.securityProfile = toggleProfileAvailability(
-                    data.server == "apache" && isSemVer(data.serverVersion, "<2.4.0"),
+                    data.server == "apache" && isSemVer(data.serverVersion, "<2.2.23"),
                     data.securityProfile,
                     "modern",
                     messageTypes.oldApache);
