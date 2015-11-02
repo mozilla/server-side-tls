@@ -54,6 +54,7 @@ server {
     ssl_certificate_key /path/to/private_key;
     ssl_session_timeout 1d;
     ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
 {{dhparam}}
 
     # {{securityProfile}} configuration. tweak to your needs.
@@ -85,6 +86,7 @@ server {
     SSLProtocol             {{sslProtocols}}
     SSLCipherSuite          {{cipherSuites}}
     SSLHonorCipherOrder     on
+{{sslSessionTickets}}
 {{compression}}
 {{ocspStapling}}
 {{hsts}}
@@ -103,6 +105,7 @@ global
     # set default parameters to the {{securityProfile}} configuration
     tune.ssl.default-dh-param {{maxDHKeySize}}
     ssl-default-bind-ciphers {{cipherSuites}}
+    ssl-default-bind-options no-tls-tickets
 
 frontend ft_test
     mode    http
@@ -307,6 +310,9 @@ frontend ft_test
                             '    SSLStaplingReturnResponderErrors off';
                         data.ocspStaplingCache = 'SSLStaplingCache        shmcb:/var/run/ocsp(128000)' + '\n';
 
+                    }
+                    if (isOpenSSLSemVer(data.opensslVersion, ">=0.9.8f") && isSemVer(data.serverVersion, '>=2.2.30')) {
+                        data.sslSessionTickets = '    SSLSessionTickets       off'
                     }
                     if (isSemVer(data.serverVersion, '>=2.4.8')) {
                         data.certFile = '    SSLCertificateFile      /path/to/signed_certificate_followed_by_intermediate_certs';
