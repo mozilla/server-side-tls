@@ -311,7 +311,9 @@ frontend ft_test
                         data.ocspStaplingCache = 'SSLStaplingCache        shmcb:/var/run/ocsp(128000)' + '\n';
 
                     }
-                    if (isOpenSSLSemVer(data.opensslVersion, ">=0.9.8f") && isSemVer(data.serverVersion, '>=2.2.30')) {
+                    if (isOpenSSLSemVer(data.opensslVersion, ">=0.9.8f") && (
+                            (isSemVer(data.serverVersion, '>=2.2.30') && isSemVer(data.serverVersion, '<2.4.0')) ||
+                            isSemVer(data.serverVersion, '>=2.4.11'))) {
                         data.sslSessionTickets = '    SSLSessionTickets       off'
                     }
                     if (isSemVer(data.serverVersion, '>=2.4.8')) {
