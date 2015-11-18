@@ -980,7 +980,7 @@ It has been proven that RC4 biases in the first 256 bytes of a cipherstream can 
 
 In a public discussion ([https://bugzilla.mozilla.org/show_bug.cgi?id=927045 bug 927045]), it has been recommended to replace RC4 with 3DES. This would impact Internet Explorer 7 and 8 users that, depending on the OS, do not support AES, and will negotiate only RC4 or 3DES ciphers. Internet Explorer uses the cryptographic library “schannel”, which is OS dependent. schannel supports AES in Windows Vista, but not in Windows XP.
  
-While 3DES provides more resistant cryptography, it is also 30 times slower and more cpu intensive than RC4. For large web infrastructure, the CPU cost of replacing 3DES with RC4 is non-zero. For this reason, we recommend that administrators evaluate their traffic patterns, and make the decision of replacing RC4 with 3DES on a per-case basis. At Mozilla, we evaluated that the impact on CPU usage is minor, and thus decided to replace RC4 with 3DES where backward compatibility is required.
+While 3DES provides more resistant cryptography, it is also 30 times slower and more cpu intensive than RC4. For large web infrastructure, the CPU cost of replacing RC4 with 3DES is non-zero. For this reason, we recommend that administrators evaluate their traffic patterns, and make the decision of replacing RC4 with 3DES on a per-case basis. At Mozilla, we evaluated that the impact on CPU usage is minor, and thus decided to replace RC4 with 3DES where backward compatibility is required.
 
 === CRIME (CVE-2012-4929) ===
 
