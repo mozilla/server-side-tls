@@ -54,7 +54,7 @@ server {
     ssl_certificate_key /path/to/private_key;
     ssl_session_timeout 1d;
     ssl_session_cache shared:SSL:50m;
-    ssl_session_tickets off;
+{{sslSessionTickets}}
 {{dhparam}}
 
     # {{securityProfile}} configuration. tweak to your needs.
@@ -338,6 +338,9 @@ $SERVER["socket"] == ":443" {
                     } else {
                         data.listen = '    listen 443;' + '\n' +
                             '    ssl on;';
+                    }
+                    if (isOpenSSLSemVer(data.opensslVersion, ">=0.9.8f") && isSemVer(data.serverVersion, '>=1.5.9')) {
+                        data.sslSessionTickets = '    ssl_session_tickets off;'
                     }
                     break;
                 case "apache":
