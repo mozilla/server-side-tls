@@ -82,16 +82,17 @@ server {
     SSLCertificateKeyFile   /path/to/private/key
     SSLCACertificateFile    /path/to/all_ca_certs
 
-    # {{securityProfile}} configuration, tweak to your needs
-    SSLProtocol             {{sslProtocols}}
-    SSLCipherSuite          {{cipherSuites}}
-    SSLHonorCipherOrder     on
-{{compression}}
-{{sslSessionTickets}}
-{{ocspStapling}}
 {{hsts}}
     ...
 &lt;/VirtualHost&gt;
+
+# {{securityProfile}} configuration, tweak to your needs
+SSLProtocol             {{sslProtocols}}
+SSLCipherSuite          {{cipherSuites}}
+SSLHonorCipherOrder     on
+{{compression}}
+{{sslSessionTickets}}
+{{ocspStapling}}
 {{ocspStaplingCache}}
 </pre>
     </script>
