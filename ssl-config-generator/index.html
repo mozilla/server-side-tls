@@ -554,6 +554,9 @@ $SERVER["socket"] == ":443" {
             $("input:radio").change(function() {
                 renderConfig(true);
             });
+            $("input:checkbox").change(function() {
+                renderConfig(false);
+            });
             $("input:text").change(function() {
                 renderConfig(false);
             });
