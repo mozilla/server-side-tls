@@ -346,7 +346,26 @@ Before Apache 2.4.7, the DH parameter is always set to 1024 bits and is not user
 
     # OCSP Stapling, only in httpd 2.3.3 and later
     SSLUseStapling          on
-    SSLStaplingResponderTimeout 5
+    # Timeout in seconds when renewing queries for OCSP responders.
+    # Apache tries to connect to all available (IP) addresses in sequence
+    # until it succeeds. E.g., for an OCSP URI resolved to 2 IP addresses
+    # the total timeout is 2 seconds for an unresponsive responder.
+    # Setting the time to a small value does not keep the clients waiting
+    # during a renewal but requests may fail on a very slow connection to
+    # the OCSP responder.
+    SSLStaplingResponderTimeout 1
+    # When enabled, Apache will synthesize a "tryLater" response
+    # when it fails to elicit any response from the OCSP responder
+    # (See SSLStaplingResponderTimeout).
+    # Firefox 43 fails to connect with a sec_error_ocsp_try_server_later
+    # when security.OCSP.require is true.
+    # This fake response will be cached. Subsequent clients will receive
+    # this "tryLater" response if SSLStaplingReturnResponderErrors is on.
+    SSLStaplingFakeTryLater off
+    # When enabled, Apache will pass responses from unsuccessful stapling
+    # related OCSP queries on to the client. This includes fresh responses
+    # indicating anything but success and cached responses including fake
+    # "tryLater" ones originally created because of SSLStaplingFakeTryLater.
     SSLStaplingReturnResponderErrors off
     # On Apache 2.4+, SSLStaplingCache must be set *outside* of the VirtualHost
     SSLStaplingCache        shmcb:/var/run/ocsp(128000)
