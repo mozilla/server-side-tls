@@ -3384,6 +3384,10 @@ In the example above, the component SIGN-RSA-SHA224 is not supported by this ver
 ! Editor
 ! Changes
 |-
+| style="text-align: center;" | 3.9
+| style="text-align: center;" | ulfr
+| add EDH-RSA-DES-CBC3-SHA back to the old and intermediate conf
+|-
 | style="text-align: center;" | 3.8
 | style="text-align: center;" | ulfr
 | redo cipher names chart (marumari), move version chart (marumari), update Intermediate cipher suite (ulfr)
