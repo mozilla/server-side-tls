@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <title>Generate Mozilla Security Recommended Web Server Configuration Files</title>
-    <link rel="stylesheet" type="text/css" media="all" href="../css/screen.css" />
-    <link href="//mozorg.cdn.mozilla.net/media/css/tabzilla-min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/screen.css" />
+    <link rel="stylesheet" href="https://mozorg.cdn.mozilla.net/media/css/tabzilla-min.css" />
     <style>
         div#server-config-text pre {
             background-color: #F7F7F7;
@@ -26,11 +26,11 @@
 
     </style>
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
-    <script src="//mozorg.cdn.mozilla.net/en-US/tabzilla/tabzilla.js"></script>
-    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css">
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
+    <script src="https://mozorg.cdn.mozilla.net/en-US/tabzilla/tabzilla.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
     <script>
         // https://gist.github.com/cowboy/566233
         var isSemVer=(function(){var a=/^(<|>|[=!<>]=)?\s*(\d+(?:\.\d+){0,2})([a-z][a-z0-9\-]*)?$/i;function b(e,c){var d=(e+"").match(a);return d?(c?(d[1]||"=="):"")+'"'+(d[2]+".0.0").match(/\d+(?:\.\d+){0,2}/)[0].replace(/(?:^|\.)(\d+)/g,function(g,f){return Array(9-f.length).join(0)+f;})+(d[3]||"~")+'"':(c?"==0":1);}return function(e){e=b(e);for(var c,d=1;c=arguments[d++];){if(!(new Function("return "+e+b(c,1)))()){return false;}}return true;};})();
@@ -38,13 +38,13 @@
         var isOpenSSLSemVer=(function(){var a=/^(<|>|[=!<>]=)?\s*(\d+(?:\.\d+){0,2})([a-z][a-z0-9\-]*)?$/i;function b(e,c){var d=(e+"").match(a);return d?(c?(d[1]||"=="):"")+'"'+(d[2]+".0.0").match(/\d+(?:\.\d+){0,2}/)[0].replace(/(?:^|\.)(\d+)/g,function(g,f){return Array(9-f.length).join(0)+f;})+(d[3]||"")+'"':(c?"==0":1);}return function(e){e=b(e);for(var c,d=1;c=arguments[d++];){if(!(new Function("return "+e+b(c,1)))()){return false;}}return true;};})();
     </script>
     <script>
-        if (window.location.protocol != "https:")
-            window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
+        if (location.protocol != "https:")
+            location.protocol = "https:";
     </script>
 
     <script id="nginx-template" type="text/x-handlebars-template">
 <h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}} | <a href="?{{queryString}}">link</a></h2>
-<p>Oldest compatible clients : {{clientList}}</p>
+<p>Oldest compatible clients: {{clientList}}</p>
 <pre>
 server {
 {{listen}}
@@ -65,7 +65,7 @@ server {
 {{ocspstapling}}
 
     resolver &lt;IP DNS resolver&gt;;
- 
+
     ....
 }
 </pre>
@@ -73,7 +73,7 @@ server {
 
     <script id="apache-template" type="text/x-handlebars-template">
 <h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}} | <a href="?{{queryString}}">link</a></h2>
-<p>Oldest compatible clients : {{clientList}}</p>
+<p>Oldest compatible clients: {{clientList}}</p>
 <pre>
 &lt;VirtualHost *:443&gt;
     ...
@@ -99,7 +99,7 @@ SSLHonorCipherOrder     on
 
     <script id="haproxy-template" type="text/x-handlebars-template">
 <h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}} | <a href="?{{queryString}}">link</a></h2>
-<p>Oldest compatible clients : {{clientList}}</p>
+<p>Oldest compatible clients: {{clientList}}</p>
 <span class="message">{{message}}</span>
 <pre style="visibility: {{visibility}};">
 global
@@ -117,10 +117,10 @@ frontend ft_test
 
     <script id="elb-template" type="text/x-handlebars-template">
 <h2>{{server}} {{serverVersion}} | {{securityProfile}} profile | OpenSSL {{opensslVersion}} | <a href="?{{queryString}}">link</a></h2>
-<p>Oldest compatible clients : {{clientList}}</p>
+<p>Oldest compatible clients: {{clientList}}</p>
 <span class="message">{{message}}</span>
-<p>This <a href="https://aws.amazon.com/cloudformation/">Amazon Web Services CloudFormation</a> template 
-  will create an <a href="https://aws.amazon.com/elasticloadbalancing/">Elastic Load Balancer</a> which 
+<p>This <a href="https://aws.amazon.com/cloudformation/">Amazon Web Services CloudFormation</a> template
+  will create an <a href="https://aws.amazon.com/elasticloadbalancing/">Elastic Load Balancer</a> which
   terminates HTTPS connections using the Mozilla recommended ciphersuites and protocols.
 </p>
 <pre style="visibility: {{visibility}};">
@@ -141,7 +141,7 @@ $SERVER["socket"] == ":443" {
     ssl.pemfile               = "/path/to/signed_cert_plus_private_key.pem"
     ssl.ca-file               = "/path/to/intermediate_certificate.pem"
     # for DH/DHE ciphers, dhparam should be >= 2048-bit
-    ssl.dh-file               = "/path/to/dhparam.pem" 
+    ssl.dh-file               = "/path/to/dhparam.pem"
     # ECDH/ECDHE ciphers curve strength (see `openssl ecparam -list_curves`)
     ssl.ec-curve              = "secp384r1"
     # Compression is by default off at compile-time, but use if needed
@@ -308,7 +308,7 @@ $SERVER["socket"] == ":443" {
             oldOpenSSL: 'TLS v1.1 and v1.2 support is only present in OpenSSL 1.0.1 and newer',
             oldApache: 'TLS v1.1 and v1.2 support is only present in Apache 2.4 and newer'
         };
-        
+
         $(function() {
             $( document ).tooltip();
         });
@@ -345,7 +345,7 @@ $SERVER["socket"] == ":443" {
                     }
                     break;
                 case "apache":
-                    // http://httpd.apache.org/docs/current/mod/mod_ssl.html
+                    // https://httpd.apache.org/docs/current/mod/mod_ssl.html
                     if (isOpenSSLSemVer(data.opensslVersion, ">=0.9.8")) {
                         if ((/^2\.2/.test(data.serverVersion) && isSemVer(data.serverVersion, '>=2.2.24')) || isSemVer(data.serverVersion, '>=2.4.3')) {
                             data.compression = '    SSLCompression          off';
@@ -460,12 +460,11 @@ $SERVER["socket"] == ":443" {
             }
 
             function renderConfig(change_software) {
-				// Update Server version input w/ latest version in versions[] array when changing software
-				var software = $("div#server-list input:radio:checked").val();
-				if (change_software === true && typeof versions[software] !== "undefined") {
-					$("#server-version").val(versions[software][versions[software].length-1]);
-					
-				};
+		// Update Server version input w/ latest version in versions[] array when changing software
+		var software = $("div#server-list input:radio:checked").val();
+		if (change_software === true && typeof versions[software] !== "undefined") {
+			$("#server-version").val(versions[software][versions[software].length-1]);
+		}
 
                 var data = {
                     serverVersion: $("#server-version").val(),
@@ -514,7 +513,7 @@ $SERVER["socket"] == ":443" {
                         $("#server-config-text").html(template(data));
                     })
                     .fail( function( elbTemplate) {
-                        console.log("JSON fetch failed : " + JSON.stringify(elbTemplate));
+                        console.log("JSON fetch failed: " + JSON.stringify(elbTemplate));
                     });
                 }
 
@@ -530,7 +529,7 @@ $SERVER["socket"] == ":443" {
                     data.securityProfile,
                     "modern",
                     messageTypes.oldApache);
-                
+
                 $( "#server-version" ).autocomplete({
                     source: versions[data.server]
                 });
@@ -544,9 +543,10 @@ $SERVER["socket"] == ":443" {
                         profile: data.securityProfile
                     })
                 });
-                
+
                 $("#server-config-text").html(template(data));
             }
+
             $("ul#security-profile-list li button").click(function() {
                 securityProfile = $(this).text();
                 renderConfig(false);
@@ -554,10 +554,7 @@ $SERVER["socket"] == ":443" {
             $("input:radio").change(function() {
                 renderConfig(true);
             });
-            $("input:checkbox").change(function() {
-                renderConfig(false);
-            });
-            $("input:text").change(function() {
+            $("input:checkbox, input:text").change(function() {
                 renderConfig(false);
             });
             $( "#openssl-version" ).autocomplete({
@@ -632,8 +629,8 @@ $SERVER["socket"] == ":443" {
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        m=s.getElementsByTagName(o)[0];a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
         ga('create', 'UA-66267220-1', 'auto');
         ga('send', 'pageview');
