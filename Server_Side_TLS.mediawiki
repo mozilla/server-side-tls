@@ -41,7 +41,7 @@ For services that don't need backward compatibility, the parameters below provid
 * Versions: '''TLSv1.2'''
 * TLS curves: '''prime256v1, secp384r1, secp521r1'''
 * Certificate type: '''ECDSA'''
-* Certificate curve: ''''prime256v1, secp384r1, secp521r1'''
+* Certificate curve: '''prime256v1, secp384r1, secp521r1'''
 * Certificate signature: '''sha256WithRSAEncryption, ecdsa-with-SHA256, ecdsa-with-SHA384, ecdsa-with-SHA512'''
 * RSA key size: '''2048''' (if not ecdsa)
 * DH Parameter size: '''None''' (disabled entirely)
@@ -116,7 +116,7 @@ For services that don't need compatibility with legacy clients (mostly WinXP), b
 0x00,0x0A  -  DES-CBC3-SHA                   SSLv3    Kx=RSA   Au=RSA    Enc=3DES(168)      Mac=SHA1
 </source>
 
-Rational:
+Rationale:
 * ChaCha20 is prefered as the fastest and safest in-software cipher, followed but AES128. Unlike the modern configuration, we do not assume clients support AESNI and thus do not prioritize AES256 above 128 and ChaCha20. There has been discussions ([http://www.mail-archive.com/dev-tech-crypto@lists.mozilla.org/msg11247.html 1], [http://www.mail-archive.com/dev-tech-crypto@lists.mozilla.org/msg12398.html 2]) on whether AES256 extra security was worth its computing cost in software (without AESNI), and the results are far from obvious. At the moment, AES128 is preferred, because it provides good security, is really fast, and seems to be more resistant to timing attacks.
 * DES-CBC3-SHA and EDH-RSA-DES-CBC3-SHA are maintained for backward compatibility with clients that do not support AES.
 * While the goal is to support a broad range of clients, we reasonably disable a number of ciphers that have little support (such as SEED, CAMELLIA, ...).
