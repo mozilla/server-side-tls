@@ -460,12 +460,12 @@ $SERVER["socket"] == ":443" {
             }
 
             function renderConfig(change_software) {
-				// Update Server version input w/ latest version in versions[] array when changing software
-				var software = $("div#server-list input:radio:checked").val();
-				if (change_software === true && typeof versions[software] !== "undefined") {
-					$("#server-version").val(versions[software][versions[software].length-1]);
-					
-				};
+                // Update Server version input w/ latest version in versions[] array when changing software
+                var software = $("div#server-list input:radio:checked").val();
+                if (change_software === true && typeof versions[software] !== "undefined") {
+                    $("#server-version").val(versions[software][versions[software].length-1]);
+                    
+                };
 
                 var data = {
                     serverVersion: $("#server-version").val(),
