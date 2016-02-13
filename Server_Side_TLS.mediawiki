@@ -201,6 +201,18 @@ Rationale:
 * SHA1 certificates are authorized but only via certificate switching, meaning the server must implement custom logic to provide a SHA1 certs to old clients, and SHA256 certs to all others. More information in the "Certificates Switching" section later in this document.
 * Most ciphers that are not clearly broken and dangerous to use are supported
 
+= JSON version of the recommendations =
+
+You can find the recommendations above in JSON format at the address [https://statics.tls.security.mozilla.org/server-side-tls-conf-4.0.json https://statics.tls.security.mozilla.org/server-side-tls-conf-4.0.json].
+
+This location is permanent and can be referenced in scripts and tools. The file is versioned and will not change, to avoid breaking tools when we update the recommendations.
+
+New versions will have their own URLs and will be referenced on this page.
+
+== Previous versions ==
+
+* None
+
 = Mandatory discards =
 
 * aNULL contains non-authenticated Diffie-Hellman key exchanges, that are subject to Man-In-The-Middle (MITM) attacks
