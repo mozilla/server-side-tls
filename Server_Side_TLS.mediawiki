@@ -207,7 +207,9 @@ You can find the recommendations above in JSON format at the address [https://st
 
 This location is permanent and can be referenced in scripts and tools. The file is versioned and will not change, to avoid breaking tools when we update the recommendations.
 
-New versions will have their own URLs and will be referenced on this page.
+If you wish to point to the latest version of the recommendations, use this address: [[https://statics.tls.security.mozilla.org/server-side-tls-conf.json https://statics.tls.security.mozilla.org/server-side-tls-conf.json].
+Be advised the above will always point to the latest version and '''will not provide backward compatibility'''.
+If you use it to automatically configure your servers without review, it may break things. Prefer the version-specific files instead.
 
 == Previous versions ==
 
