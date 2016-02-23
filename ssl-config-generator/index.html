@@ -353,20 +353,20 @@ $SERVER["socket"] == ":443" {
                     // http://httpd.apache.org/docs/current/mod/mod_ssl.html
                     if (isOpenSSLSemVer(data.opensslVersion, ">=0.9.8")) {
                         if ((/^2\.2/.test(data.serverVersion) && isSemVer(data.serverVersion, '>=2.2.24')) || isSemVer(data.serverVersion, '>=2.4.3')) {
-                            data.compression = '    SSLCompression          off';
+                            data.compression = 'SSLCompression          off';
                         }
                     }
                     if (isOpenSSLSemVer(data.opensslVersion, ">=0.9.8h") && isSemVer(data.serverVersion, '>=2.3.3')) {
-                        data.ocspStapling = '\n    # OCSP Stapling, only in httpd 2.3.3 and later' + '\n' +
-                            '    SSLUseStapling          on' + '\n' +
-                            '    SSLStaplingResponderTimeout 5' + '\n' +
-                            '    SSLStaplingReturnResponderErrors off';
+                        data.ocspStapling = '\n# OCSP Stapling, only in httpd 2.3.3 and later' + '\n' +
+                            'SSLUseStapling          on' + '\n' +
+                            'SSLStaplingResponderTimeout 5' + '\n' +
+                            'SSLStaplingReturnResponderErrors off';
                         data.ocspStaplingCache = 'SSLStaplingCache        shmcb:/var/run/ocsp(128000)' + '\n';
 
                     }
                     if (isOpenSSLSemVer(data.opensslVersion, ">=0.9.8f")) {
                         if ((/^2\.2/.test(data.serverVersion) && isSemVer(data.serverVersion, '>=2.2.30')) || isSemVer(data.serverVersion, '>=2.4.11')) {
-                            data.sslSessionTickets = '    SSLSessionTickets       off';
+                            data.sslSessionTickets = 'SSLSessionTickets       off';
                         }
                     }
                     if (isSemVer(data.serverVersion, '>=2.4.8')) {
