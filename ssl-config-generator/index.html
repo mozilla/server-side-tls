@@ -116,11 +116,15 @@ global
     # set default parameters to the {{securityProfile}} configuration
     tune.ssl.default-dh-param {{maxDHKeySize}}
     ssl-default-bind-ciphers {{cipherSuites}}
-    ssl-default-bind-options no-tls-tickets
+    ssl-default-bind-options {{sslProtocols}} no-tls-tickets
+    ssl-default-server-ciphers {{cipherSuites}}
+    ssl-default-server-options {{sslProtocols}} no-tls-tickets
 
 frontend ft_test
     mode    http
-    bind    0.0.0.0:443 {{sslProtocols}} crt /path/to/&lt;cert+privkey+intermediate+dhparam&gt;
+    bind    :443 crt /path/to/&lt;cert+privkey+intermediate+dhparam&gt;
+    bind    :80
+    redirect scheme https code 301 if !{ ssl_fc }
 {{hsts}}
 </pre>
     </script>
