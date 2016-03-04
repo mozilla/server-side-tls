@@ -50,7 +50,7 @@
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
-    
+
     # Redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.
     return 301 https://$host$request_uri;
 }
@@ -122,7 +122,7 @@ global
 
 frontend ft_test
     mode    http
-    bind    :443 crt /path/to/&lt;cert+privkey+intermediate+dhparam&gt;
+    bind    :443 ssl crt /path/to/&lt;cert+privkey+intermediate+dhparam&gt;
     bind    :80
     redirect scheme https code 301 if !{ ssl_fc }
 {{hsts}}
@@ -196,7 +196,7 @@ $SERVER["socket"] == ":443" {
                 sslProtocols: {
                     apache: 'all -SSLv2 -SSLv3 -TLSv1 -TLSv1.1',
                     nginx: 'TLSv1.2',
-                    haproxy: 'ssl no-sslv3 no-tlsv10 no-tlsv11',
+                    haproxy: 'no-sslv3 no-tlsv10 no-tlsv11',
                     lighttpd: '    ssl.use-sslv2 = "disable"\n    ssl.use-sslv3 = "disable"'
                 },
                 clientList: 'Firefox 27, Chrome 30, IE 11 on Windows 7, Edge, Opera 17, Safari 9, Android 5.0, and Java 8',
@@ -244,7 +244,7 @@ $SERVER["socket"] == ":443" {
                 sslProtocols: {
                     apache: 'all -SSLv2 -SSLv3',
                     nginx: 'TLSv1 TLSv1.1 TLSv1.2',
-                    haproxy: 'ssl no-sslv3',
+                    haproxy: 'no-sslv3',
                     lighttpd: '    ssl.use-sslv2 = "disable"\n    ssl.use-sslv3 = "disable"'
                 },
                 clientList: 'Firefox 1, Chrome 1, IE 7, Opera 5, Safari 1, Windows XP IE8, Android 2.3, Java 7',
@@ -291,7 +291,7 @@ $SERVER["socket"] == ":443" {
                     apache: 'all -SSLv2',
                     nginx: 'SSLv3 TLSv1 TLSv1.1 TLSv1.2',
                     lighttpd: 'SSLv3 TLSv1 TLSv1.1 TLSv1.2',
-                    haproxy: 'ssl',
+                    haproxy: '',
                     lighttpd: '    ssl.use-sslv2 = "disable"\n    ssl.use-sslv3 = "enable"'
                 },
                 clientList: 'Windows XP IE6, Java 6',
