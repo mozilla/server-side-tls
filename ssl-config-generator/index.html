@@ -90,7 +90,9 @@ server {
     SSLEngine on
 {{certFile}}
     SSLCertificateKeyFile   /path/to/private/key
-    SSLCACertificateFile    /path/to/all_ca_certs
+
+    # Uncomment the following directive when using client certificate authentication
+    #SSLCACertificateFile    /path/to/ca_certs_for_client_authentication
 
 {{hsts}}
     ...
