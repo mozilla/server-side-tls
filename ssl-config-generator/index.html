@@ -387,7 +387,7 @@ $SERVER["socket"] == ":443" {
                     // http://www.haproxy.org/download/1.5/doc/configuration.txt
                     if (data.hstsEnabled == "true") {
                         data.hsts = '\n    # HSTS (15768000 seconds = 6 months)' + '\n' +
-                            '    rspadd  Strict-Transport-Security:\\ max-age=15768000';
+                            '    http-response set-header Strict-Transport-Security max-age=15768000';
                     }
                     if (isSemVer(data.serverVersion, "<1.5")) {
                         data.visibility = 'hidden';
