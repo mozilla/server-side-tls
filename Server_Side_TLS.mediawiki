@@ -376,7 +376,7 @@ Due to its experimental nature, HPKP is currently '''not''' recommended on produ
 
 Certificates Switching is a technique by which a server provides a different X.509 certificate to a client based on specific selection criteria. This technique is used primarily to maintain backward compatibility with very old clients, such as Internet Explorer 6 on Windows XP SP2.
 
-On XPSP2, IE6 is only able to establish connections to servers that provide a certificate signed with sha1WithRSAEncryption. Those certificates are note issued by modern CAs anymore, and all sites have been encouraged to upgrade to SHA-256 certificates. As modern browsers gradually block connections backed by SHA-1 certificates, sites that need to maintain compatibility with XPSP2 must implement certificates switching to provide a SHA-1 cert to old clients and a SHA-256 cert to modern ones.
+On XPSP2, IE6 is only able to establish connections to servers that provide a certificate signed with sha1WithRSAEncryption. Those certificates are not issued by modern CAs anymore, and all sites have been encouraged to upgrade to SHA-256 certificates. As modern browsers gradually block connections backed by SHA-1 certificates, sites that need to maintain compatibility with XPSP2 must implement certificates switching to provide a SHA-1 cert to old clients and a SHA-256 cert to modern ones.
 
 Certificate switching can be implemented in various ways. A simplistic approach is to select the certificate based on the protocol version (SHA-256 to TLS clients, SHA-1 to SSLv3 ones). A more sophisticated approach consists at looking inside the CLIENT HELLO for SHA-256 support in the "signature_algorithms" extension.
 
