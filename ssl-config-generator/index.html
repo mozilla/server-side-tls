@@ -356,7 +356,6 @@ $SERVER["socket"] == ":443" {
                 sslProtocols: {
                     apache: 'all -SSLv2',
                     nginx: 'SSLv3 TLSv1 TLSv1.1 TLSv1.2',
-                    lighttpd: 'SSLv3 TLSv1 TLSv1.1 TLSv1.2',
                     haproxy: '',
                     lighttpd: '    ssl.use-sslv2 = "disable"\n    ssl.use-sslv3 = "enable"',
                     tomcat: 'SSLv3, TLSv1, TLSv1.1, TLSv1.2'
