@@ -28,6 +28,7 @@
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.js"></script>
     <script src="//mozorg.cdn.mozilla.net/en-US/tabzilla/tabzilla.js"></script>
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css">
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
@@ -65,7 +66,7 @@ server {
 
     # {{securityProfile}} configuration. tweak to your needs.
     ssl_protocols {{sslProtocols}};
-    ssl_ciphers '{{cipherSuites}}';
+    ssl_ciphers '{{opensslCipherSuites}}';
     ssl_prefer_server_ciphers on;
 {{hsts}}
 {{ocspstapling}}
@@ -96,7 +97,7 @@ server {
 
 # {{securityProfile}} configuration, tweak to your needs
 SSLProtocol             {{sslProtocols}}
-SSLCipherSuite          {{cipherSuites}}
+SSLCipherSuite          {{opensslCipherSuites}}
 SSLHonorCipherOrder     on
 {{compression}}
 {{sslSessionTickets}}
@@ -113,9 +114,9 @@ SSLHonorCipherOrder     on
 global
     # set default parameters to the {{securityProfile}} configuration
     tune.ssl.default-dh-param {{maxDHKeySize}}
-    ssl-default-bind-ciphers {{cipherSuites}}
+    ssl-default-bind-ciphers {{opensslCipherSuites}}
     ssl-default-bind-options {{sslProtocols}} no-tls-tickets
-    ssl-default-server-ciphers {{cipherSuites}}
+    ssl-default-server-ciphers {{opensslCipherSuites}}
     ssl-default-server-options {{sslProtocols}} no-tls-tickets
 
 frontend ft_test
@@ -167,7 +168,7 @@ $SERVER["socket"] == ":443" {
     # {{securityProfile}} configuration, tweak to your needs
 {{sslProtocols}}
     ssl.honor-cipher-order    = "enable"
-    ssl.cipher-list           = "{{cipherSuites}}"
+    ssl.cipher-list           = "{{opensslCipherSuites}}"
 {{hsts}}
 
     ...
@@ -195,7 +196,7 @@ $SERVER["socket"] == ":443" {
            maxThreads="150" SSLEnabled="true" scheme="https" secure="true"
            clientAuth="false" sslEnabledProtocols="{{sslProtocols}}"
            keystoreFile="/path/to/keystore.jks" keyAlias="server" keystorePass="jkspassword"
-           useServerCipherSuitesOrder="true" ciphers="{{jsseCipherSuites}}" /&gt;
+           useServerCipherSuitesOrder="true" ciphers="{{ianaCipherSuites}}" /&gt;
 </pre>
         <p><br/></p>
         <h4>tomcat/conf/web.xml</h4>
@@ -242,7 +243,6 @@ $SERVER["socket"] == ":443" {
         var profiles = {
             modern: {
                 cipherSuites: 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256',
-                jsseCipherSuites: 'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256',
                 elbPolicy: [
                     "Protocol-TLSv1.2",
                     "Server-Defined-Cipher-Order",
@@ -268,7 +268,6 @@ $SERVER["socket"] == ":443" {
             },
             intermediate: {
                 cipherSuites: 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS',
-                jsseCipherSuites: 'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,TLS_DHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,TLS_DHE_RSA_WITH_AES_128_CBC_SHA,TLS_DHE_RSA_WITH_AES_256_CBC_SHA256,TLS_DHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA,TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA,SSL_RSA_WITH_3DES_EDE_CBC_SHA',
                 elbPolicy: [
                     "Protocol-TLSv1",
                     "Protocol-TLSv1.1",
@@ -317,8 +316,7 @@ $SERVER["socket"] == ":443" {
                 messages: []
             },
             old: {
-                cipherSuites: 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-RSA-DES-CBC3-SHA:ECDHE-ECDSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:DES-CBC3-SHA:HIGH:SEED:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!RSAPSK:!aDH:!aECDH:!EDH-DSS-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA:!SRP',
-                jsseCipherSuites: 'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,TLS_DHE_DSS_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,TLS_DHE_RSA_WITH_AES_128_CBC_SHA,TLS_DHE_DSS_WITH_AES_128_CBC_SHA256,TLS_DHE_RSA_WITH_AES_256_CBC_SHA256,TLS_DHE_DSS_WITH_AES_256_CBC_SHA,TLS_DHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA,SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA,SSL_RSA_WITH_3DES_EDE_CBC_SHA',
+                cipherSuites: 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:DHE-DSS-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-RSA-DES-CBC3-SHA:ECDHE-ECDSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DHE-DSS-AES256-SHA256:DHE-DSS-AES128-SHA:DES-CBC3-SHA:DHE-RSA-CHACHA20-POLY1305:ECDHE-RSA-CAMELLIA256-SHA384:ECDHE-ECDSA-CAMELLIA256-SHA384:DHE-RSA-CAMELLIA256-SHA256:DHE-DSS-CAMELLIA256-SHA256:DHE-RSA-CAMELLIA256-SHA:DHE-DSS-CAMELLIA256-SHA:CAMELLIA256-SHA256:CAMELLIA256-SHA:ECDHE-RSA-CAMELLIA128-SHA256:ECDHE-ECDSA-CAMELLIA128-SHA256:DHE-RSA-CAMELLIA128-SHA256:DHE-DSS-CAMELLIA128-SHA256:DHE-RSA-CAMELLIA128-SHA:DHE-DSS-CAMELLIA128-SHA:CAMELLIA128-SHA256:CAMELLIA128-SHA:DHE-RSA-SEED-SHA:DHE-DSS-SEED-SHA:SEED-SHA',
                 elbPolicy: [
                     "Protocol-SSLv3",
                     "Protocol-TLSv1",
@@ -379,6 +377,61 @@ $SERVER["socket"] == ":443" {
             oldOpenSSL: 'TLS v1.1 and v1.2 support is only present in OpenSSL 1.0.1 and newer',
             oldApache: 'TLS v1.1 and v1.2 support is only present in Apache 2.2.23 and newer'
         };
+
+        var ianaTlsCipherSuiteNames;
+        // json/tls-parameters-4.csv fetched from http://www.iana.org/assignments/tls-parameters/tls-parameters-4.csv
+        // on the page http://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml
+        Papa.parse("../json/tls-parameters-4.csv", {
+            download: true,
+        	header: true,
+            complete: function(results) {
+                ianaTlsCipherSuiteNames = results.data;
+            }
+        });
+
+        var opensslCipherSuites;
+        // json/openssl-ciphersuites.csv is produced by running
+        // openssl ciphers -V ALL:COMPLEMENTOFALL | awk '{print "\"" $1 "\"," $3}' 2>&1 > openssl-ciphersuites.csv
+        // Add in deprecated names : https://www.openssl.org/docs/manmaster/apps/ciphers.html#Older-names-used-by-OpenSSL
+        // openssl ciphers -V EDH-RSA-DES-CBC3-SHA:EDH-DSS-DES-CBC3-SHA | awk '{print "\"" $1 "\"," $3}' | sed -e 's/,DHE-/,EDH-/g'  2>&1 >> openssl-ciphersuites.csv
+        Papa.parse("../json/openssl-ciphersuites.csv", {
+            download: true,
+            complete: function(results) {
+                opensslCipherSuites = results.data;
+            }
+        });
+
+        function getCodeFromOpensslCipher(opensslCipher) {
+            for (var i=0, tot=opensslCipherSuites.length; i < tot; i++) {
+                if (opensslCipherSuites[i][1] == opensslCipher) {
+                    return opensslCipherSuites[i][0];
+                }
+            }
+            return false;
+        }
+
+        function getIanaCipherFromCode(code) {
+            for (var i=0, tot=ianaTlsCipherSuiteNames.length; i < tot; i++) {
+                if (ianaTlsCipherSuiteNames[i].Value == code) {
+                    return ianaTlsCipherSuiteNames[i].Description;
+                }
+            }
+            return false;
+        }
+
+        function opensslCipherStringToIanaCipherString(opensslCipherString) {
+            var ianaCipherList = [];
+            opensslCipherString.split(":").forEach(function(opensslCipher){
+                var code = getCodeFromOpensslCipher(opensslCipher);
+                if (code) {
+                    var ianaCipher = getIanaCipherFromCode(code);
+                    if (ianaCipher) {
+                        ianaCipherList.push(ianaCipher);
+                    }
+                }
+            });
+            return ianaCipherList.join(",");
+        }
 
         $(function() {
             $( document ).tooltip();
@@ -558,7 +611,7 @@ $SERVER["socket"] == ":443" {
                 // define profile dependent values
                 jQuery.extend(data, {
                     sslProtocols: profiles[data.securityProfile]["sslProtocols"][data.server],
-                    cipherSuites: profiles[data.securityProfile]["cipherSuites"],
+                    opensslCipherSuites: profiles[data.securityProfile]["cipherSuites"],
                     maxDHKeySize: profiles[data.securityProfile]["maxDHKeySize"],
                     clientList: profiles[data.securityProfile]["clientList"]
                 });
@@ -594,7 +647,7 @@ $SERVER["socket"] == ":443" {
                     });
                 } else if (data.server == "tomcat") {
                     jQuery.extend(data, {
-                        jsseCipherSuites: profiles[data.securityProfile]["jsseCipherSuites"]
+                        ianaCipherSuites: opensslCipherStringToIanaCipherString(profiles[data.securityProfile]["cipherSuites"])
                     });
                 }
 
