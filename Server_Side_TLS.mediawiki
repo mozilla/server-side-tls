@@ -262,15 +262,12 @@ MBYCEQCHU6UNZoHMF6bPtj21Hn/bAgEC.....
 </source>
 
 == Pre-defined DHE groups ==
-In order to lower the burden of system administrators, several servers provide pre-computed DH groups. Unfortunately, the [https://weakdh.org/ logjam] report showed that it is very likely that a state-level adversary may have broken the most widely used 1024-bit DH group, Oakley group 2, standardized in [https://tools.ietf.org/html/rfc2409#section-6.2 rfc2409]].
+In order to lower the burden of system administrators, several servers provide pre-computed DH groups. Unfortunately, the [https://weakdh.org/ logjam] shows that pre-defined 1024 bits DHE is not safe, and administrators should either:
+* use a larger group, with a minimum size of 2048-bit, as recommended in the intermediate configuration ;
+* keep using a 1024-bit DH group if you need to (see [[#DHE_and_Java]]), but generate DH parameters yourself via the openssl dhparam 1024 command ;
+* disable DHE altogether, as recommended in the modern configuration, and rely on ECDHE for PFS if you don't support legacy clients lacking ECDHE support (see [[#DHE_and_ECDHE_support]]).
 
-For this reason, the use of this group is considered unsafe and you should either:
-* use a larger group, with a minimum size of 2048-bit, as recommended in the intermediate and modern configurations ;
-* keep using a 1024-bit DH group if you need to (see [[#DHE_and_Java]]), but move away from Oakley group 2 and use a custom DH group instead, generated via the openssl dhparam 1024 command ;
-* disable DHE altogether, relying on ECDHE for PFS if you don't support legacy clients lacking ECDHE support (see [[#DHE_and_ECDHE_support]]).
-
-It is currently assumed that standardized 2048 bits DH groups provide sufficient security to resist factorization attacks. However, the careful administrator should generate a random DH group instead of using a
-standardized one when setting up a new server, as advised by the [https://weakdh.org|logjam] authors.
+When using pre-defined DH groups, the IETF recommends implementing [RFC 7919 https://tools.ietf.org/html/rfc7919] and use either the ffdhe2048, ffdhe3072 or ffdhe4196 group. However, the careful administrator should generate a random DH group instead of using a standardized one when setting up a new server.
 
 == DHE and ECDHE support ==
 Most modern clients that support both ECDHE and DHE typically prefer the former, because ECDHE provides faster handshakes than DHE ([http://vincent.bernat.im/en/blog/2011-ssl-perfect-forward-secrecy.html], [http://nmav.gnutls.org/2011/12/price-to-pay-for-perfect-forward.html]).
@@ -512,9 +509,9 @@ SPDY version 3 is vulnerable to the CRIME attack (see also http://zoompf.com/201
 
 Once a TLS handshake has been negociated between the server and the client, both may exchange a session ticket, which contains an AES-CBC 128bit key which can decrypt the session. This key is generally static and only regenerated when the web server is restarted (with recent versions of Apache, it's stored in a file and also kept upon restarts).
 
-The current work-around is to disable RFC 5077 support.
+There is a security concern around the management of TLS tickets in web servers: if a server is breached, the key that encrypted tickets can be stolen and used to decrypted recorded TLS sessions. Administrators that are more concerned about security than performance may want to disable TLS tickets support entirely. However, this is a drastic measure that will impact performances, and thus the general recommendation is to implement regular restarts and wipes of the key file in web servers.
 
-more: https://media.blackhat.com/us-13/US-13-Daigniere-TLS-Secrets-Slides.pdf
+more information: https://media.blackhat.com/us-13/US-13-Daigniere-TLS-Secrets-Slides.pdf
 
 == Cipher names correspondence table ==
 IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table below matches these ciphers as well as their corresponding compatibility level.
@@ -2814,6 +2811,10 @@ In the example above, the component SIGN-RSA-SHA224 is not supported by this ver
 ! Version
 ! Editor
 ! Changes
+|-
+| style="text-align: center;" | 4.1
+| style="text-align: center;" | Julien Vehent
+| Clarify Logjam notes, Clarify risk of TLS Tickets
 |-
 | style="text-align: center;" | 4
 | style="text-align: center;" | Julien Vehent
