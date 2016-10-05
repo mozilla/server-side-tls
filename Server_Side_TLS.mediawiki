@@ -251,23 +251,56 @@ As an example, TLS_DHE_RSA_WITH_AES_128_CBC_SHA256 works as follow:
 # Client sends a [http://tools.ietf.org/html/rfc5246#section-7.1 CHANGE CIPHER SPEC] message to the server, and both parties continue the handshake using ENCRYPTED HANDSHAKE MESSAGES
 
 The size of the prime number ''p'' constrains the size of the pre-master key ''PMS'', because of the modulo operation. A smaller prime almost means weaker values of ''A'' and ''B'', which could leak the secret values ''X'' and ''Y''. Thus, the prime ''p'' should not be smaller than the size of the RSA private key.
-<source lang="bash">
-$ openssl dhparam 2048
-Generating DH parameters, 2048 bit long safe prime, generator 2
-..+..+...............+
+
+== Pre-defined DHE groups ==
+
+Instead of using pre-configured DH groups, or generating their own with "openssl dhparam", operators should use the pre-defined DH groups ffdhe2048, ffdhe3072 or ffdhe4096 recommended by the IETF in [RFC 7919 https://tools.ietf.org/html/rfc7919].  These groups are audited and may be more resistant to attacks than ones randomly generated.
+
+Note: if you must support older Java clients, Dh groups larger than 1024 bits may block connectivity (see [[#DHE_and_Java]]).
+
+=== ffdhe2048 ===
+<source>
 -----BEGIN DH PARAMETERS-----
-MBYCEQCHU6UNZoHMF6bPtj21Hn/bAgEC.....
-......
+MIIBCAKCAQEA//////////+t+FRYortKmq/cViAnPTzx2LnFg84tNpWp4TZBFGQz
++8yTnc4kmz75fS/jY2MMddj2gbICrsRhetPfHtXV/WVhJDP1H18GbtCFY2VVPe0a
+87VXE15/V8k1mE8McODmi3fipona8+/och3xWKE2rec1MKzKT0g6eXq8CrGCsyT7
+YdEIqUuyyOP7uWrat2DX9GgdT0Kj3jlN9K5W7edjcrsZCwenyO4KbXCeAvzhzffi
+7MA0BM0oNC9hkXL+nOmFg/+OTxIy7vKBg8P+OxtMb61zO7X8vC7CIAXFjvGDfRaD
+ssbzSibBsu/6iGtCOGEoXJf//////////wIBAg==
 -----END DH PARAMETERS-----
 </source>
 
-== Pre-defined DHE groups ==
-In order to lower the burden of system administrators, several servers provide pre-computed DH groups. Unfortunately, the [https://weakdh.org/ logjam] shows that pre-defined 1024 bits DHE is not safe, and administrators should either:
-* use a larger group, with a minimum size of 2048-bit, as recommended in the intermediate configuration ;
-* keep using a 1024-bit DH group if you need to (see [[#DHE_and_Java]]), but generate DH parameters yourself via the openssl dhparam 1024 command ;
-* disable DHE altogether, as recommended in the modern configuration, and rely on ECDHE for PFS if you don't support legacy clients lacking ECDHE support (see [[#DHE_and_ECDHE_support]]).
+=== ffdhe3072 ===
+<source>
+-----BEGIN DH PARAMETERS-----
+MIIBiAKCAYEA//////////+t+FRYortKmq/cViAnPTzx2LnFg84tNpWp4TZBFGQz
++8yTnc4kmz75fS/jY2MMddj2gbICrsRhetPfHtXV/WVhJDP1H18GbtCFY2VVPe0a
+87VXE15/V8k1mE8McODmi3fipona8+/och3xWKE2rec1MKzKT0g6eXq8CrGCsyT7
+YdEIqUuyyOP7uWrat2DX9GgdT0Kj3jlN9K5W7edjcrsZCwenyO4KbXCeAvzhzffi
+7MA0BM0oNC9hkXL+nOmFg/+OTxIy7vKBg8P+OxtMb61zO7X8vC7CIAXFjvGDfRaD
+ssbzSibBsu/6iGtCOGEfz9zeNVs7ZRkDW7w09N75nAI4YbRvydbmyQd62R0mkff3
+7lmMsPrBhtkcrv4TCYUTknC0EwyTvEN5RPT9RFLi103TZPLiHnH1S/9croKrnJ32
+nuhtK8UiNjoNq8Uhl5sN6todv5pC1cRITgq80Gv6U93vPBsg7j/VnXwl5B0rZsYu
+N///////////AgEC
+-----END DH PARAMETERS-----
+</source>
 
-When using pre-defined DH groups, the IETF recommends implementing [RFC 7919 https://tools.ietf.org/html/rfc7919] and use either the ffdhe2048, ffdhe3072 or ffdhe4196 group. However, the careful administrator should generate a random DH group instead of using a standardized one when setting up a new server.
+=== ffdhe4096 ===
+<source>
+-----BEGIN DH PARAMETERS-----
+MIICCAKCAgEA//////////+t+FRYortKmq/cViAnPTzx2LnFg84tNpWp4TZBFGQz
++8yTnc4kmz75fS/jY2MMddj2gbICrsRhetPfHtXV/WVhJDP1H18GbtCFY2VVPe0a
+87VXE15/V8k1mE8McODmi3fipona8+/och3xWKE2rec1MKzKT0g6eXq8CrGCsyT7
+YdEIqUuyyOP7uWrat2DX9GgdT0Kj3jlN9K5W7edjcrsZCwenyO4KbXCeAvzhzffi
+7MA0BM0oNC9hkXL+nOmFg/+OTxIy7vKBg8P+OxtMb61zO7X8vC7CIAXFjvGDfRaD
+ssbzSibBsu/6iGtCOGEfz9zeNVs7ZRkDW7w09N75nAI4YbRvydbmyQd62R0mkff3
+7lmMsPrBhtkcrv4TCYUTknC0EwyTvEN5RPT9RFLi103TZPLiHnH1S/9croKrnJ32
+nuhtK8UiNjoNq8Uhl5sN6todv5pC1cRITgq80Gv6U93vPBsg7j/VnXwl5B0rZp4e
+8W5vUsMWTfT7eTDp5OWIV7asfV9C1p9tGHdjzx1VA0AEh/VbpX4xzHpxNciG77Qx
+iu1qHgEtnmgyqQdgCpGBMMRtx3j5ca0AOAkpmaMzy4t6Gh25PXFAADwqTs6p+Y0K
+zAqCkc3OyX3Pjsm1Wn+IpGtNtahR9EGC4caKAH5eZV9q//////////8CAQI=
+-----END DH PARAMETERS-----
+</source>
 
 == DHE and ECDHE support ==
 Most modern clients that support both ECDHE and DHE typically prefer the former, because ECDHE provides faster handshakes than DHE ([http://vincent.bernat.im/en/blog/2011-ssl-perfect-forward-secrecy.html], [http://nmav.gnutls.org/2011/12/price-to-pay-for-perfect-forward.html]).
@@ -459,7 +492,6 @@ In a public discussion ([https://bugzilla.mozilla.org/show_bug.cgi?id=927045 bug
  
 While 3DES provides more resistant cryptography, it is also 30 times slower and more cpu intensive than RC4. For large web infrastructure, the CPU cost of replacing RC4 with 3DES is non-zero. For this reason, we recommend that administrators evaluate their traffic patterns, and make the decision of replacing RC4 with 3DES on a per-case basis. At Mozilla, we evaluated that the impact on CPU usage is minor, and thus decided to replace RC4 with 3DES where backward compatibility is required.
 
-
 The root cause of the problem is information leakage that occurs when data is compressed prior to encryption. If someone can repeatedly inject and mix arbitrary content with some sensitive and relatively predictable data, and observe the resulting encrypted stream, then he will be able to extract the unknown data from it.
 
 more: https://community.qualys.com/blogs/securitylabs/2012/09/14/crime-information-leakage-attack-against-ssltls
@@ -507,9 +539,9 @@ SPDY version 3 is vulnerable to the CRIME attack (see also http://zoompf.com/201
 
 == TLS tickets (RFC 5077) ==
 
-Once a TLS handshake has been negociated between the server and the client, both may exchange a session ticket, which contains an AES-CBC 128bit key which can decrypt the session. This key is generally static and only regenerated when the web server is restarted (with recent versions of Apache, it's stored in a file and also kept upon restarts).
+Once a TLS handshake has been negotiated between the server and the client, both may exchange a session ticket, which contains an AES-CBC 128bit key which can decrypt the session. This key is generally static and only regenerated when the web server is restarted (with recent versions of Apache, it's stored in a file and also kept upon restarts).
 
-There is a security concern around the management of TLS tickets in web servers: if a server is breached, the key that encrypted tickets can be stolen and used to decrypted recorded TLS sessions. Administrators that are more concerned about security than performance may want to disable TLS tickets support entirely. However, this is a drastic measure that will impact performances, and thus the general recommendation is to implement regular restarts and wipes of the key file in web servers.
+The key that encrypt TLS tickets in servers is very hard to manage and potentially induces a security risk if not renewed regularly: if a server is breached, the key can be stolen and used to decrypt recorded TLS tickets, thus leaking session keys. TLS tickets do bring a performance benefit because of session resumption, but administrators that are more concerned about security than performance may want to disable them entirely. The trade-off we recommend is to implement restarts of web servers and force deletion of local caches to renew encryption keys.
 
 more information: https://media.blackhat.com/us-13/US-13-Daigniere-TLS-Secrets-Slides.pdf
 
