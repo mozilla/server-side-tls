@@ -256,7 +256,7 @@ The size of the prime number ''p'' constrains the size of the pre-master key ''P
 
 Instead of using pre-configured DH groups, or generating their own with "openssl dhparam", operators should use the pre-defined DH groups ffdhe2048, ffdhe3072 or ffdhe4096 recommended by the IETF in [RFC 7919 https://tools.ietf.org/html/rfc7919].  These groups are audited and may be more resistant to attacks than ones randomly generated.
 
-Note: if you must support older Java clients, Dh groups larger than 1024 bits may block connectivity (see [[#DHE_and_Java]]).
+Note: if you must support old Java clients, Dh groups larger than 1024 bits may block connectivity (see [[#DHE_and_Java]]).
 
 === ffdhe2048 ===
 <source>
@@ -316,8 +316,8 @@ Note that schannel on Windows XP technically support DHE, but only with DSA keys
 Java 6 and 7 do not support Diffie-Hellman parameters larger than 1024 bits. If your server expects to receive connections from java 6 clients and wants to enable PFS, it must provide a DHE parameter of 1024 bits.
 
 If keeping the compatibility with Java < 7 is a necessity, thus preventing the use of large DH keys, three solutions are available:
-* using custom 1024-bit DH parameters, different from Oakley group 2 ;
-* if the software used does not support custom DH parameters, like Apache HTTPd < 2.2.30, it is possible to keep using the 1024-bit DH Oakley group 2, knowing these clients will be at risk from a state-level adversary ;
+* using custom 1024-bit DH parameters, different from Oakley group 2, preferably generated with '''openssl dhparam 1024''' ;
+* if the software used does not support custom DH parameters, like Apache HTTPd < 2.2.30, it is possible to keep using the 1024-bit DH Oakley group 2, knowing these clients may be at risk of a compromise;
 * it is also possible to completely disable DHE. This means that clients not supporting ECDHE will be reverting to static RSA, giving up Forward Secrecy.
 
 The case of Java 7 is a bit different. Java 7 supports ECDHE ciphers, so if the server provides ECDHE and prioritizes it before DHE ciphers using server side ordering, then Java 7 will use ECDHE and not care about the size of the DHE parameter. In this situation, the server can use 2048 bits DHE parameters for all other clients.
@@ -539,9 +539,9 @@ SPDY version 3 is vulnerable to the CRIME attack (see also http://zoompf.com/201
 
 == TLS tickets (RFC 5077) ==
 
-Once a TLS handshake has been negotiated between the server and the client, both may exchange a session ticket, which contains an AES-CBC 128bit key which can decrypt the session. This key is generally static and only regenerated when the web server is restarted (with recent versions of Apache, it's stored in a file and also kept upon restarts).
+Once a TLS handshake has been negotiated between the server and the client, both may exchange a session ticket, which contains the session and is usually encrypted with AES-CBC 128bit. This AES key is generally static and only regenerated when the web server is restarted (with recent versions of Apache, it's stored in a file and also kept upon restarts).
 
-The key that encrypt TLS tickets in servers is very hard to manage and potentially induces a security risk if not renewed regularly: if a server is breached, the key can be stolen and used to decrypt recorded TLS tickets, thus leaking session keys. TLS tickets do bring a performance benefit because of session resumption, but administrators that are more concerned about security than performance may want to disable them entirely. The trade-off we recommend is to implement restarts of web servers and force deletion of local caches to renew encryption keys.
+The key that encrypts TLS tickets in servers is very hard to manage and potentially introduces a security risk if not renewed regularly: if a server is breached, the key can be stolen and used to decrypt recorded TLS tickets, thus leaking session keys. TLS tickets do bring a performance benefit because of session resumption, but administrators that are more concerned about security than performance may want to disable them entirely. The trade-off we recommend is to implement restarts of web servers and force deletion of local caches to renew encryption keys.
 
 more information: https://media.blackhat.com/us-13/US-13-Daigniere-TLS-Secrets-Slides.pdf
 
