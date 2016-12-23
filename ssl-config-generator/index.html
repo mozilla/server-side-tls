@@ -112,7 +112,7 @@ SSLHonorCipherOrder     on
 <pre style="visibility: {{visibility}};">
 global
     # set default parameters to the {{securityProfile}} configuration
-    tune.ssl.default-dh-param {{maxDHKeySize}}
+    {{#if dhparam}}tune.ssl.default-dh-param {{maxDHKeySize}}{{/if}}
     ssl-default-bind-ciphers {{cipherSuites}}
     ssl-default-bind-options {{sslProtocols}} no-tls-tickets
     ssl-default-server-ciphers {{cipherSuites}}
@@ -394,6 +394,7 @@ $SERVER["socket"] == ":443" {
                         data.visibility = 'hidden';
                         data.message = "HAProxy didn't support SSL until version 1.5 and newer";
                     }
+                    data.dhparam = true
                     break;
                 case "lighttpd":
                     // http://redmine.lighttpd.net/projects/1/wiki/docs_ssl
