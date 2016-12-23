@@ -409,6 +409,13 @@ $SERVER["socket"] == ":443" {
             return data;
         }
 
+        function includesDHEcipherSuites(suites) {
+            function isDHE(suite) {
+                return /^DHE/.test(suite);
+            }
+            return suites.split(':').filter(isDHE).length > 0
+        }
+
         $(document).ready(function() {
             function loadFromQueryString() {
                 // http://stackoverflow.com/a/10834119/837015
@@ -523,6 +530,11 @@ $SERVER["socket"] == ":443" {
                     .fail( function( elbTemplate) {
                         console.log("JSON fetch failed : " + JSON.stringify(elbTemplate));
                     });
+                }
+
+                // clear the dhparam config for server configs not using DHE
+                if (!includesDHEcipherSuites(data.cipherSuites)) {
+                    data.dhparam = ''
                 }
 
                 // catch invalid version profile combinations
