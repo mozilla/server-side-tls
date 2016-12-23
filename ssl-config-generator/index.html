@@ -152,8 +152,7 @@ $SERVER["socket"] == ":443" {
     # pemfile is cert+privkey, ca-file is the intermediate chain in one file
     ssl.pemfile               = "/path/to/signed_cert_plus_private_key.pem"
     ssl.ca-file               = "/path/to/intermediate_certificate.pem"
-    # for DH/DHE ciphers, dhparam should be >= 2048-bit
-    ssl.dh-file               = "/path/to/dhparam.pem"
+    {{dhparam}}
     # ECDH/ECDHE ciphers curve strength (see `openssl ecparam -list_curves`)
     ssl.ec-curve              = "secp384r1"
     # Compression is by default off at compile-time, but use if needed
@@ -403,6 +402,10 @@ $SERVER["socket"] == ":443" {
                             '    setenv.add-response-header  = (\n' +
                             '        "Strict-Transport-Security" => "max-age=15768000;"\n' +
                             '    )';
+                    }
+                    if (isSemVer(data.serverVersion, ">=1.4.29")) {
+                        data.dhparam = '\n    # for DH/DHE ciphers, dhparam should be >= 2048-bit\n' +
+                                       '    ssl.dh-file               = "/path/to/dhparam.pem"'
                     }
                     break;
             }
