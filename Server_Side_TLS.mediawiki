@@ -220,7 +220,7 @@ If you use it to automatically configure your servers without review, it may bre
 * DES contains ciphers that use the deprecated Data Encryption Standard
 * SSLv2 contains all ciphers that were defined in the old version of the SSL standard, now deprecated
 * MD5 contains all the ciphers that use the deprecated message digest 5 as the hashing algorithm
-* kDH and kECDH contain static DH/ECDH for key exchange which is rarely used
+* kDH and kECDH contain static DH/ECDH key exchange which is rarely used
 
 = Forward Secrecy =
 
