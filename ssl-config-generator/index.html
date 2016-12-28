@@ -112,7 +112,7 @@ SSLHonorCipherOrder     on
 <pre style="visibility: {{visibility}};">
 global
     # set default parameters to the {{securityProfile}} configuration
-    tune.ssl.default-dh-param {{maxDHKeySize}}
+    {{#if dhparam}}tune.ssl.default-dh-param {{maxDHKeySize}}{{/if}}
     ssl-default-bind-ciphers {{cipherSuites}}
     ssl-default-bind-options {{sslProtocols}} no-tls-tickets
     ssl-default-server-ciphers {{cipherSuites}}
@@ -152,8 +152,7 @@ $SERVER["socket"] == ":443" {
     # pemfile is cert+privkey, ca-file is the intermediate chain in one file
     ssl.pemfile               = "/path/to/signed_cert_plus_private_key.pem"
     ssl.ca-file               = "/path/to/intermediate_certificate.pem"
-    # for DH/DHE ciphers, dhparam should be >= 2048-bit
-    ssl.dh-file               = "/path/to/dhparam.pem"
+    {{dhparam}}
     # ECDH/ECDHE ciphers curve strength (see `openssl ecparam -list_curves`)
     ssl.ec-curve              = "secp384r1"
     # Compression is by default off at compile-time, but use if needed
@@ -395,6 +394,7 @@ $SERVER["socket"] == ":443" {
                         data.visibility = 'hidden';
                         data.message = "HAProxy didn't support SSL until version 1.5 and newer";
                     }
+                    data.dhparam = true
                     break;
                 case "lighttpd":
                     // http://redmine.lighttpd.net/projects/1/wiki/docs_ssl
@@ -404,9 +404,20 @@ $SERVER["socket"] == ":443" {
                             '        "Strict-Transport-Security" => "max-age=15768000;"\n' +
                             '    )';
                     }
+                    if (isSemVer(data.serverVersion, ">=1.4.29")) {
+                        data.dhparam = '\n    # for DH/DHE ciphers, dhparam should be >= 2048-bit\n' +
+                                       '    ssl.dh-file               = "/path/to/dhparam.pem"'
+                    }
                     break;
             }
             return data;
+        }
+
+        function includesDHEcipherSuites(suites) {
+            function isDHE(suite) {
+                return /^DHE/.test(suite);
+            }
+            return suites.split(':').filter(isDHE).length > 0
         }
 
         $(document).ready(function() {
@@ -523,6 +534,11 @@ $SERVER["socket"] == ":443" {
                     .fail( function( elbTemplate) {
                         console.log("JSON fetch failed : " + JSON.stringify(elbTemplate));
                     });
+                }
+
+                // clear the dhparam config for server configs not using DHE
+                if (!includesDHEcipherSuites(data.cipherSuites)) {
+                    data.dhparam = ''
                 }
 
                 // catch invalid version profile combinations
