@@ -81,7 +81,7 @@ For services that don't need compatibility with legacy clients (mostly WinXP), b
 * HSTS: '''max-age=15768000''' (6 months)
 * HPKP: '''max-age=2589000''' (1 month)
 * Certificate Validity: '''<=732 days''' (24 months)
-* OCSP Stapling: '''recommended'''
+* OCSP Stapling: '''required'''
 
 <source>
 0xCC,0x14  -  ECDHE-ECDSA-CHACHA20-POLY1305  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=ChaCha20(256)  Mac=AEAD
