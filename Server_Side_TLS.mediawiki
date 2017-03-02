@@ -36,8 +36,8 @@ The ordering of a ciphersuite is very important because it decides which algorit
 For services that don't need backward compatibility, the parameters below provide a higher level of security. This configuration is compatible with Firefox 27, Chrome 30, IE 11 on Windows 7, Edge, Opera 17, Safari 9, Android 5.0, and Java 8.
 
 * Ciphersuites: '''ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256'''
-* Versions: '''TLSv1.2'''
-* TLS curves: '''prime256v1, secp384r1, secp521r1'''
+* Versions: '''TLSv1.3, TLSv1.2'''
+* TLS curves: '''prime256v1, secp384r1, x25519, x448'''
 * Certificate type: '''ECDSA (recommended) or RSA'''
 * Certificate curve: '''prime256v1, secp384r1, secp521r1'''
 * Certificate signature: '''ecdsa-with-SHA256, ecdsa-with-SHA384, ecdsa-with-SHA512, sha256WithRSAEncryption, sha384WithRSAEncryption, sha512WithRSAEncryption'''
@@ -66,8 +66,6 @@ Rationale:
 For services that don't need compatibility with legacy clients (mostly WinXP), but still need to support a wide range of clients, this configuration is recommended. It is is compatible with Firefox 1, Chrome 1, IE 7, Opera 5 and Safari 1.
 
 * Ciphersuites: '''ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:!DSS'''
-* Versions: '''TLSv1.2, TLSv1.1, TLSv1'''
-* TLS curves: '''prime256v1, secp384r1, secp521r1'''
 * Certificate type: '''RSA'''
 * Certificate curve: ''''None'''
 * Certificate signature: '''sha256WithRSAEncryption'''
@@ -76,6 +74,8 @@ For services that don't need compatibility with legacy clients (mostly WinXP), b
 * ECDH Parameter size: '''256'''
 * HSTS: '''max-age=15768000'''
 * Certificate switching: '''None'''
+* Versions: '''TLSv1.3, TLSv1.2, TLSv1.1, TLSv1'''
+* TLS curves: '''prime256v1, secp384r1, x25519, x448'''
 
 <source>
 0xCC,0x14  -  ECDHE-ECDSA-CHACHA20-POLY1305  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=ChaCha20(256)  Mac=AEAD
@@ -110,8 +110,8 @@ Rationale:
 This is the old ciphersuite that works with all clients back to Windows XP/IE6. It should be used as a last resort only.
 
 * Ciphersuites: '''ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-RSA-DES-CBC3-SHA:ECDHE-ECDSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:DES-CBC3-SHA:HIGH:SEED:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!RSAPSK:!aDH:!aECDH:!EDH-DSS-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA:!SRP'''
-* Versions: '''TLSv1.2, TLSv1.1, TLSv1, SSLv3'''
-* TLS curves: '''prime256v1, secp384r1, secp521r1'''
+* Versions: '''TLSv1.3, TLSv1.2, TLSv1.1, TLSv1, SSLv3'''
+* TLS curves: '''prime256v1, secp384r1, x25519, x448'''
 * Certificate type: '''RSA'''
 * Certificate curve: ''''None'''
 * Certificate signature: '''sha256WithRSAEncryption'''
