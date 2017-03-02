@@ -47,6 +47,7 @@ For services that don't need backward compatibility, the parameters below provid
 * HPKP: '''max-age=34387200''' (13 months)
 * Certificate Validity: '''<=398 days''' (13 months)
 * OCSP Stapling: '''required'''
+* CAA: '''recommended'''
 
 <source>
 0xC0,0x2C  -  ECDHE-ECDSA-AES256-GCM-SHA384  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(256)    Mac=AEAD
@@ -82,6 +83,7 @@ For services that don't need compatibility with legacy clients (mostly WinXP), b
 * HPKP: '''max-age=2589000''' (1 month)
 * Certificate Validity: '''<=732 days''' (24 months)
 * OCSP Stapling: '''required'''
+* CAA: '''optional'''
 
 <source>
 0xCC,0x14  -  ECDHE-ECDSA-CHACHA20-POLY1305  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=ChaCha20(256)  Mac=AEAD
@@ -129,6 +131,7 @@ This is the old ciphersuite that works with all clients back to Windows XP/IE6. 
 * Certificate switching: '''sha1WithRSAEncryption'''
 * Certificate Validity: '''<=1194 days''' (39 months)
 * OCSP Stapling: '''optional'''
+* CAA: '''optional'''
 
 <source>
 0xCC,0x14  -  ECDHE-ECDSA-CHACHA20-POLY1305   TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=ChaCha20(256)  Mac=AEAD
