@@ -41,6 +41,7 @@ For services that don't need backward compatibility, the parameters below provid
 * Certificate type: '''ECDSA (recommended) or RSA'''
 * Certificate curve: '''prime256v1, secp384r1'''
 * Certificate signature: '''ecdsa-with-SHA256, ecdsa-with-SHA384, ecdsa-with-SHA512, sha256WithRSAEncryption, sha384WithRSAEncryption, sha512WithRSAEncryption'''
+* Certificate transparency: '''required'''
 * Bits of security: '''>=128''' (RSA 3072 and above, P-256, P-384)
 * HSTS: '''max-age=34387200''' (13 months)
 * HPKP: '''max-age=34387200''' (13 months)
@@ -74,6 +75,7 @@ For services that don't need compatibility with legacy clients (mostly WinXP), b
 * Certificate type: '''ECDSA (recommended) or RSA'''
 * Certificate curve: ''''prime256v1, secp384r1'''
 * Certificate signature: '''ecdsa-with-SHA256, ecdsa-with-SHA384, ecdsa-with-SHA512, sha256WithRSAEncryption, sha384WithRSAEncryption, sha512WithRSAEncryption'''
+* Certificate transparency: '''optional'''
 * Bits of security: '''>=112''' (RSA 2048 and above, P-256, P-384)
 * DH Parameter size: '''2048''' (recommend using [#Pre-defined_DHE_groups Pre-defined DHE groups])
 * HSTS: '''max-age=15768000''' (6 months)
@@ -119,6 +121,7 @@ This is the old ciphersuite that works with all clients back to Windows XP/IE6. 
 * Certificate type: '''RSA'''
 * Certificate curve: ''''None'''
 * Certificate signature: '''sha256WithRSAEncryption'''
+* Certificate transparency: '''optional'''
 * Bits of security: '''>=112''' (RSA 2048 and above)
 * DH Parameter size: '''1024'''
 * HSTS: '''max-age=2589000''' (1 month) (optional)
