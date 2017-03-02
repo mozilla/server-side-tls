@@ -39,7 +39,7 @@ For services that don't need backward compatibility, the parameters below provid
 * Versions: '''TLSv1.3, TLSv1.2'''
 * TLS curves: '''prime256v1, secp384r1, x25519, x448'''
 * Certificate type: '''ECDSA (recommended) or RSA'''
-* Certificate curve: '''prime256v1, secp384r1, secp521r1'''
+* Certificate curve: '''prime256v1, secp384r1'''
 * Certificate signature: '''ecdsa-with-SHA256, ecdsa-with-SHA384, ecdsa-with-SHA512, sha256WithRSAEncryption, sha384WithRSAEncryption, sha512WithRSAEncryption'''
 * Bits of security: '''>=128''' (RSA 3072 and above, P-256, P-284, X25519)
 * HSTS: '''max-age=15768000'''
