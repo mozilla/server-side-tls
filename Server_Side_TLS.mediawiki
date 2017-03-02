@@ -69,7 +69,7 @@ Rationale:
 == <span style="color:orange;">'''Intermediate'''</span> compatibility (default) ==
 For services that don't need compatibility with legacy clients (mostly WinXP), but still need to support a wide range of clients, this configuration is recommended. It is is compatible with Firefox 1, Chrome 1, IE 7, Opera 5 and Safari 1.
 
-* Ciphersuites: '''ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS'''
+* Ciphersuites: '''ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:!DSS'''
 * Versions: '''TLSv1.2, TLSv1.1, TLSv1'''
 * TLS curves: '''prime256v1, secp384r1, secp521r1'''
 * Certificate type: '''RSA'''
@@ -102,21 +102,16 @@ For services that don't need compatibility with legacy clients (mostly WinXP), b
 0x00,0x33  -  DHE-RSA-AES128-SHA             SSLv3    Kx=DH    Au=RSA    Enc=AES(128)       Mac=SHA1
 0x00,0x6B  -  DHE-RSA-AES256-SHA256          TLSv1.2  Kx=DH    Au=RSA    Enc=AES(256)       Mac=SHA256
 0x00,0x39  -  DHE-RSA-AES256-SHA             SSLv3    Kx=DH    Au=RSA    Enc=AES(256)       Mac=SHA1
-0xC0,0x08  -  ECDHE-ECDSA-DES-CBC3-SHA       SSLv3    Kx=ECDH  Au=ECDSA  Enc=3DES(168)      Mac=SHA1
-0xC0,0x12  -  ECDHE-RSA-DES-CBC3-SHA         SSLv3    Kx=ECDH  Au=RSA    Enc=3DES(168)      Mac=SHA1
-0x00,0x16  -  EDH-RSA-DES-CBC3-SHA           SSLv3    Kx=DH    Au=RSA    Enc=3DES(168)      Mac=SHA1
 0x00,0x9C  -  AES128-GCM-SHA256              TLSv1.2  Kx=RSA   Au=RSA    Enc=AESGCM(128)    Mac=AEAD
 0x00,0x9D  -  AES256-GCM-SHA384              TLSv1.2  Kx=RSA   Au=RSA    Enc=AESGCM(256)    Mac=AEAD
 0x00,0x3C  -  AES128-SHA256                  TLSv1.2  Kx=RSA   Au=RSA    Enc=AES(128)       Mac=SHA256
 0x00,0x3D  -  AES256-SHA256                  TLSv1.2  Kx=RSA   Au=RSA    Enc=AES(256)       Mac=SHA256
 0x00,0x2F  -  AES128-SHA                     SSLv3    Kx=RSA   Au=RSA    Enc=AES(128)       Mac=SHA1
 0x00,0x35  -  AES256-SHA                     SSLv3    Kx=RSA   Au=RSA    Enc=AES(256)       Mac=SHA1
-0x00,0x0A  -  DES-CBC3-SHA                   SSLv3    Kx=RSA   Au=RSA    Enc=3DES(168)      Mac=SHA1
 </source>
 
 Rationale:
 * ChaCha20 is prefered as the fastest and safest in-software cipher, followed by AES128. Unlike the modern configuration, we do not assume clients support AESNI and thus do not prioritize AES256 above 128 and ChaCha20. There has been discussions ([http://www.mail-archive.com/dev-tech-crypto@lists.mozilla.org/msg11247.html 1], [http://www.mail-archive.com/dev-tech-crypto@lists.mozilla.org/msg12398.html 2]) on whether AES256 extra security was worth its computing cost in software (without AESNI), and the results are far from obvious. At the moment, AES128 is preferred, because it provides good security, is really fast, and seems to be more resistant to timing attacks.
-* DES-CBC3-SHA and EDH-RSA-DES-CBC3-SHA are maintained for backward compatibility with clients that do not support AES.
 * While the goal is to support a broad range of clients, we reasonably disable a number of ciphers that have little support (such as SEED, CAMELLIA, ...).
 
 == <span style="color:gray;">'''Old'''</span> backward compatibility ==
