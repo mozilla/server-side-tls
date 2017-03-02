@@ -38,14 +38,11 @@ For services that don't need backward compatibility, the parameters below provid
 * Ciphersuites: '''ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256'''
 * Versions: '''TLSv1.2'''
 * TLS curves: '''prime256v1, secp384r1, secp521r1'''
-* Certificate type: '''ECDSA'''
+* Certificate type: '''ECDSA (recommended) or RSA'''
 * Certificate curve: '''prime256v1, secp384r1, secp521r1'''
-* Certificate signature: '''sha256WithRSAEncryption, ecdsa-with-SHA256, ecdsa-with-SHA384, ecdsa-with-SHA512'''
-* RSA key size: '''2048''' (if not ecdsa)
-* DH Parameter size: '''None''' (disabled entirely)
-* ECDH Parameter size: '''256'''
+* Certificate signature: '''ecdsa-with-SHA256, ecdsa-with-SHA384, ecdsa-with-SHA512, sha256WithRSAEncryption, sha384WithRSAEncryption, sha512WithRSAEncryption'''
+* Bits of security: '''>=128''' (RSA 3072 and above, P-256, P-284, X25519)
 * HSTS: '''max-age=15768000'''
-* Certificate switching: '''None'''
 
 <source>
 0xC0,0x2C  -  ECDHE-ECDSA-AES256-GCM-SHA384  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(256)    Mac=AEAD
