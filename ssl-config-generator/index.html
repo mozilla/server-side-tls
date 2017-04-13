@@ -336,7 +336,7 @@ $SERVER["socket"] == ":443" {
                         data.hsts = '\n    # HSTS (ngx_http_headers_module is required) (15768000 seconds = 6 months)' + '\n' +
                             '    add_header Strict-Transport-Security "max-age=15768000"';
                         if (isSemVer(data.serverVersion, '>=1.7.5')) {
-                            data.hsts += ' always'
+                            data.hsts += ' always';
                         }
                         data.hsts += ';';
                     }
