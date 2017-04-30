@@ -529,6 +529,7 @@ The Logjam attack describes methods of attacking TLS servers supporting DHE expo
 
 more: https://weakdh.org
 
+= SSL and TLS Settings =
 == SPDY ==
 
 (see also http://en.wikipedia.org/wiki/SPDY and http://www.chromium.org/spdy/spdy-protocol)
