@@ -32,6 +32,8 @@ Older versions of OpenSSL may not return the full list of algorithms. AES-GCM an
 
 The ordering of a ciphersuite is very important because it decides which algorithms are going to be selected in priority. Each level shows the list of algorithms returned by its ciphersuite. If you have to pick ciphers manually for your application, make sure you keep the ordering.
 
+The ciphersuite numbers listed come from the IANA [https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-4 TLS Cipher Suite Registry]. Previous versions of these recommendations included draft numbers for ECDHE-ECDSA-CHACHA20-POLY1305 (0xCC,0x14) and ECDHE-RSA-CHACHA20-POLY1305 (0xCC,0x13).
+
 == <span style="color:green;">'''Modern'''</span> compatibility ==
 For services that don't need backward compatibility, the parameters below provide a higher level of security. This configuration is compatible with Firefox 27, Chrome 30, IE 11 on Windows 7, Edge, Opera 17, Safari 9, Android 5.0, and Java 8.
 
@@ -50,8 +52,8 @@ For services that don't need backward compatibility, the parameters below provid
 <source>
 0xC0,0x2C  -  ECDHE-ECDSA-AES256-GCM-SHA384  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(256)    Mac=AEAD
 0xC0,0x30  -  ECDHE-RSA-AES256-GCM-SHA384    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(256)    Mac=AEAD
-0xCC,0x14  -  ECDHE-ECDSA-CHACHA20-POLY1305  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=ChaCha20(256)  Mac=AEAD
-0xCC,0x13  -  ECDHE-RSA-CHACHA20-POLY1305    TLSv1.2  Kx=ECDH  Au=RSA    Enc=ChaCha20(256)  Mac=AEAD
+0xCC,0xA9  -  ECDHE-ECDSA-CHACHA20-POLY1305  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=ChaCha20(256)  Mac=AEAD
+0xCC,0xA8  -  ECDHE-RSA-CHACHA20-POLY1305    TLSv1.2  Kx=ECDH  Au=RSA    Enc=ChaCha20(256)  Mac=AEAD
 0xC0,0x2B  -  ECDHE-ECDSA-AES128-GCM-SHA256  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(128)    Mac=AEAD
 0xC0,0x2F  -  ECDHE-RSA-AES128-GCM-SHA256    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(128)    Mac=AEAD
 0xC0,0x24  -  ECDHE-ECDSA-AES256-SHA384      TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AES(256)       Mac=SHA384
@@ -73,7 +75,7 @@ For services that don't need compatibility with legacy clients (mostly WinXP), b
 * Versions: '''TLSv1.2, TLSv1.1, TLSv1'''
 * TLS curves: '''prime256v1, secp384r1, secp521r1'''
 * Certificate type: '''RSA'''
-* Certificate curve: ''''None'''
+* Certificate curve: '''None'''
 * Certificate signature: '''sha256WithRSAEncryption'''
 * RSA key size: '''2048'''
 * DH Parameter size: '''2048'''
@@ -82,8 +84,8 @@ For services that don't need compatibility with legacy clients (mostly WinXP), b
 * Certificate switching: '''None'''
 
 <source>
-0xCC,0x14  -  ECDHE-ECDSA-CHACHA20-POLY1305  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=ChaCha20(256)  Mac=AEAD
-0xCC,0x13  -  ECDHE-RSA-CHACHA20-POLY1305    TLSv1.2  Kx=ECDH  Au=RSA    Enc=ChaCha20(256)  Mac=AEAD
+0xCC,0xA9  -  ECDHE-ECDSA-CHACHA20-POLY1305  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=ChaCha20(256)  Mac=AEAD
+0xCC,0xA8  -  ECDHE-RSA-CHACHA20-POLY1305    TLSv1.2  Kx=ECDH  Au=RSA    Enc=ChaCha20(256)  Mac=AEAD
 0xC0,0x2B  -  ECDHE-ECDSA-AES128-GCM-SHA256  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(128)    Mac=AEAD
 0xC0,0x2F  -  ECDHE-RSA-AES128-GCM-SHA256    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(128)    Mac=AEAD
 0xC0,0x2C  -  ECDHE-ECDSA-AES256-GCM-SHA384  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(256)    Mac=AEAD
@@ -127,7 +129,7 @@ This is the old ciphersuite that works with all clients back to Windows XP/IE6. 
 * Versions: '''TLSv1.2, TLSv1.1, TLSv1, SSLv3'''
 * TLS curves: '''prime256v1, secp384r1, secp521r1'''
 * Certificate type: '''RSA'''
-* Certificate curve: ''''None'''
+* Certificate curve: '''None'''
 * Certificate signature: '''sha256WithRSAEncryption'''
 * RSA key size: '''2048'''
 * DH Parameter size: '''1024'''
@@ -136,8 +138,8 @@ This is the old ciphersuite that works with all clients back to Windows XP/IE6. 
 * Certificate switching: '''sha1WithRSAEncryption'''
 
 <source>
-0xCC,0x14  -  ECDHE-ECDSA-CHACHA20-POLY1305   TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=ChaCha20(256)  Mac=AEAD
-0xCC,0x13  -  ECDHE-RSA-CHACHA20-POLY1305     TLSv1.2  Kx=ECDH  Au=RSA    Enc=ChaCha20(256)  Mac=AEAD
+0xCC,0xA9  -  ECDHE-ECDSA-CHACHA20-POLY1305   TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=ChaCha20(256)  Mac=AEAD
+0xCC,0xA8  -  ECDHE-RSA-CHACHA20-POLY1305     TLSv1.2  Kx=ECDH  Au=RSA    Enc=ChaCha20(256)  Mac=AEAD
 0xC0,0x2F  -  ECDHE-RSA-AES128-GCM-SHA256     TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(128)    Mac=AEAD
 0xC0,0x2B  -  ECDHE-ECDSA-AES128-GCM-SHA256   TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(128)    Mac=AEAD
 0xC0,0x30  -  ECDHE-RSA-AES256-GCM-SHA384     TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(256)    Mac=AEAD
