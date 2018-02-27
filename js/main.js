@@ -1,7 +1,5 @@
 var captureJson;
-$.getJSON("https://fr0zenbits.github.io/server-side-tls/json/server-side-tls-conf-4.0.json", function(responseJson){
-    captureJson = responseJson;
-});
+$.getJSON("https://fr0zenbits.github.io/server-side-tls/json/server-side-tls-conf-4.0.json").done(fucntion(x){ captureJson = x; });
 
 var json = captureJson.configurations;
 
