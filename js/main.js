@@ -1,5 +1,5 @@
 var json;
-$.getJSON("../json/server-side-tls-conf-4.0", function(responseJson){
+$.getJSON("../json/server-side-tls-conf-4.0.json", function(responseJson){
     json = responseJson.configurations;
 });
 
