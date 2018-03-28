@@ -547,6 +547,8 @@ The key that encrypts TLS tickets in servers is very hard to manage and potentia
 
 more information: https://media.blackhat.com/us-13/US-13-Daigniere-TLS-Secrets-Slides.pdf
 
+= Cipher suites =
+
 == Cipher names correspondence table ==
 IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table below matches these ciphers as well as their corresponding compatibility level.
 {| class="wikitable sortable"
