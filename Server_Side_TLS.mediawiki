@@ -532,13 +532,6 @@ The Logjam attack describes methods of attacking TLS servers supporting DHE expo
 more: https://weakdh.org
 
 = SSL and TLS Settings =
-== SPDY ==
-
-(see also http://en.wikipedia.org/wiki/SPDY and http://www.chromium.org/spdy/spdy-protocol)
-
-SPDY is a protocol that incorporate TLS, which attempts to reduce latency when loading pages. It is currently not an HTTP standard (albeit it is being drafted for HTTP 2.0), but is widely supported.
-
-SPDY version 3 is vulnerable to the CRIME attack (see also http://zoompf.com/2012/09/explaining-the-crime-weakness-in-spdy-and-ssl) - this is due to the use of compression. Clients currently implement a non-standard hack in with gzip in order to circumvent the vulnerability. SPDY version 4 is planned to include a proper fix.
 
 == TLS tickets (RFC 5077) ==
 
