@@ -734,7 +734,7 @@ IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table be
 | style="background-color: #DBC158; font-weight: bold;" | TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA
 | style="background-color: #DBC158; font-weight: bold;" | TLS_DHE_RSA_3DES_EDE_CBC_SHA1
 | style="background-color: #DBC158; font-weight: bold;" | TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA
-| style="background-color: #DBC158; font-weight: bold;" | 
+| style="background-color: #DBC158; font-weight: bold;" | EDH-RSA-DES-CBC3-SHA
 |-
 ! scope=row | 0x00,0x9C
 | style="background-color: #DBC158; font-weight: bold; text-align: center;" | 26
@@ -797,7 +797,7 @@ IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table be
 | style="background-color: #DBC158; font-weight: bold;" | TLS_RSA_WITH_3DES_EDE_CBC_SHA
 | style="background-color: #DBC158; font-weight: bold;" | TLS_RSA_3DES_EDE_CBC_SHA1
 | style="background-color: #DBC158; font-weight: bold;" | TLS_RSA_WITH_3DES_EDE_CBC_SHA
-| style="background-color: #DBC158; font-weight: bold;" | 
+| style="background-color: #DBC158; font-weight: bold;" | DES-CBC3-SHA
 |-
 ! scope=row | 0x00,0x88
 | style="background-color: #CCCCCC; font-weight: bold; text-align: center;" | 35
