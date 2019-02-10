@@ -196,7 +196,7 @@ $SERVER["socket"] == ":443" {
                 ],
                 sslProtocols: {
                     apache: 'all -SSLv2 -SSLv3 -TLSv1 -TLSv1.1',
-                    nginx: 'TLSv1.2 TLSv1.3',
+                    nginx: 'TLSv1.2',
                     haproxy: 'no-sslv3 no-tlsv10 no-tlsv11',
                     lighttpd: '    ssl.use-sslv2 = "disable"\n    ssl.use-sslv3 = "disable"'
                 },
@@ -239,7 +239,7 @@ $SERVER["socket"] == ":443" {
                 ],
                 sslProtocols: {
                     apache: 'all -SSLv2 -SSLv3',
-                    nginx: 'TLSv1 TLSv1.1 TLSv1.2 TLSv1.3',
+                    nginx: 'TLSv1 TLSv1.1 TLSv1.2',
                     haproxy: 'no-sslv3',
                     lighttpd: '    ssl.use-sslv2 = "disable"\n    ssl.use-sslv3 = "disable"'
                 },
@@ -284,7 +284,7 @@ $SERVER["socket"] == ":443" {
                 ],
                 sslProtocols: {
                     apache: 'all -SSLv2',
-                    nginx: 'SSLv3 TLSv1 TLSv1.1 TLSv1.2 TLSv1.3',
+                    nginx: 'SSLv3 TLSv1 TLSv1.1 TLSv1.2',
                     lighttpd: 'SSLv3 TLSv1 TLSv1.1 TLSv1.2',
                     haproxy: '',
                     lighttpd: '    ssl.use-sslv2 = "disable"\n    ssl.use-sslv3 = "enable"'
