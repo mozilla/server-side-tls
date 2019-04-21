@@ -1,0 +1,18 @@
+div#server-config-text pre {
+  background-color: #f7f7f7;
+  border-radius: 3px;
+  padding: 2em;
+}
+label,
+p {
+  font-family: "Open Sans", "Lucida Sans", "Lucida Grande",
+    "Lucida Sans Unicode", Verdana, sans-serif;
+  font-weight: normal;
+  text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.75);
+}
+.message {
+  font-size: 150%;
+}
+pre {
+  overflow-x: auto;
+}
