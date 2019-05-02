@@ -24,27 +24,19 @@ SSLProtocol             {{#if (minver "2.3.16" form.serverVersion)}}{{replace ou
 SSLCipherSuite          {{output.cipherSuites}}
 SSLHonorCipherOrder     on
 {{#if (minver "0.9.8" form.opensslVersion)}}
-  {{#if (matchesminorver "2.2" form.serverVersion)}}
-    {{#if (minver "2.2.24" form.serverVersion)}}
+  {{#if (minpatchver "2.2.24" form.serverVersion)}}
 SSLCompression          off
-    {{/if}}
   {{/if}}
-  {{#if (matchesminorver "2.4" form.serverVersion)}}
-    {{#if (minver "2.4.3" form.serverVersion)}}
+  {{#if (minpatchver "2.4.3" form.serverVersion)}}
 SSLCompression          off
-    {{/if}}
   {{/if}}
 {{/if}}
 {{#if (minver "0.9.8f" form.opensslVersion)}}
-  {{#if (matchesminorver "2.2" form.serverVersion)}}
-    {{#if (minver "2.2.30" form.serverVersion)}}
+  {{#if (minpatchver "2.2.30" form.serverVersion)}}
 SSLSessionTickets       off
-    {{/if}}
   {{/if}}
-  {{#if (matchesminorver "2.4" form.serverVersion)}}
-    {{#if (minver "2.4.11" form.serverVersion)}}
+  {{#if (minpatchver "2.4.11" form.serverVersion)}}
 SSLSessionTickets       off
-    {{/if}}
   {{/if}}
 {{/if}}
 {{#if (minver "0.9.8h" form.opensslVersion)}}

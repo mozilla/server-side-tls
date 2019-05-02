@@ -3,7 +3,7 @@ import { diff } from 'semver';
 
 export default (minorver, curver) => {
   // add a fake patch level to the minor version, and then send to the normalizer
-  minorver = normalizever(`${minorver}.0`);
+  minorver = normalizever(minorver);
   curver = normalizever(curver);
 
   const versionDiff = diff(minorver, curver);
