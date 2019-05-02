@@ -11,11 +11,11 @@
 
     # Uncomment the following directive when using client certificate authentication
     # SSLCACertificateFile    /path/to/ca_certs_for_client_authentication
-    {{#if form.hsts}}
+{{#if form.hsts}}
 
     # HTTP Strict Transport Security (mod_headers is required) ({{output.hstsMaxAge}} seconds)
     Header always set Strict-Transport-Security "max-age={{output.hstsMaxAge}}"
-    {{/if}}
+{{/if}}
     ...
 </VirtualHost>
 
