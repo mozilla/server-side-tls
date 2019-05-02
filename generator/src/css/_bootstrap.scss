@@ -1,0 +1,16 @@
+// typography
+$font-size-base:         1rem !default;  // 16px
+$font-family-sans-serif: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+$font-family-serif:      "Zilla Slab", Georgia, "Times New Roman", Times, serif !default;
+
+$font-family-base:     $font-family-sans-serif !default;
+$headings-font-family: $font-family-serif !default;
+$headings-font-weight: 700 !default;
+
+// these are the protocol font sizes
+$h1-font-size: $font-size-base * 4.5;
+$h2-font-size: $font-size-base * 3.75;
+$h3-font-size: $font-size-base * 3;
+$h4-font-size: $font-size-base * 2.25;
+$h5-font-size: $font-size-base * 1.5;
+$h6-font-size: $font-size-base * 1.125;

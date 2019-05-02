@@ -1,0 +1,49 @@
+// colors
+$blue: #006FE6 !default;
+$gray-50: #F9FAFB !default;
+
+// dropdowns
+.dropdown-toggle-arrowless::after {
+  display: none;
+}
+
+
+// grid breakpoints
+$grid-gutter-width: 36px;
+
+
+// links
+$link-decoration: underline dotted;
+header a {
+  text-decoration: none;
+}
+
+// navbar
+$navbar-brand-font-size: 2rem;
+.navbar-collapse {
+  .dropdown-menu {
+    text-align: right;
+  }
+  text-align: right;
+}
+
+
+// spacers
+$spacer: 1rem;
+$spacers: (
+  6: ($spacer * 4.75)
+) !default;
+
+
+// tables
+table.table-mapping tbody tr td:nth-child(2) {
+  text-align: center;
+}
+
+.table-row-spacer {
+  line-height: $spacer * .5;
+}
+
+// typography
+$font-weight-bold: 600 !default;
+$small-font-size: 90% !default;

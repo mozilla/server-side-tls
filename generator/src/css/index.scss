@@ -1,0 +1,20 @@
+@import '_bootstrap.scss';
+@import '~bootstrap/scss/bootstrap';
+
+@import '../../node_modules/highlight.js/styles/github.css';
+@import '_fonts.scss';
+
+
+#output-header {
+  margin-top: 4.5rem;
+}
+
+#output-clients {
+  font-weight: 400;
+  margin-top: -.5rem;
+}
+
+#output-config {
+  font-size: .8rem;
+  max-height: unset;
+}

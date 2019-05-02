@@ -1,0 +1,108 @@
+<body>
+  <div class="container mt-5">
+    <h2>Mozilla SSL Configuration Generator</h2>
+
+    <form id="form-generator">
+      <div class="form-row">
+        <!-- server software -->
+        <div class="col-12 col-md-4">
+          <h5>Server Software</h5>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="server" id="server-apache" value="apache" checked>
+            <label class="form-check-label" for="server-apache">
+              Apache
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="server" id="server-awselb" value="awselb">
+            <label class="form-check-label" for="server-awselb">
+              AWS Elastic Load Balancer (ELB)
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="server" id="server-haproxy" value="haproxy">
+            <label class="form-check-label" for="server-haproxy">
+              HAProxy
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="server" id="server-lighttpd" value="lighttpd">
+            <label class="form-check-label" for="server-lighttpd">
+              lighttpd
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="server" id="server-nginx" value="nginx">
+            <label class="form-check-label" for="server-nginx">
+              nginx
+            </label>
+          </div>
+        </div>
+
+        <!-- profile -->
+        <div class="col-12 col-md-4">
+          <h5>Mozilla Configuration</h5>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="config" id="config-modern" value="modern" checked>
+            <label class="form-check-label" for="config-modern">
+              Modern
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="config" id="config-intermediate" value="intermediate">
+            <label class="form-check-label" for="config-intermediate">
+              Intermediate
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="config" id="config-old" value="old">
+            <label class="form-check-label" for="config-old">
+              Old
+            </label>
+          </div>
+        </div>
+
+        <!-- versions -->
+        <div class="col-12 col-md-4">
+          <h5>Environment</h5>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Server Version</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Server Version" aria-described="server-version" id="server-version" value="<%= htmlWebpackPlugin.options.profiles.apache.latestVersion %>">
+          </div>
+          <div class="input-group mt-2">
+            <div class="input-group-prepend">
+              <span class="input-group-text">OpenSSL Version</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Server Version" aria-described="openssl-version" id="openssl-version" value="<%= htmlWebpackPlugin.options.profiles.openssl.latestVersion %>">
+          </div>
+
+          <h5 class="mt-3">Miscellaneous</h5>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">
+                <input type="checkbox" id="hsts" aria-label="HTTP Strict Transport Security" checked>
+              </div>
+            </div>
+            <input type="text" class="form-control bg-white" aria-label="HTTP Strict Transport Security" value="HTTP Strict Transport Security" readonly>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div id="output-header"></div>
+
+    <pre class="border p-3 pre-scrollable" id="output-config"></pre>
+
+    <div class="mt-5">
+      <h4>See Also:</h4>
+
+      <ul>
+        <li><a href="https://wiki.mozilla.org/Security/Server_Side_TLS">Mozilla's Server Side TLS Guidelines</a> for more details on these configurations.</li>
+        <li><a href="https://github.com/mozilla/tls-observatory">TLS Observatory</a>, <a href="https://github.com/jvehent/cipherscan">Cipherscan</a> and <a href="https://www.ssllabs.com/ssltest/">SSLLabs</a> to test the configuration of live servers</li>
+        <li>Report issues and propose improvements to this generator <a href="https://github.com/mozilla/server-side-tls">on GitHub</a></li>
+      </ul>
+    </div>
+  </div>
+</body>

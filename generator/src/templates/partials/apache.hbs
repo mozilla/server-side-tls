@@ -1,0 +1,59 @@
+<VirtualHost *:443>
+    ...
+    SSLEngine on
+{{#if (minver "2.4.8" form.serverVersion)}}
+    SSLCertificateFile      /path/to/signed_certificate_followed_by_intermediate_certificates
+{{else}}
+    SSLCertificateFile      /path/to/signed_certificate
+    SSLCertificateChainFile /path/to/intermediate_certificate
+{{/if}}
+    SSLCertificateKeyFile   /path/to/private/key
+
+    # Uncomment the following directive when using client certificate authentication
+    # SSLCACertificateFile    /path/to/ca_certs_for_client_authentication
+    {{#if form.hsts}}
+
+    # HTTP Strict Transport Security (mod_headers is required) ({{output.hstsMaxAge}} seconds)
+    Header always set Strict-Transport-Security "max-age={{output.hstsMaxAge}}"
+    {{/if}}
+    ...
+</VirtualHost>
+
+# {{form.config}} configuration, tweak to your needs
+SSLProtocol             {{#if (minver "2.3.16" form.serverVersion)}}{{replace output.protocols " -SSLv2" ""}}{{else}}{{output.protocols}}{{/if}}
+SSLCipherSuite          {{output.cipherSuites}}
+SSLHonorCipherOrder     on
+{{#if (minver "0.9.8" form.opensslVersion)}}
+  {{#if (matchesminorver "2.2" form.serverVersion)}}
+    {{#if (minver "2.2.24" form.serverVersion)}}
+SSLCompression          off
+    {{/if}}
+  {{/if}}
+  {{#if (matchesminorver "2.4" form.serverVersion)}}
+    {{#if (minver "2.4.3" form.serverVersion)}}
+SSLCompression          off
+    {{/if}}
+  {{/if}}
+{{/if}}
+{{#if (minver "0.9.8f" form.opensslVersion)}}
+  {{#if (matchesminorver "2.2" form.serverVersion)}}
+    {{#if (minver "2.2.30" form.serverVersion)}}
+SSLSessionTickets       off
+    {{/if}}
+  {{/if}}
+  {{#if (matchesminorver "2.4" form.serverVersion)}}
+    {{#if (minver "2.4.11" form.serverVersion)}}
+SSLSessionTickets       off
+    {{/if}}
+  {{/if}}
+{{/if}}
+{{#if (minver "0.9.8h" form.opensslVersion)}}
+  {{#if (minver "2.3.3" form.serverVersion)}}
+
+# OCSP Stapling, only in httpd 2.3.3 and later
+SSLUseStapling          on
+SSLStaplingResponderTimeout 5
+SSLStaplingReturnResponderErrors off
+SSLStaplingCache        shmcb:/var/run/ocsp(128000)
+  {{/if}}
+{{/if}}

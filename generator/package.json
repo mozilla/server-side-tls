@@ -1,0 +1,53 @@
+{
+  "name": "mozilla-ssl-config-generator",
+  "version": "1.0.0",
+  "description": "Mozilla SSL Configuration Generator",
+  "license": "MPL-2.0",
+  "scripts": {
+    "build": "NODE_ENV=production webpack --config=config/webpack.config.js --display-error-details --progress --colors",
+    "watch": "NODE_ENV=development webpack --config=config/webpack.config.js --watch --display-error-details --progress --colors"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mozilla/server-side-tls"
+  },
+  "bugs": {
+    "url": "https://github.com/mozilla/server-side-tls/issues"
+  },
+  "homepage": "https://github.com/mozilla/server-side-tls",
+  "dependencies": {
+    "@mozilla-protocol/core": "^6.0.1",
+    "bootstrap": "^4.3.1",
+    "handlebars": "^4.1.2",
+    "highlight.js": "^9.15.6",
+    "jquery": "^3.3.1",
+    "popper.js": "^1.14.7",
+    "semver": "^6.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.3.3",
+    "@babel/plugin-proposal-object-rest-spread": "^7.3.2",
+    "@babel/preset-env": "^7.1.0",
+    "babel-loader": "^8.0.4",
+    "browser-sync": "^2.26.3",
+    "browser-sync-webpack-plugin": "^2.2.2",
+    "clean-webpack-plugin": "^1.0.0",
+    "copy-webpack-plugin": "^4.5.4",
+    "css-loader": "^2.1.0",
+    "ejs-compiled-loader": "^1.1.0",
+    "ejs-loader": "^0.3.3",
+    "extract-loader": "^3.1.0",
+    "file-loader": "^3.0.1",
+    "handlebars-loader": "^1.7.1",
+    "html-loader": "^0.5.5",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.5.0",
+    "node-sass": "^4.11.0",
+    "postcss-loader": "^3.0.0",
+    "precss": "^4.0.0",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.29.5",
+    "webpack-cli": "^3.2.3"
+  }
+}
