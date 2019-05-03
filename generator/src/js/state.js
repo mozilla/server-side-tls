@@ -15,6 +15,7 @@ export default async function () {
     form: {
       config: form['config'].value,
       hsts: form['hsts'].checked,
+      ocsp: form['ocsp'].checked,
       opensslVersion: form['openssl-version'].value,
       server,
       serverVersion: form['server-version'].value,      
@@ -22,13 +23,14 @@ export default async function () {
     output: {
       cipherSuites: ssc.openssl_ciphersuites,
       hstsMaxAge: ssc.hsts_min_age,
+      latestVersion: profiles[server].latestVersion,
       oldestClients: ssc.oldest_clients.join(', '),
       protocols: profiles[server][config].protocols,
     },
     sstls,
   };
 
-  console.log('state has been updated', state, config);
+  console.log('state has been updated', state, config, server);
 
   return state;
 };

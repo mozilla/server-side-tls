@@ -6,11 +6,16 @@ import hljs from 'highlight.js';
 
 import '../css/index.scss';
 
+import profiles from './profiles.js';
 import state from './state.js';
 
+
+
+// TODO: have webpack do this based on directory contents
 const templates = {
   apache: require('../templates/partials/apache.hbs'),
   header: require('../templates/partials/header.hbs'),
+  nginx: require('../templates/partials/nginx.hbs'),
 };
 
 
@@ -24,7 +29,9 @@ const render = async () => {
   const renderedTemplate = templates[_state.form.server](_state);
   
   // syntax highlight and enter into the page
-  document.getElementById('output-config').innerHTML = hljs.highlight('apache', renderedTemplate, true).value;
+  const highlighter = profiles[_state.form.server].highlighter;
+
+  document.getElementById('output-config').innerHTML = hljs.highlight(highlighter, renderedTemplate, true).value;
 };
 
 
@@ -35,7 +42,14 @@ $().ready(() => {
   render();
 
   // update state anytime the form is changed
-  $('#form-generator').on('change', async () => {
+  $('#form-config, #form-environment').on('change', async () => {
     render();
-  })
+  });
+
+  // anytime the server changes, so does the server version
+  $('#form-server').on('change', async () => {
+    const _state = await state();
+    $('#server-version').val(_state.output.latestVersion);
+    render();
+  });
 });

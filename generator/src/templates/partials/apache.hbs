@@ -39,13 +39,15 @@ SSLSessionTickets       off
 SSLSessionTickets       off
   {{/if}}
 {{/if}}
-{{#if (minver "0.9.8h" form.opensslVersion)}}
-  {{#if (minver "2.3.3" form.serverVersion)}}
+{{#if form.ocsp}}
+  {{#if (minver "0.9.8h" form.opensslVersion)}}
+    {{#if (minver "2.3.3" form.serverVersion)}}
 
 # OCSP Stapling, only in httpd 2.3.3 and later
 SSLUseStapling          on
 SSLStaplingResponderTimeout 5
 SSLStaplingReturnResponderErrors off
 SSLStaplingCache        shmcb:/var/run/ocsp(128000)
+    {{/if}}
   {{/if}}
 {{/if}}

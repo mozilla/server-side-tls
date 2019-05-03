@@ -5,7 +5,7 @@
     <form id="form-generator">
       <div class="form-row">
         <!-- server software -->
-        <div class="col-12 col-md-4">
+        <div id="form-server" class="col-12 col-md-4">
           <h5>Server Software</h5>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="server" id="server-apache" value="apache" checked>
@@ -40,7 +40,7 @@
         </div>
 
         <!-- profile -->
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-4" id="form-config">
           <h5>Mozilla Configuration</h5>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="config" id="config-modern" value="modern" checked>
@@ -63,7 +63,7 @@
         </div>
 
         <!-- versions -->
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-4" id="form-environment">
           <h5>Environment</h5>
           <div class="input-group">
             <div class="input-group-prepend">
@@ -86,6 +86,14 @@
               </div>
             </div>
             <input type="text" class="form-control bg-white" aria-label="HTTP Strict Transport Security" value="HTTP Strict Transport Security" readonly>
+          </div>
+          <div class="input-group mt-2">
+            <div class="input-group-prepend">
+              <div class="input-group-text">
+                <input type="checkbox" id="ocsp" aria-label="OCSP Stapling" checked>
+              </div>
+            </div>
+            <input type="text" class="form-control bg-white" aria-label="OCSP Stapling" value="OCSP Stapling" readonly>
           </div>
         </div>
       </div>
