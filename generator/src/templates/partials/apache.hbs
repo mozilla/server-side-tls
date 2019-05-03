@@ -39,6 +39,15 @@ SSLSessionTickets       off
 SSLSessionTickets       off
   {{/if}}
 {{/if}}
+{{#if (includes ":DHE" output.cipherSuites)}}
+  {{#if (minver "1.0.2" form.opensslVersion)}}
+    {{#if (minpatchver "2.4.8" form.serverVersion)}}
+
+# generate with: $ openssl dhparam -out /path/to/dhparam.pem 2048
+SSLOpenSSLConfCmd DHParameters /path/to/dhparam.pem;
+    {{/if}}
+  {{/if}}
+{{/if}}
 {{#if form.ocsp}}
   {{#if (minver "0.9.8h" form.opensslVersion)}}
     {{#if (minver "2.3.3" form.serverVersion)}}
