@@ -2,8 +2,15 @@ import $ from 'jquery';
 import 'bootstrap';
 import ClipboardJS from 'clipboard';
 
-// TODO: only import necessary highlight.js modules
-import hljs from 'highlight.js';
+// Import only the used highlights from highlight.js (saves about 1MB)
+// import hljs from 'highlight.js';
+import hljs from 'highlight.js/lib/highlight';
+import apache from 'highlight.js/lib/languages/apache';
+import json from 'highlight.js/lib/languages/json';
+import nginx from 'highlight.js/lib/languages/nginx';
+hljs.registerLanguage('apache', apache);
+hljs.registerLanguage('json', json);
+hljs.registerLanguage('nginx', nginx);
 
 import '../css/index.scss';
 
