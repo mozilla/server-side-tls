@@ -4,6 +4,7 @@
   "description": "Mozilla SSL Configuration Generator",
   "license": "MPL-2.0",
   "scripts": {
+    "analyze": "NODE_ENV=analyze webpack --config=config/webpack.config.js --display-error-details --progress --colors",
     "build": "NODE_ENV=production webpack --config=config/webpack.config.js --display-error-details --progress --colors",
     "watch": "NODE_ENV=development webpack --config=config/webpack.config.js --watch --display-error-details --progress --colors"
   },
@@ -48,6 +49,7 @@
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
     "webpack": "^4.29.5",
+    "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^3.2.3"
   }
 }
