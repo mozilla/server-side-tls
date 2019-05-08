@@ -26,6 +26,7 @@ export default async function () {
       latestVersion: profiles[server].latestVersion,
       oldestClients: ssc.oldest_clients,
       protocols: ssc.tls_versions,
+      supportedCiphers: profiles[server].supportedCiphers,
     },
     sstls,
   };
