@@ -2,5 +2,7 @@
   {{form.server}} {{form.serverVersion}}, {{form.config}} profile, OpenSSL {{form.opensslVersion}}
 </h3>
 <h6 id="output-clients">
-  Supports {{output.oldestClients}}
+  Supports {{#each output.oldestClients}}
+    {{#if @last}} and {{this}}{{else}}{{this}}, {{/if}}
+  {{/each}}
 </h6>

@@ -1,0 +1,38 @@
+$SERVER["socket"] == ":443" {
+    protocol     = "https://"
+    ssl.engine   = "enable"
+    ssl.disable-client-renegotiation = "enable"
+
+    # pemfile is cert+privkey, ca-file is the intermediate chain in one file
+    ssl.pemfile               = "/path/to/signed_cert_plus_private_key.pem"
+    ssl.ca-file               = "/path/to/intermediate_certificate.pem"
+{{#if (minver "1.4.29" form.serverVersion)}}
+
+    # for DH/DHE ciphers, dhparam should be >= 2048-bit
+    ssl.dh-file               = "/path/to/dhparam.pem"
+{{/if}}
+
+    # ECDH/ECDHE ciphers curve strength (see `openssl ecparam -list_curves`)
+    ssl.ec-curve              = "prime256v1{{#if (minver "1.4.48" form.serverVersion)}}{{#if (minver "1.0.2" form.opensslVersion)}}:secp384r1:secp521r1{{/if}}{{/if}}"
+
+    # Compression is by default off at compile-time, but use if needed
+    # ssl.use-compression     = "disable"
+
+    # Environment flag for HTTPS enabled
+    setenv.add-environment = (
+        "HTTPS" => "on"
+    )
+
+    # {{form.config}} configuration, tweak to your needs
+    ssl.use-sslv2 = "disable"
+    ssl.use-sslv3 = {{#if (includes "SSLv3" output.protocols)}}"enable"{{else}}"disable"{{/if}}
+    ssl.honor-cipher-order    = "enable"
+    ssl.cipher-list           = "{{output.cipherSuites}}"
+{{#if form.hsts}}
+
+    # HTTP Strict Transport Security ({{output.hstsMaxAge}} seconds
+    setenv.add-response-header  = (
+        "Strict-Transport-Security" => "max-age={{output.hstsMaxAge}}"
+    )
+{{/if}}
+}

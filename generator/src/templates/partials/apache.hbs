@@ -20,7 +20,13 @@
 </VirtualHost>
 
 # {{form.config}} configuration, tweak to your needs
-SSLProtocol             {{#if (minver "2.3.16" form.serverVersion)}}{{replace output.protocols " -SSLv2" ""}}{{else}}{{output.protocols}}{{/if}}
+{{#if (minver "2.3.16" form.serverVersion)}}
+SSLProtocol             all {{#unless (includes "SSLv3" output.protocols)}}-SSLv3{{/unless}}
+                            {{~#unless (includes "TLSv1" output.protocols)}} -TLSv1{{/unless}}
+                            {{~#unless (includes "TLSv1.1" output.protocols)}} -TLSv1.1{{/unless}}
+{{else}}
+SSLProtocol             all -SSLv2 {{#unless (includes "SSLv3" output.protocols)}}-SSLv3 {{/unless}}{{#unless (includes "TLSv1" output.protocols)}}-TLSv1{{/unless}}{{#unless (includes "TLSv1.1" output.protocols)}} -TLSv1.1{{/unless}}
+{{/if}}
 SSLCipherSuite          {{output.cipherSuites}}
 SSLHonorCipherOrder     on
 {{#if (minver "0.9.8" form.opensslVersion)}}

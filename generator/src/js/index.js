@@ -14,7 +14,10 @@ import state from './state.js';
 // TODO: have webpack do this based on directory contents
 const templates = {
   apache: require('../templates/partials/apache.hbs'),
+  awselb: require('../templates/partials/awselb.hbs'),
+  haproxy: require('../templates/partials/haproxy.hbs'),
   header: require('../templates/partials/header.hbs'),
+  lighttpd: require('../templates/partials/lighttpd.hbs'),
   nginx: require('../templates/partials/nginx.hbs'),
 };
 

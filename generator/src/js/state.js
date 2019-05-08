@@ -24,8 +24,8 @@ export default async function () {
       cipherSuites: ssc.openssl_ciphersuites,
       hstsMaxAge: ssc.hsts_min_age,
       latestVersion: profiles[server].latestVersion,
-      oldestClients: ssc.oldest_clients.join(', '),
-      protocols: profiles[server][config].protocols,
+      oldestClients: ssc.oldest_clients,
+      protocols: ssc.tls_versions,
     },
     sstls,
   };
