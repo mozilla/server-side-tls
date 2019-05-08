@@ -4,6 +4,18 @@
 @import '../../node_modules/highlight.js/styles/github.css';
 @import '_fonts.scss';
 
+#copy {
+  bottom: 4rem;
+  float: right;
+  position: relative;
+  right: .75rem;
+}
+
+#copy-icon {
+  fill: currentColor;
+  height: 1rem;
+  margin-bottom: 4px;
+}
 
 #output-header {
   margin-top: 3rem;

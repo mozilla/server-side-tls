@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import 'bootstrap';
+import ClipboardJS from 'clipboard';
 
 // TODO: only import necessary highlight.js modules
 import hljs from 'highlight.js';
@@ -8,6 +9,7 @@ import '../css/index.scss';
 
 import profiles from './profiles.js';
 import state from './state.js';
+import { sleep } from './utils.js';
 
 
 
@@ -54,5 +56,17 @@ $().ready(() => {
     const _state = await state();
     $('#server-version').val(_state.output.latestVersion);
     render();
+  });
+
+  // instantiate tooltips
+  $('[data-toggle="tooltip"]').tooltip();
+
+  // instantiate clipboard thingie
+  const clipboard = new ClipboardJS('#copy');
+  clipboard.on('success', async e => {
+    $('#copy').tooltip('show');
+    e.clearSelection();
+    await sleep(750);
+    $('#copy').tooltip('hide');
   });
 });
