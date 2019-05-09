@@ -1,0 +1,12 @@
+# generated with: {{{output.link}}}
+ssl = on
+
+ssl_cert_file = '/path/to/signed_cert_plus_intermediates'
+ssl_key_file = '/path/to/private_key'
+{{#if (includes ":DHE" output.cipherSuites)}}
+
+# generate with: $ openssl dhparam -out /path/to/dhparam.pem 2048
+ssl_dh_params_file = '/path/to/dhparam.pem'
+{{/if}}
+
+ssl_ciphers = '{{output.cipherSuites}}'

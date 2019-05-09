@@ -7,11 +7,15 @@ import { sep } from 'path';
 // import hljs from 'highlight.js';
 import hljs from 'highlight.js/lib/highlight';
 import apache from 'highlight.js/lib/languages/apache';
+import ini from 'highlight.js/lib/languages/ini';
 import json from 'highlight.js/lib/languages/json';
 import nginx from 'highlight.js/lib/languages/nginx';
+import yaml from 'highlight.js/lib/languages/yaml';
 hljs.registerLanguage('apache', apache);
+hljs.registerLanguage('ini', ini);
 hljs.registerLanguage('json', json);
 hljs.registerLanguage('nginx', nginx);
+hljs.registerLanguage('yaml', yaml);
 
 import '../css/index.scss';
 
@@ -31,6 +35,15 @@ templateContext.keys().forEach(key => {
 const render = async () => {
   const _state = await state();
 
+  // enable and disable the appropriate fields
+  $('#server-version').toggleClass('text-disabled', _state.output.hasVersions === false);
+  $('#openssl-version').toggleClass('text-disabled', _state.output.usesOpenssl === false);
+  $('#hsts').prop('disabled', _state.output.supportsHsts === false);
+  $('#ocsp').prop('disabled', _state.output.supportsOcspStapling === false);
+
+  // update the fragment
+  window.location.hash = _state.output.fragment;
+  
   // render the output header
   document.getElementById('output-header').innerHTML = templates.header(_state);
 
@@ -42,7 +55,6 @@ const render = async () => {
 
   document.getElementById('output-config').innerHTML = hljs.highlight(highlighter, renderedTemplate, true).value;
 };
-
 
 
 // set a listen on the form to update the state
@@ -59,6 +71,7 @@ $().ready(() => {
   $('#form-server').on('change', async () => {
     const _state = await state();
     $('#server-version').val(_state.output.latestVersion);
+
     render();
   });
 

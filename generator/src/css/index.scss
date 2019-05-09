@@ -18,7 +18,7 @@
 }
 
 #output-header {
-  margin-top: 3rem;
+  margin-top: 2.5rem;
 }
 
 #output-clients {
@@ -30,4 +30,8 @@
   font-size: .8rem;
   max-height: unset;
   white-space: pre-wrap;
+}
+
+.text-disabled {
+  color: #a1a8ae;
 }

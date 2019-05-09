@@ -1,3 +1,4 @@
+# generated with: {{{output.link}}}
 <VirtualHost *:443>
     SSLEngine on
 {{#if (minver "2.4.8" form.serverVersion)}}
@@ -6,7 +7,7 @@
     SSLCertificateFile      /path/to/signed_certificate
     SSLCertificateChainFile /path/to/intermediate_certificate
 {{/if}}
-    SSLCertificateKeyFile   /path/to/private/key
+    SSLCertificateKeyFile   /path/to/private_key
 
     # Uncomment the following directive when using client certificate authentication
     # SSLCACertificateFile    /path/to/ca_certs_for_client_authentication

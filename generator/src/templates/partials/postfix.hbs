@@ -1,12 +1,19 @@
+# generated with: {{{output.link}}}
 smtpd_use_tls = yes
 
 smtpd_tls_security_level = may
 smtpd_tls_auth_only = yes
 smtpd_tls_cert_file = /path/to/signed_cert_plus_intermediates
 smtpd_tls_key_file = /path/to/private_key
-smtpd_tls_mandatory_protocols = !SSLv2,!SSLv3,!TLSv1,!TLSv1.1
-smtpd_tls_protocols = !SSLv2,!SSLv3,!TLSv1,!TLSv1.1
+smtpd_tls_mandatory_protocols = !SSLv2{{#unless (includes "SSLv3" output.protocols)}}, !SSLv3{{/unless}}{{#unless (includes "TLSv1" output.protocols)}}, !TLSv1{{/unless}}{{#unless (includes "TLSv1.1" output.protocols)}}, !TLSv1.1{{/unless}}
+smtpd_tls_protocols = !SSLv2{{#unless (includes "SSLv3" output.protocols)}}, !SSLv3{{/unless}}{{#unless (includes "TLSv1" output.protocols)}}, !TLSv1{{/unless}}{{#unless (includes "TLSv1.1" output.protocols)}}, !TLSv1.1{{/unless}}
 smtpd_tls_mandatory_ciphers = medium
+{{#if (includes ":DHE" output.cipherSuites)}}
 
-tls_medium_cipherlist = EECDH+AESGCM:EDH+AESGCM
+# generate with: $ openssl dhparam -out /path/to/dhparam.pem 2048
+# not actually 1024 bits, this applies to all DHE >= 1024 bits
+smtpd_tls_dh1024_param_file = /path/to/dhparam.pem
+{{/if}}
+
+tls_medium_cipherlist = {{output.cipherSuites}}
 tls_preempt_cipherlist = yes
