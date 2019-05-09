@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import 'bootstrap';
 import ClipboardJS from 'clipboard';
+import { sep } from 'path';
 
 // Import only the used highlights from highlight.js (saves about 1MB)
 // import hljs from 'highlight.js';
@@ -19,16 +20,12 @@ import state from './state.js';
 import { sleep } from './utils.js';
 
 
-
-// TODO: have webpack do this based on directory contents
-const templates = {
-  apache: require('../templates/partials/apache.hbs'),
-  awselb: require('../templates/partials/awselb.hbs'),
-  haproxy: require('../templates/partials/haproxy.hbs'),
-  header: require('../templates/partials/header.hbs'),
-  lighttpd: require('../templates/partials/lighttpd.hbs'),
-  nginx: require('../templates/partials/nginx.hbs'),
-};
+// import all the templates by name, e.g. apache --> require(apache.hbs)
+const templates = {};
+const templateContext = require.context('../templates/partials', true, /\.hbs$/);
+templateContext.keys().forEach(key => {
+  templates[key.split(sep).slice(-1)[0].split('.')[0]] = templateContext(key);
+});
 
 
 const render = async () => {
