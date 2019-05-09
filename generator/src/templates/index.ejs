@@ -1,42 +1,23 @@
 <body>
   <div class="container mt-4">
-    <h2>Mozilla SSL Configuration Generator</h2>
+    <h2><%= htmlWebpackPlugin.options.constants.title %></h2>
 
     <form id="form-generator">
       <div class="form-row">
-        <!-- server software -->
+        <!-- server software, populated from entries in profiles.js with names -->
         <div id="form-server" class="col-12 col-md-4">
           <h5>Server Software</h5>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="server" id="server-apache" value="apache">
-            <label class="form-check-label" for="server-apache">
-              Apache
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="server" id="server-awselb" value="awselb">
-            <label class="form-check-label" for="server-awselb">
-              AWS Elastic Load Balancer (ELB)
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="server" id="server-haproxy" value="haproxy">
-            <label class="form-check-label" for="server-haproxy">
-              HAProxy
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="server" id="server-lighttpd" value="lighttpd">
-            <label class="form-check-label" for="server-lighttpd">
-              lighttpd
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="server" id="server-nginx" value="nginx" checked>
-            <label class="form-check-label" for="server-nginx">
-              nginx
-            </label>
-          </div>
+          <%
+            Object.entries(htmlWebpackPlugin.options.profiles).forEach(profile => {
+              if (profile[1].name) {
+          %>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="server" id="server-<%= profile[0] %>" value="<%= profile[0] %>" <% if (profile[1].checked) {%>checked<% } %>>
+              <label class="form-check-label" for="server-<%= profile[0] %>">
+                <%= profile[1].name %>
+              </label>
+            </div>
+          <% }}) %>
         </div>
 
         <!-- profile -->
