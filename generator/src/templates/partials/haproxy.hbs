@@ -3,12 +3,14 @@
 global
     # {{form.config}} configuration, tweak to your needs
     ssl-default-bind-ciphers {{output.cipherSuites}}
-    ssl-default-bind-options {{#unless (includes "SSLv3" output.protocols)}} no-sslv3{{/unless}}{{#unless (includes "TLSv1" output.protocols)}} no-tlsv10{{/unless}}{{#unless (includes "TLSv1.1" output.protocols)}} no-tlsv11{{/unless}} no-tls-tickets
+    ssl-default-bind-options{{#unless (includes "SSLv3" output.protocols)}} no-sslv3{{/unless}}{{#unless (includes "TLSv1" output.protocols)}} no-tlsv10{{/unless}}{{#unless (includes "TLSv1.1" output.protocols)}} no-tlsv11{{/unless}} no-tls-tickets
     ssl-default-server-ciphers {{output.cipherSuites}}
     ssl-default-server-options{{#unless (includes "SSLv3" output.protocols)}} no-sslv3{{/unless}}{{#unless (includes "TLSv1" output.protocols)}} no-tlsv10{{/unless}}{{#unless (includes "TLSv1.1" output.protocols)}} no-tlsv11{{/unless}} no-tls-tickets
+{{#if (includes ":DHE" output.cipherSuites)}}
 
     # generate with: $ openssl dhparam -out /path/to/dhparam.pem 2048
     ssl-dh-param-file /path/to/dhparam.pem
+{{/if}}
 
 frontend ft_test
     mode    http

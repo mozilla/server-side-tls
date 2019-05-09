@@ -1,5 +1,4 @@
 <VirtualHost *:443>
-    ...
     SSLEngine on
 {{#if (minver "2.4.8" form.serverVersion)}}
     SSLCertificateFile      /path/to/signed_certificate_followed_by_intermediate_certificates
@@ -16,7 +15,6 @@
     # HTTP Strict Transport Security (mod_headers is required) ({{output.hstsMaxAge}} seconds)
     Header always set Strict-Transport-Security "max-age={{output.hstsMaxAge}}"
 {{/if}}
-    ...
 </VirtualHost>
 
 # {{form.config}} configuration, tweak to your needs
