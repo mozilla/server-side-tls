@@ -9,8 +9,6 @@
 {{/if}}
     SSLCertificateKeyFile   /path/to/private_key
 
-    # Uncomment the following directive when using client certificate authentication
-    # SSLCACertificateFile    /path/to/ca_certs_for_client_authentication
 {{#if form.hsts}}
 
     # HTTP Strict Transport Security (mod_headers is required) ({{output.hstsMaxAge}} seconds)
