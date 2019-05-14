@@ -1,0 +1,52 @@
+# generated with: {{{output.link}}}
+<VirtualHost *:443>
+    SSLEngine on
+    SSLWallet               /path_to_wallet
+{{#if form.hsts}}
+
+    # HTTP Strict Transport Security (mod_headers is required) ({{output.hstsMaxAge}} seconds)
+    Header always set Strict-Transport-Security "max-age={{output.hstsMaxAge}}"
+{{/if}}
+</VirtualHost>
+
+# {{form.config}} configuration, tweak to your needs
+SSLProtocol             All {{#unless (includes "TLSv1" output.protocols)}}-TLSv1{{/unless}}{{#unless (includes "TLSv1.1" output.protocols)}} -TLSv1.1{{/unless}}
+SSLCipherSuite          {{output.cipherSuites}}
+SSLHonorCipherOrder     on
+{{#if (minver "0.9.8" form.opensslVersion)}}
+  {{#if (minpatchver "2.2.24" form.serverVersion)}}
+SSLCompression          off
+  {{/if}}
+  {{#if (minpatchver "2.4.3" form.serverVersion)}}
+SSLCompression          off
+  {{/if}}
+{{/if}}
+{{#if (minver "0.9.8f" form.opensslVersion)}}
+  {{#if (minpatchver "2.2.30" form.serverVersion)}}
+SSLSessionTickets       off
+  {{/if}}
+  {{#if (minpatchver "2.4.11" form.serverVersion)}}
+SSLSessionTickets       off
+  {{/if}}
+{{/if}}
+{{#if (includes ":DHE" output.cipherSuites)}}
+  {{#if (minver "1.0.2" form.opensslVersion)}}
+    {{#if (minpatchver "2.4.8" form.serverVersion)}}
+
+# generate with: $ openssl dhparam -out /path/to/dhparam.pem 2048
+SSLOpenSSLConfCmd DHParameters /path/to/dhparam.pem;
+    {{/if}}
+  {{/if}}
+{{/if}}
+{{#if form.ocsp}}
+  {{#if (minver "0.9.8h" form.opensslVersion)}}
+    {{#if (minver "2.3.3" form.serverVersion)}}
+
+# OCSP Stapling, only in httpd 2.3.3 and later
+SSLUseStapling          on
+SSLStaplingResponderTimeout 5
+SSLStaplingReturnResponderErrors off
+SSLStaplingCache        shmcb:/var/run/ocsp(128000)
+    {{/if}}
+  {{/if}}
+{{/if}}

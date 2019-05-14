@@ -45,6 +45,13 @@ module.exports = {
   openssl: {
     latestVersion: '1.1.1b',
   },
+  oraclehttp: {
+    highlighter: 'apache',
+    latestVersion: '12.2.1',
+    name: 'Oracle HTTP Server',
+    supportsHsts: true,
+    supportsOcspStapling: false,  // TODO: fix this, but Oracle's documentation is terrible
+  },
   postfix: {
     highlighter: 'nginx',
     latestVersion: '3.4.5',

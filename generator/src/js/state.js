@@ -15,8 +15,8 @@ export default async function () {
   const state = {
     form: {
       config: form['config'].value,
-      hsts: form['hsts'].checked,
-      ocsp: form['ocsp'].checked,
+      hsts: form['hsts'].checked && profiles[server].supportsHsts !== false,
+      ocsp: form['ocsp'].checked && profiles[server].supportsOcspStapling !== false,
       opensslVersion: form['openssl-version'].value,
       server,
       serverVersion: form['server-version'].value,      
