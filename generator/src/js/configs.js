@@ -1,4 +1,4 @@
-// profiles for the supported pieces of software
+// configs for the supported pieces of software
 // hasVersions, supportsHsts, supportsOcspStapling, and usesOpenssl only need to be defined if false
 
 module.exports = {

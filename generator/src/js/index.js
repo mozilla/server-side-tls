@@ -19,7 +19,8 @@ hljs.registerLanguage('yaml', yaml);
 
 import '../css/index.scss';
 
-import profiles from './profiles.js';
+import { validHashKeys } from './constants.js';
+import configs from './configs.js';
 import state from './state.js';
 import { sleep } from './utils.js';
 
@@ -51,7 +52,7 @@ const render = async () => {
   const renderedTemplate = templates[_state.form.server](_state);
   
   // syntax highlight and enter into the page
-  const highlighter = profiles[_state.form.server].highlighter;
+  const highlighter = configs[_state.form.server].highlighter;
 
   document.getElementById('output-config').innerHTML = hljs.highlight(highlighter, renderedTemplate, true).value;
 };
@@ -59,6 +60,40 @@ const render = async () => {
 
 // set a listen on the form to update the state
 $().ready(() => {
+  // set all the buttons to the right thing
+  if (window.location.hash.length > 0) {
+    const mappings = {
+      'true': true,
+      'false': false,
+    };
+
+    const params = new URLSearchParams(window.location.hash.substr(1));
+
+    for (let entry of params.entries()) {
+      // if it's in the mappings, we should do a find/replace
+      entry[1] = mappings[entry[1]] === undefined ? entry[1] : mappings[entry[1]];
+
+      if (validHashKeys.includes(entry[0])) {
+        // find the element
+        let e = document.getElementById(entry[0]) || document.querySelector(`input[name=${entry[0]}][value=${entry[1]}`);
+
+        if (!e || !e.type) {
+          continue;
+        }
+
+        switch (e.type) {
+          case 'radio':
+          case 'checkbox':
+            e.checked = entry[1];
+            break;
+          case 'text':
+            e.value = entry[1];
+        }
+
+      }
+    }
+  }
+
   // update the global state with the default values
   render();
 
