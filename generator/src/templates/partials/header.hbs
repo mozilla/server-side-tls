@@ -1,5 +1,5 @@
 <h3>
-  {{form.server}} {{form.serverVersion}}, {{form.config}} profile, OpenSSL {{form.opensslVersion}}
+  {{form.server}} {{form.serverVersion}}, {{form.config}} config{{#if output.usesOpenssl}}, OpenSSL {{form.opensslVersion}}{{/if}}
 </h3>
 <h6 id="output-clients">
   Supports {{#each output.oldestClients}}
