@@ -2795,7 +2795,7 @@ IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table be
 | style="background-color: white;" | ECDHE-ECDSA-AES256-CCM8
 |}
 
-The table above was automatically generated via: [https://github.com/marumari/tls-table/blob/master/tls-table.py https://github.com/marumari/tls-table/blob/master/tls-table.py].
+The table above was automatically generated via: [https://github.com/april/tls-table/blob/master/tls-table.py https://github.com/april/tls-table/blob/master/tls-table.py].
 
 Colors correspond to the [[#Modern_compatibility|<span style="color: #008000; font-weight: bold;">Modern</span>]], [[#Intermediate_compatibility_.28default.29|<span style="color: #FFA500; font-weight: bold;">Intermediate</span>]], and [[#Old_backward_compatibility|<span style="color: #808080; font-weight: bold;">Old</span>]] compatibility levels. Each compatibility level is a superset of the more modern levels above it.
 
