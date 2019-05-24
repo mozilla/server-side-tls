@@ -1,5 +1,5 @@
 = Cipher suite correspondence table =
-IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table below lists each cipher as well as its corresponding Mozilla [[Server Side TLS]] compatibility level.
+IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table below lists each cipher as well as its corresponding Mozilla [[Security/Server Side TLS|Server Side TLS]] compatibility level.
 
 {| class="wikitable sortable"
 |-
