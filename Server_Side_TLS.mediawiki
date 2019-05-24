@@ -550,7 +550,7 @@ more information: https://media.blackhat.com/us-13/US-13-Daigniere-TLS-Secrets-S
 
 = Cipher suites =
 
-Different libraries support different cipher suites and refer to them by different names. Mozilla maintains a list of [[Cipher Suites|all known cipher suites]] and their corresponding names.
+Different libraries support different cipher suites and refer to them by different names. Mozilla maintains a list of [[Security/Cipher Suites|all known cipher suites]] and their corresponding names.
 
 == GnuTLS ciphersuite ==
 
