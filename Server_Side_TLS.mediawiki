@@ -107,7 +107,7 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 * TLS curves: '''X25519, prime256v1, secp384r1'''
 * Certificate type: '''ECDSA (P-256)''' (recommended), or '''RSA (2048 bits)'''
 * Certificate curve: '''None'''
-* DH parameter size: '''2048''' (ffdhe2048, RFC 7919)
+* DH parameter size: '''2048''' (ffdhe2048, [https://tools.ietf.org/html/rfc7919#appendix-A.1 RFC 7919])
 * HSTS: '''max-age=63072000''' (two years)
 * Maximum certificate lifespan: '''90 days''' (recommended) to '''2 years'''
 * Cipher preference: '''server chooses'''
@@ -144,7 +144,7 @@ This configuration is compatible with a number of very old clients, and should b
 * TLS curves: '''X25519, prime256v1, secp384r1'''
 * Certificate type: '''RSA (2048-bits)'''
 * Certificate curve: '''None'''
-* DH parameter size: '''1024''' (Group 2, RFC 5996)
+* DH parameter size: '''1024''' (Group 2, [https://tools.ietf.org/html/rfc5996#appendix-B.2 RFC 5996])
 * HSTS: '''max-age=63072000''' (two years)
 * Maximum certificate lifespan: '''90 days''' (recommended) to '''2 years'''
 * Cipher preference: '''server chooses'''
