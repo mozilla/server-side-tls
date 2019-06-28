@@ -72,7 +72,7 @@ Mozilla maintains three recommended configurations for servers using TLS. Pick t
 
 <p style="max-width: 60em;">The ordering of cipher suites in the <span style="color: orange; font-weight: bold;">Intermediate</span> and <span style="color: gray; font-weight: bold;">Old</span> configurations is very important, as it determines the priority with which algorithms are selected.</p>
 
-<p style="max-width: 60em;">OpenSSL will ignore cipher suites it doesn't understand, so always use the full set of cipher suites below, in their recommended order. The use of the <span style="color: gray; font-weight: bold;">Old</span> configuration with modern versions of OpenSSL may require custom builds with support for SSLv3 and deprecated ciphers.</p>
+<p style="max-width: 60em;">OpenSSL will ignore cipher suites it doesn't understand, so always use the full set of cipher suites below, in their recommended order. The use of the <span style="color: gray; font-weight: bold;">Old</span> configuration with modern versions of OpenSSL may require custom builds with support for deprecated ciphers.</p>
 <br style="clear: right;">
 
 == <span style="color:green;">'''Modern'''</span> compatibility ==
