@@ -21,7 +21,7 @@ Mozilla maintains three recommended configurations for servers using TLS. Pick t
 
 * <span style="color: green; font-weight: bold;">Modern</span>''':''' Modern clients that support TLS 1.3, with no need for backwards compatibility
 * <span style="color: orange; font-weight: bold;">Intermediate</span>''':''' Recommended configuration for a general-purpose server
-* <span style="color: gray; font-weight: bold;">Old</span>''':''' Services accessed by very old clients or libraries, such as Internet Explorer 8 (Windows XP) or OpenSSL 0.9.8
+* <span style="color: gray; font-weight: bold;">Old</span>''':''' Services accessed by very old clients or libraries, such as Internet Explorer 8 (Windows XP), Java 6, or OpenSSL 0.9.8
 
 {| class="wikitable" style="margin: 1.5rem 1rem;"
 |-
@@ -78,7 +78,7 @@ Mozilla maintains three recommended configurations for servers using TLS. Pick t
 == <span style="color:green;">'''Modern'''</span> compatibility ==
 For services with clients that support TLS 1.3 and don't need backward compatibility, the <span style="color: green; font-weight: bold;">Modern</span> configuration provides an extremely high level of security.
 
-* Cipher suites (TLS 1.3): '''TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256'''
+* Cipher suites (TLS 1.3): '''TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256'''
 * Cipher suites (TLS 1.2): (none)
 * Protocols: '''TLS 1.3'''
 * Certificate type: '''ECDSA (P-256)'''
@@ -88,135 +88,97 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 * Cipher preference: '''client chooses'''
 
 <source>
-0x13,0x02  -  TLS_AES_256_GCM_SHA384        TLSv1.3  Kx=any  Au=any  Enc=AESGCM(256)             Mac=AEAD
 0x13,0x01  -  TLS_AES_128_GCM_SHA256        TLSv1.3  Kx=any  Au=any  Enc=AESGCM(128)             Mac=AEAD
+0x13,0x02  -  TLS_AES_256_GCM_SHA384        TLSv1.3  Kx=any  Au=any  Enc=AESGCM(256)             Mac=AEAD
 0x13,0x03  -  TLS_CHACHA20_POLY1305_SHA256  TLSv1.3  Kx=any  Au=any  Enc=CHACHA20/POLY1305(256)  Mac=AEAD
 </source>
 
 * Rationale:
 ** All cipher suites are [https://en.wikipedia.org/wiki/Forward_secrecy forward secret] and [https://en.wikipedia.org/wiki/Authenticated_encryption authenticated]
-** All TLS 1.3 ciphers are secure, so we allow the client to choose the cipher suite, as they will know best if they have support for hardware-accelerated AES
+** The cipher suites are all strong and so we allow the client to choose, as they will know best if they have support for hardware-accelerated AES
 ** We recommend ECDSA certificates using P-256, as P-384 provides negligable improvements to security and Ed25519 is not yet widely supported
 
 == <span style="color:orange;">'''Intermediate'''</span> compatibility (recommended) ==
 <p style="max-width: 60em;">For services that don't need compatibility with legacy clients, such as Windows XP or old versions of OpenSSL. This is the recommended configuration for the vast majority of services, as it is highly secure and compatible with nearly every client released in the last five (or more) years.</p>
 
-* Cipher suites (TLS 1.3): '''TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256'''
-* Cipher suites (TLS 1.2): '''ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256'''
+* Cipher suites (TLS 1.3): '''TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256'''
+* Cipher suites (TLS 1.2): '''ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384'''
 * Protocols: '''TLS 1.2, TLS 1.3'''
 * TLS curves: '''X25519, prime256v1, secp384r1'''
 * Certificate type: '''ECDSA (P-256)''' (recommended), or '''RSA (2048 bits)'''
-* Certificate curve: '''None'''
 * DH parameter size: '''2048''' (ffdhe2048, [https://tools.ietf.org/html/rfc7919#appendix-A.1 RFC 7919])
 * HSTS: '''max-age=63072000''' (two years)
 * Maximum certificate lifespan: '''90 days''' (recommended) to '''2 years'''
-* Cipher preference: '''server chooses'''
+* Cipher preference: '''client chooses'''
 
 <source>
-0x13,0x02  -  TLS_AES_256_GCM_SHA384         TLSv1.3  Kx=any   Au=any    Enc=AESGCM(256)             Mac=AEAD
 0x13,0x01  -  TLS_AES_128_GCM_SHA256         TLSv1.3  Kx=any   Au=any    Enc=AESGCM(128)             Mac=AEAD
+0x13,0x02  -  TLS_AES_256_GCM_SHA384         TLSv1.3  Kx=any   Au=any    Enc=AESGCM(256)             Mac=AEAD
 0x13,0x03  -  TLS_CHACHA20_POLY1305_SHA256   TLSv1.3  Kx=any   Au=any    Enc=CHACHA20/POLY1305(256)  Mac=AEAD
-0xC0,0x2C  -  ECDHE-ECDSA-AES256-GCM-SHA384  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(256)             Mac=AEAD
-0xC0,0x30  -  ECDHE-RSA-AES256-GCM-SHA384    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(256)             Mac=AEAD
 0xC0,0x2B  -  ECDHE-ECDSA-AES128-GCM-SHA256  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(128)             Mac=AEAD
 0xC0,0x2F  -  ECDHE-RSA-AES128-GCM-SHA256    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(128)             Mac=AEAD
+0xC0,0x2C  -  ECDHE-ECDSA-AES256-GCM-SHA384  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(256)             Mac=AEAD
+0xC0,0x30  -  ECDHE-RSA-AES256-GCM-SHA384    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(256)             Mac=AEAD
 0xCC,0xA9  -  ECDHE-ECDSA-CHACHA20-POLY1305  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=CHACHA20/POLY1305(256)  Mac=AEAD
 0xCC,0xA8  -  ECDHE-RSA-CHACHA20-POLY1305    TLSv1.2  Kx=ECDH  Au=RSA    Enc=CHACHA20/POLY1305(256)  Mac=AEAD
-0x00,0x9F  -  DHE-RSA-AES256-GCM-SHA384      TLSv1.2  Kx=DH    Au=RSA    Enc=AESGCM(256)             Mac=AEAD
 0x00,0x9E  -  DHE-RSA-AES128-GCM-SHA256      TLSv1.2  Kx=DH    Au=RSA    Enc=AESGCM(128)             Mac=AEAD
+0x00,0x9F  -  DHE-RSA-AES256-GCM-SHA384      TLSv1.2  Kx=DH    Au=RSA    Enc=AESGCM(256)             Mac=AEAD
 </source>
 
 * Rationale:
 ** All cipher suites are [https://en.wikipedia.org/wiki/Forward_secrecy forward secret] and [https://en.wikipedia.org/wiki/Authenticated_encryption authenticated]
 ** TLS 1.2 is the minimum supported protocol, as recommended by [https://tools.ietf.org/html/rfc7525#section-3.1.1 RFC 7525], PCI DSS, and others
 ** ECDSA certificates are recommended over RSA certificates, as they allow the use of ECDHE with Windows 7 clients using Internet Explorer 11
+** The cipher suites are all strong and so we allow the client to choose, as they will know best if they have support for hardware-accelerated AES
 ** Windows XP (including all embedded versions) are no longer supported by Microsoft, eliminating the need for many older protocols and ciphers
 ** While the goal is to support a broad range of clients, we reasonably disable a number of ciphers that have little support (such as ARIA, Camellia, 3DES, and SEED)
 ** 90 days is the recommended maximum certificate lifespan, to encourage certificate issuance automation
 
 == <span style="color:gray;">'''Old'''</span> backward compatibility ==
 
-This configuration is compatible with a number of very old clients, and should be used as a last resort only.
+This configuration is compatible with a number of very old clients, and should be used only as a last resort.
 
-* Cipher suites (TLS 1.3): '''TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256'''
-* Cipher suites (TLS 1.0 - 1.2): '''ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-CHACHA20-POLY1305:DHE-DSS-AES256-GCM-SHA384:DHE-DSS-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:DHE-DSS-AES128-SHA256:DHE-DSS-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:ECDHE-ECDSA-ARIA128-GCM-SHA256:ECDHE-ECDSA-ARIA256-GCM-SHA384:ECDHE-ARIA128-GCM-SHA256:ECDHE-ARIA256-GCM-SHA384:DHE-RSA-ARIA128-GCM-SHA256:DHE-DSS-ARIA128-GCM-SHA256:DHE-RSA-ARIA256-GCM-SHA384:DHE-DSS-ARIA256-GCM-SHA384:ECDHE-ECDSA-CAMELLIA128-SHA256:ECDHE-RSA-CAMELLIA128-SHA256:ECDHE-ECDSA-CAMELLIA256-SHA384:ECDHE-RSA-CAMELLIA256-SHA384:DHE-RSA-CAMELLIA128-SHA256:DHE-RSA-CAMELLIA256-SHA256:DHE-RSA-CAMELLIA128-SHA:DHE-RSA-CAMELLIA256-SHA:DHE-DSS-CAMELLIA128-SHA256:DHE-DSS-CAMELLIA256-SHA256:DHE-DSS-CAMELLIA128-SHA:DHE-DSS-CAMELLIA256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:ARIA128-GCM-SHA256:ARIA256-GCM-SHA384:CAMELLIA128-SHA256:CAMELLIA256-SHA256:CAMELLIA128-SHA:CAMELLIA256-SHA:DES-CBC3-SHA:DHE-RSA-SEED-SHA:DHE-DSS-SEED-SHA:SEED-SHA'''
+* Cipher suites (TLS 1.3): '''TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256'''
+* Cipher suites (TLS 1.0 - 1.2): '''ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA256:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA'''
 * Protocols: '''TLS 1.0, TLS 1.1, TLS 1.2, TLS 1.3'''
 * TLS curves: '''X25519, prime256v1, secp384r1'''
 * Certificate type: '''RSA (2048-bits)'''
 * Certificate curve: '''None'''
-* DH parameter size: '''1024''' (Group 2, [https://tools.ietf.org/html/rfc5996#appendix-B.2 RFC 5996])
+* DH parameter size: '''1024''' (generated with <tt>openssl dhparam 1024</tt>)
 * HSTS: '''max-age=63072000''' (two years)
 * Maximum certificate lifespan: '''90 days''' (recommended) to '''2 years'''
 * Cipher preference: '''server chooses'''
 
 <source>
-0x13,0x02  -  TLS_AES_256_GCM_SHA384          TLSv1.3  Kx=any   Au=any    Enc=AESGCM(256)             Mac=AEAD
-0x13,0x01  -  TLS_AES_128_GCM_SHA256          TLSv1.3  Kx=any   Au=any    Enc=AESGCM(128)             Mac=AEAD
-0x13,0x03  -  TLS_CHACHA20_POLY1305_SHA256    TLSv1.3  Kx=any   Au=any    Enc=CHACHA20/POLY1305(256)  Mac=AEAD
-0xC0,0x2C  -  ECDHE-ECDSA-AES256-GCM-SHA384   TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(256)             Mac=AEAD
-0xC0,0x30  -  ECDHE-RSA-AES256-GCM-SHA384     TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(256)             Mac=AEAD
-0xC0,0x2B  -  ECDHE-ECDSA-AES128-GCM-SHA256   TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(128)             Mac=AEAD
-0xC0,0x2F  -  ECDHE-RSA-AES128-GCM-SHA256     TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(128)             Mac=AEAD
-0xCC,0xA9  -  ECDHE-ECDSA-CHACHA20-POLY1305   TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=CHACHA20/POLY1305(256)  Mac=AEAD
-0xCC,0xA8  -  ECDHE-RSA-CHACHA20-POLY1305     TLSv1.2  Kx=ECDH  Au=RSA    Enc=CHACHA20/POLY1305(256)  Mac=AEAD
-0x00,0x9F  -  DHE-RSA-AES256-GCM-SHA384       TLSv1.2  Kx=DH    Au=RSA    Enc=AESGCM(256)             Mac=AEAD
-0x00,0x9E  -  DHE-RSA-AES128-GCM-SHA256       TLSv1.2  Kx=DH    Au=RSA    Enc=AESGCM(128)             Mac=AEAD
-0xCC,0xAA  -  DHE-RSA-CHACHA20-POLY1305       TLSv1.2  Kx=DH    Au=RSA    Enc=CHACHA20/POLY1305(256)  Mac=AEAD
-0x00,0xA3  -  DHE-DSS-AES256-GCM-SHA384       TLSv1.2  Kx=DH    Au=DSS    Enc=AESGCM(256)             Mac=AEAD
-0x00,0xA2  -  DHE-DSS-AES128-GCM-SHA256       TLSv1.2  Kx=DH    Au=DSS    Enc=AESGCM(128)             Mac=AEAD
-0xC0,0x23  -  ECDHE-ECDSA-AES128-SHA256       TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AES(128)                Mac=SHA256
-0xC0,0x27  -  ECDHE-RSA-AES128-SHA256         TLSv1.2  Kx=ECDH  Au=RSA    Enc=AES(128)                Mac=SHA256
-0xC0,0x09  -  ECDHE-ECDSA-AES128-SHA          TLSv1    Kx=ECDH  Au=ECDSA  Enc=AES(128)                Mac=SHA1
-0xC0,0x13  -  ECDHE-RSA-AES128-SHA            TLSv1    Kx=ECDH  Au=RSA    Enc=AES(128)                Mac=SHA1
-0xC0,0x24  -  ECDHE-ECDSA-AES256-SHA384       TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AES(256)                Mac=SHA384
-0xC0,0x28  -  ECDHE-RSA-AES256-SHA384         TLSv1.2  Kx=ECDH  Au=RSA    Enc=AES(256)                Mac=SHA384
-0xC0,0x0A  -  ECDHE-ECDSA-AES256-SHA          TLSv1    Kx=ECDH  Au=ECDSA  Enc=AES(256)                Mac=SHA1
-0xC0,0x14  -  ECDHE-RSA-AES256-SHA            TLSv1    Kx=ECDH  Au=RSA    Enc=AES(256)                Mac=SHA1
-0x00,0x67  -  DHE-RSA-AES128-SHA256           TLSv1.2  Kx=DH    Au=RSA    Enc=AES(128)                Mac=SHA256
-0x00,0x33  -  DHE-RSA-AES128-SHA              SSLv3    Kx=DH    Au=RSA    Enc=AES(128)                Mac=SHA1
-0x00,0x6B  -  DHE-RSA-AES256-SHA256           TLSv1.2  Kx=DH    Au=RSA    Enc=AES(256)                Mac=SHA256
-0x00,0x39  -  DHE-RSA-AES256-SHA              SSLv3    Kx=DH    Au=RSA    Enc=AES(256)                Mac=SHA1
-0x00,0x40  -  DHE-DSS-AES128-SHA256           TLSv1.2  Kx=DH    Au=DSS    Enc=AES(128)                Mac=SHA256
-0x00,0x38  -  DHE-DSS-AES256-SHA              SSLv3    Kx=DH    Au=DSS    Enc=AES(256)                Mac=SHA1
-0x00,0x9C  -  AES128-GCM-SHA256               TLSv1.2  Kx=RSA   Au=RSA    Enc=AESGCM(128)             Mac=AEAD
-0x00,0x9D  -  AES256-GCM-SHA384               TLSv1.2  Kx=RSA   Au=RSA    Enc=AESGCM(256)             Mac=AEAD
-0x00,0x3C  -  AES128-SHA256                   TLSv1.2  Kx=RSA   Au=RSA    Enc=AES(128)                Mac=SHA256
-0x00,0x3D  -  AES256-SHA256                   TLSv1.2  Kx=RSA   Au=RSA    Enc=AES(256)                Mac=SHA256
-0x00,0x2F  -  AES128-SHA                      SSLv3    Kx=RSA   Au=RSA    Enc=AES(128)                Mac=SHA1
-0x00,0x35  -  AES256-SHA                      SSLv3    Kx=RSA   Au=RSA    Enc=AES(256)                Mac=SHA1
-0xC0,0x5C  -  ECDHE-ECDSA-ARIA128-GCM-SHA256  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=ARIAGCM(128)            Mac=AEAD
-0xC0,0x5D  -  ECDHE-ECDSA-ARIA256-GCM-SHA384  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=ARIAGCM(256)            Mac=AEAD
-0xC0,0x60  -  ECDHE-ARIA128-GCM-SHA256        TLSv1.2  Kx=ECDH  Au=RSA    Enc=ARIAGCM(128)            Mac=AEAD
-0xC0,0x61  -  ECDHE-ARIA256-GCM-SHA384        TLSv1.2  Kx=ECDH  Au=RSA    Enc=ARIAGCM(256)            Mac=AEAD
-0xC0,0x52  -  DHE-RSA-ARIA128-GCM-SHA256      TLSv1.2  Kx=DH    Au=RSA    Enc=ARIAGCM(128)            Mac=AEAD
-0xC0,0x56  -  DHE-DSS-ARIA128-GCM-SHA256      TLSv1.2  Kx=DH    Au=DSS    Enc=ARIAGCM(128)            Mac=AEAD
-0xC0,0x53  -  DHE-RSA-ARIA256-GCM-SHA384      TLSv1.2  Kx=DH    Au=RSA    Enc=ARIAGCM(256)            Mac=AEAD
-0xC0,0x57  -  DHE-DSS-ARIA256-GCM-SHA384      TLSv1.2  Kx=DH    Au=DSS    Enc=ARIAGCM(256)            Mac=AEAD
-0xC0,0x72  -  ECDHE-ECDSA-CAMELLIA128-SHA256  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=Camellia(128)           Mac=SHA256
-0xC0,0x76  -  ECDHE-RSA-CAMELLIA128-SHA256    TLSv1.2  Kx=ECDH  Au=RSA    Enc=Camellia(128)           Mac=SHA256
-0xC0,0x73  -  ECDHE-ECDSA-CAMELLIA256-SHA384  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=Camellia(256)           Mac=SHA384
-0xC0,0x77  -  ECDHE-RSA-CAMELLIA256-SHA384    TLSv1.2  Kx=ECDH  Au=RSA    Enc=Camellia(256)           Mac=SHA384
-0x00,0xBE  -  DHE-RSA-CAMELLIA128-SHA256      TLSv1.2  Kx=DH    Au=RSA    Enc=Camellia(128)           Mac=SHA256
-0x00,0xC4  -  DHE-RSA-CAMELLIA256-SHA256      TLSv1.2  Kx=DH    Au=RSA    Enc=Camellia(256)           Mac=SHA256
-0x00,0x45  -  DHE-RSA-CAMELLIA128-SHA         SSLv3    Kx=DH    Au=RSA    Enc=Camellia(128)           Mac=SHA1
-0x00,0x88  -  DHE-RSA-CAMELLIA256-SHA         SSLv3    Kx=DH    Au=RSA    Enc=Camellia(256)           Mac=SHA1
-0x00,0xBD  -  DHE-DSS-CAMELLIA128-SHA256      TLSv1.2  Kx=DH    Au=DSS    Enc=Camellia(128)           Mac=SHA256
-0x00,0xC3  -  DHE-DSS-CAMELLIA256-SHA256      TLSv1.2  Kx=DH    Au=DSS    Enc=Camellia(256)           Mac=SHA256
-0x00,0x44  -  DHE-DSS-CAMELLIA128-SHA         SSLv3    Kx=DH    Au=DSS    Enc=Camellia(128)           Mac=SHA1
-0x00,0x87  -  DHE-DSS-CAMELLIA256-SHA         SSLv3    Kx=DH    Au=DSS    Enc=Camellia(256)           Mac=SHA1
-0xC0,0x50  -  ARIA128-GCM-SHA256              TLSv1.2  Kx=RSA   Au=RSA    Enc=ARIAGCM(128)            Mac=AEAD
-0xC0,0x51  -  ARIA256-GCM-SHA384              TLSv1.2  Kx=RSA   Au=RSA    Enc=ARIAGCM(256)            Mac=AEAD
-0x00,0xBA  -  CAMELLIA128-SHA256              TLSv1.2  Kx=RSA   Au=RSA    Enc=Camellia(128)           Mac=SHA256
-0x00,0xC0  -  CAMELLIA256-SHA256              TLSv1.2  Kx=RSA   Au=RSA    Enc=Camellia(256)           Mac=SHA256
-0x00,0x41  -  CAMELLIA128-SHA                 SSLv3    Kx=RSA   Au=RSA    Enc=Camellia(128)           Mac=SHA1
-0x00,0x84  -  CAMELLIA256-SHA                 SSLv3    Kx=RSA   Au=RSA    Enc=Camellia(256)           Mac=SHA1
-0xC0,0x08  -  ECDHE-ECDSA-DES-CBC3-SHA        TLSv1    Kx=ECDH  Au=ECDSA  Enc=3DES(168)               Mac=SHA1
-0xC0,0x12  -  ECDHE-RSA-DES-CBC3-SHA          TLSv1    Kx=ECDH  Au=RSA    Enc=3DES(168)               Mac=SHA1
-0x00,0x16  -  DHE-RSA-DES-CBC3-SHA            SSLv3    Kx=DH    Au=RSA    Enc=3DES(168)               Mac=SHA1
-0x00,0x0A  -  DES-CBC3-SHA                    SSLv3    Kx=RSA   Au=RSA    Enc=3DES(168)               Mac=SHA1
-0x00,0x9A  -  DHE-RSA-SEED-SHA                SSLv3    Kx=DH    Au=RSA    Enc=SEED(128)               Mac=SHA1
-0x00,0x99  -  DHE-DSS-SEED-SHA                SSLv3    Kx=DH    Au=DSS    Enc=SEED(128)               Mac=SHA1
-0x00,0x96  -  SEED-SHA                        SSLv3    Kx=RSA   Au=RSA    Enc=SEED(128)               Mac=SHA1
+0x13,0x01  -  TLS_AES_128_GCM_SHA256         TLSv1.3  Kx=any   Au=any    Enc=AESGCM(128)             Mac=AEAD
+0x13,0x02  -  TLS_AES_256_GCM_SHA384         TLSv1.3  Kx=any   Au=any    Enc=AESGCM(256)             Mac=AEAD
+0x13,0x03  -  TLS_CHACHA20_POLY1305_SHA256   TLSv1.3  Kx=any   Au=any    Enc=CHACHA20/POLY1305(256)  Mac=AEAD
+0xC0,0x2B  -  ECDHE-ECDSA-AES128-GCM-SHA256  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(128)             Mac=AEAD
+0xC0,0x2F  -  ECDHE-RSA-AES128-GCM-SHA256    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(128)             Mac=AEAD
+0xC0,0x2C  -  ECDHE-ECDSA-AES256-GCM-SHA384  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(256)             Mac=AEAD
+0xC0,0x30  -  ECDHE-RSA-AES256-GCM-SHA384    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(256)             Mac=AEAD
+0xCC,0xA9  -  ECDHE-ECDSA-CHACHA20-POLY1305  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=CHACHA20/POLY1305(256)  Mac=AEAD
+0xCC,0xA8  -  ECDHE-RSA-CHACHA20-POLY1305    TLSv1.2  Kx=ECDH  Au=RSA    Enc=CHACHA20/POLY1305(256)  Mac=AEAD
+0x00,0x9E  -  DHE-RSA-AES128-GCM-SHA256      TLSv1.2  Kx=DH    Au=RSA    Enc=AESGCM(128)             Mac=AEAD
+0x00,0x9F  -  DHE-RSA-AES256-GCM-SHA384      TLSv1.2  Kx=DH    Au=RSA    Enc=AESGCM(256)             Mac=AEAD
+0xCC,0xAA  -  DHE-RSA-CHACHA20-POLY1305      TLSv1.2  Kx=DH    Au=RSA    Enc=CHACHA20/POLY1305(256)  Mac=AEAD
+0xC0,0x23  -  ECDHE-ECDSA-AES128-SHA256      TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AES(128)                Mac=SHA256
+0xC0,0x27  -  ECDHE-RSA-AES128-SHA256        TLSv1.2  Kx=ECDH  Au=RSA    Enc=AES(128)                Mac=SHA256
+0xC0,0x09  -  ECDHE-ECDSA-AES128-SHA         TLSv1    Kx=ECDH  Au=ECDSA  Enc=AES(128)                Mac=SHA1
+0xC0,0x13  -  ECDHE-RSA-AES128-SHA           TLSv1    Kx=ECDH  Au=RSA    Enc=AES(128)                Mac=SHA1
+0xC0,0x24  -  ECDHE-ECDSA-AES256-SHA384      TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AES(256)                Mac=SHA384
+0xC0,0x28  -  ECDHE-RSA-AES256-SHA384        TLSv1.2  Kx=ECDH  Au=RSA    Enc=AES(256)                Mac=SHA384
+0xC0,0x0A  -  ECDHE-ECDSA-AES256-SHA         TLSv1    Kx=ECDH  Au=ECDSA  Enc=AES(256)                Mac=SHA1
+0xC0,0x14  -  ECDHE-RSA-AES256-SHA           TLSv1    Kx=ECDH  Au=RSA    Enc=AES(256)                Mac=SHA1
+0x00,0x67  -  DHE-RSA-AES128-SHA256          TLSv1.2  Kx=DH    Au=RSA    Enc=AES(128)                Mac=SHA256
+0x00,0x6B  -  DHE-RSA-AES256-SHA256          TLSv1.2  Kx=DH    Au=RSA    Enc=AES(256)                Mac=SHA256
+0x00,0x9C  -  AES128-GCM-SHA256              TLSv1.2  Kx=RSA   Au=RSA    Enc=AESGCM(128)             Mac=AEAD
+0x00,0x9D  -  AES256-GCM-SHA384              TLSv1.2  Kx=RSA   Au=RSA    Enc=AESGCM(256)             Mac=AEAD
+0x00,0x3C  -  AES128-SHA256                  TLSv1.2  Kx=RSA   Au=RSA    Enc=AES(128)                Mac=SHA256
+0x00,0x3D  -  AES256-SHA256                  TLSv1.2  Kx=RSA   Au=RSA    Enc=AES(256)                Mac=SHA256
+0x00,0x2F  -  AES128-SHA                     SSLv3    Kx=RSA   Au=RSA    Enc=AES(128)                Mac=SHA1
+0x00,0x35  -  AES256-SHA                     SSLv3    Kx=RSA   Au=RSA    Enc=AES(256)                Mac=SHA1
+0x00,0x0A  -  DES-CBC3-SHA                   SSLv3    Kx=RSA   Au=RSA    Enc=3DES(168)               Mac=SHA1
 </source>
 
 * Rationale:
