@@ -8,16 +8,15 @@
     <div style="text-align: center;">
         <h1>Mozilla SSL Configuration Generator</h1>
         <div>
-            Redirecting to the updated <a href="https://ssl-config.mozilla.org">SSL Configuration Generator</a>&hellip;
+            Redirecting to the updated <a href="https://ssl-config.mozilla.org/">SSL Configuration Generator</a>&hellip;
         </div>
     </div>
     <script>
         // get the current location
         var url = new URL(window.location);
+        var redirect = 'https://ssl-config.mozilla.org/';
 
-        if (url.search === '') {
-            var redirect = 'https://ssl-config.mozilla.org';
-        } else {
+        if (url.search !== '') {
             var search = url.search;
 
             // change to hash
@@ -30,9 +29,9 @@
                            .replace('profile=', 'config=')
                            .replace('openssl=', 'openssl-version=');
 
-            var redirect = 'https://ssl-config.mozilla.org/' + search;
+            redirect = 'https://ssl-config.mozilla.org/' + search;
         }
-        
+
         // boop
         window.location = redirect;
     </script>
