@@ -128,9 +128,10 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 * Rationale:
 ** All cipher suites are [https://en.wikipedia.org/wiki/Forward_secrecy forward secret] and [https://en.wikipedia.org/wiki/Authenticated_encryption authenticated]
 ** TLS 1.2 is the minimum supported protocol, as recommended by [https://tools.ietf.org/html/rfc7525#section-3.1.1 RFC 7525], PCI DSS, and others
-** ECDSA certificates are recommended over RSA certificates, as they allow the use of ECDHE with Windows 7 clients using Internet Explorer 11
+** ECDSA certificates are recommended over RSA certificates, as they allow the use of ECDHE with Windows 7 clients using Internet Explorer 11, as well as allow connections from IE11 on Windows Server 2008 R2
 ** The cipher suites are all strong and so we allow the client to choose, as they will know best if they have support for hardware-accelerated AES
 ** Windows XP (including all embedded versions) are no longer supported by Microsoft, eliminating the need for many older protocols and ciphers
+** Administrators needing to provide access to [https://www.ssllabs.com/ssltest/viewClient.html?name=IE&version=11&platform=Win%207&key=36 IE 11 on Windows Server 2008 R2] and who are unable to switch to or add ECDSA certificates can add <tt>TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA</tt>
 ** While the goal is to support a broad range of clients, we reasonably disable a number of ciphers that have little support (such as ARIA, Camellia, 3DES, and SEED)
 ** 90 days is the recommended maximum certificate lifespan, to encourage certificate issuance automation
 
@@ -200,6 +201,10 @@ This configuration is compatible with a number of very old clients, and should b
 ! Version
 ! Editor
 ! Changes
+|-
+| style="text-align: center;" | 5.0.1
+| style="text-align: center;" | April King
+| Add note about IE 11 on Windows Server 2008 R2
 |-
 | style="text-align: center;" | 5.0
 | style="text-align: center;" | April King
