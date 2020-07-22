@@ -84,7 +84,7 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 * Certificate type: '''ECDSA (P-256)'''
 * TLS curves: '''X25519, prime256v1, secp384r1'''
 * HSTS: '''max-age=63072000''' (two years)
-* Maximum certificate lifespan: '''90 days'''
+* Certificate lifespan: '''90 days'''
 * Cipher preference: '''client chooses'''
 
 <source>
@@ -108,7 +108,7 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 * Certificate type: '''ECDSA (P-256)''' (recommended), or '''RSA (2048 bits)'''
 * DH parameter size: '''2048''' (ffdhe2048, [https://tools.ietf.org/html/rfc7919#appendix-A.1 RFC 7919])
 * HSTS: '''max-age=63072000''' (two years)
-* Maximum certificate lifespan: '''90 days''' (recommended) to '''2 years'''
+* Certificate lifespan: '''90 days''' (recommended) to '''366 days'''
 * Cipher preference: '''client chooses'''
 
 <source>
@@ -147,7 +147,7 @@ This configuration is compatible with a number of very old clients, and should b
 * Certificate curve: '''None'''
 * DH parameter size: '''1024''' (generated with <tt>openssl dhparam 1024</tt>)
 * HSTS: '''max-age=63072000''' (two years)
-* Maximum certificate lifespan: '''90 days''' (recommended) to '''2 years'''
+* Certificate lifespan: '''90 days''' (recommended) to '''366 days'''
 * Cipher preference: '''server chooses'''
 
 <source>
@@ -201,6 +201,10 @@ This configuration is compatible with a number of very old clients, and should b
 ! Version
 ! Editor
 ! Changes
+|-
+| style="text-align: center;" | 5.5
+| style="text-align: center;" | April King
+| Update certificate lifespan to reflect browser policy changes
 |-
 | style="text-align: center;" | 5.3
 | style="text-align: center;" | April King
