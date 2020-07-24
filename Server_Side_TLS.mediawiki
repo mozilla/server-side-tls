@@ -191,9 +191,9 @@ This configuration is compatible with a number of very old clients, and should b
 
 = JSON version of the recommendations =
 
-<p style="max-width: 60em;">Mozilla also maintains [https://ssl-config.mozilla.org/guidelines/5.3.json these recommendations] in JSON format, for automated system configuration. This location is versioned and permanent, and can be referenced in scripts and tools. The file will not change, to avoid breaking tools when we update the recommendations.</p>
+<p style="max-width: 60em;">Mozilla also maintains [https://ssl-config.mozilla.org/guidelines/5.6.json these recommendations] in JSON format, for automated system configuration. This location is versioned and permanent, and can be referenced in scripts and tools. The file will not change, to avoid breaking tools when we update the recommendations.</p>
 
-<p style="max-width: 60em;">We also maintain a [https://ssl-config.mozilla.org/guidelines/latest.json rolling version] of these recommendations, with the caveat that they may change '''without warning''' and '''without providing backwards compatibility'''. As it may break things if you use it to automatically configure your servers without review, we recommend you use the [https://ssl-config.mozilla.org/guidelines/5.3.json version-specific file] instead.</p>
+<p style="max-width: 60em;">We also maintain a [https://ssl-config.mozilla.org/guidelines/latest.json rolling version] of these recommendations, with the caveat that they may change '''without warning''' and '''without providing backwards compatibility'''. As it may break things if you use it to automatically configure your servers without review, we recommend you use the [https://ssl-config.mozilla.org/guidelines/5.6.json version-specific file] instead.</p>
 
 = Version History =
 {| class="wikitable"
