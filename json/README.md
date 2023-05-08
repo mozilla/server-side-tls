@@ -1,6 +1,6 @@
 # Current JSON Server Side TLS Recommendations
 
-The current JSON recommendations can be found at https://github.com/mozilla/ssl-config-generator/tree/master/docs/guidelines 
+The current JSON recommendations can be found at https://github.com/mozilla/ssl-config-generator/tree/master/src/static/guidelines
 
 # Historical JSON Versions of Server Side TLS Recommendations
 
