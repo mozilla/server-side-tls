@@ -1,19 +1,18 @@
-# JSON Versions of Server Side TLS Recommendations
+# Current JSON Server Side TLS Recommendations
 
-The JSON recommendations are tracked in GitHub and hosted in AWS CloudFront in 
-the `infosec-prod` AWS account. CloudFront terminates the TLS connection and 
-sources the data from the `server-side-tls` AWS S3 bucket also hosted in the 
-`infosec-prod` AWS account.
+The current JSON recommendations can be found at https://github.com/mozilla/ssl-config-generator/tree/master/docs/guidelines 
 
-# Deployment method
+# Historical JSON Versions of Server Side TLS Recommendations
 
-To deploy the JSON recommendations after they have been updated in the repo, 
-run the following command with a user or role with sufficient permissions to 
-write to the `server-side-tls` bucket in infosec-prod
+The `/json` directory in this repo contains the JSON recommendations up to version
+5.0 from 2019.
 
-```
-aws s3 cp server-side-tls-conf.json s3://server-side-tls/
-aws s3 cp server-side-tls-conf-5.0.json s3://server-side-tls/
-```
+These historical JSON recommendations are tracked in GitHub and hosted in the 
+`server-side-tls` AWS S3 bucket hosted in the`infosec-prod` AWS account. That 
+S3 bucket is then fronted by AWS CloudFront, also in the `infosec-prod` AWS 
+account. The CloudFront distribution `EIB8EDBWWFDDU ` terminates the TLS 
+connection at https://statics.tls.security.mozilla.org serving up the content 
+from the S3 bucket.
 
-Or upload the updated files through the AWS web console.
+All future recommendation updates should be made in the https://github.com/mozilla/ssl-config-generator/
+repository, not here.
