@@ -99,7 +99,7 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 ** We recommend ECDSA certificates using P-256, as P-384 provides negligible improvements to security and Ed25519 is not yet widely supported
 
 == <span style="color:orange;">'''Intermediate'''</span> compatibility (recommended) ==
-<p style="max-width: 60em;">For services that don't need compatibility with legacy clients, such as Windows XP or old versions of OpenSSL. This is the recommended configuration for the vast majority of services, as it is highly secure and compatible with nearly every client released in the last five (or more) years.</p>
+<p style="max-width: 60em;">For services that don't need compatibility with legacy clients such as Windows XP or old versions of OpenSSL. This is the recommended configuration for the vast majority of services, as it is highly secure and compatible with nearly every client released in the last five (or more) years.</p>
 
 * Cipher suites (TLS 1.3): '''TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256'''
 * Cipher suites (TLS 1.2): '''ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384'''
