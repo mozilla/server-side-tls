@@ -1,6 +1,9 @@
 = Cipher suite correspondence table =
 IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table below lists each cipher as well as its corresponding Mozilla [[Security/Server Side TLS|Server Side TLS]] compatibility level.
 
+<!-- Modern row color : #9EDB58 -->
+<!-- Intermediate row color : #DBC158 -->
+<!-- Old row color : #CCCCCC -->
 {| class="wikitable sortable"
 |-
 ! scope="col" | Hex
@@ -340,11 +343,11 @@ IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table be
 | style="background-color: #CCCCCC; font-weight: bold;" | AES128-CCM
 |-
 ! scope=row | 0xCC,0xAA
-| style="background-color: #CCCCCC; font-weight: bold; text-align: center;" | 48
-| style="background-color: #CCCCCC; font-weight: bold;" | TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-| style="background-color: #CCCCCC; font-weight: bold;" | TLS_DHE_RSA_CHACHA20_POLY1305
-| style="background-color: #CCCCCC; font-weight: bold;" | TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-| style="background-color: #CCCCCC; font-weight: bold;" | DHE-RSA-CHACHA20-POLY1305
+| style="background-color: #DBC158; font-weight: bold; text-align: center;" | 48
+| style="background-color: #DBC158; font-weight: bold;" | TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+| style="background-color: #DBC158; font-weight: bold;" | TLS_DHE_RSA_CHACHA20_POLY1305
+| style="background-color: #DBC158; font-weight: bold;" | TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+| style="background-color: #DBC158; font-weight: bold;" | DHE-RSA-CHACHA20-POLY1305
 |-
 ! scope=row | 0xC0,0x5D
 | style="background-color: #CCCCCC; font-weight: bold; text-align: center;" | 49

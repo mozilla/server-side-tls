@@ -87,6 +87,7 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 * Certificate lifespan: '''90 days'''
 * Cipher preference: '''client chooses'''
 
+<!-- This tabular openssl list can be produced by running "openssl ciphers -V" -->
 <source>
 0x13,0x01  -  TLS_AES_128_GCM_SHA256        TLSv1.3  Kx=any  Au=any  Enc=AESGCM(128)             Mac=AEAD
 0x13,0x02  -  TLS_AES_256_GCM_SHA384        TLSv1.3  Kx=any  Au=any  Enc=AESGCM(256)             Mac=AEAD
@@ -102,7 +103,7 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 <p style="max-width: 60em;">For services that don't need compatibility with legacy clients such as Windows XP or old versions of OpenSSL. This is the recommended configuration for the vast majority of services, as it is highly secure and compatible with nearly every client released in the last five (or more) years.</p>
 
 * Cipher suites (TLS 1.3): '''TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256'''
-* Cipher suites (TLS 1.2): '''ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384'''
+* Cipher suites (TLS 1.2): '''ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305'''
 * Protocols: '''TLS 1.2, TLS 1.3'''
 * TLS curves: '''X25519, prime256v1, secp384r1'''
 * Certificate type: '''ECDSA (P-256)''' (recommended), or '''RSA (2048 bits)'''
@@ -111,6 +112,7 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 * Certificate lifespan: '''90 days''' (recommended) to '''366 days'''
 * Cipher preference: '''client chooses'''
 
+<!-- This tabular openssl list can be produced by running "openssl ciphers -V" -->
 <source>
 0x13,0x01  -  TLS_AES_128_GCM_SHA256         TLSv1.3  Kx=any   Au=any    Enc=AESGCM(128)             Mac=AEAD
 0x13,0x02  -  TLS_AES_256_GCM_SHA384         TLSv1.3  Kx=any   Au=any    Enc=AESGCM(256)             Mac=AEAD
@@ -123,6 +125,7 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 0xCC,0xA8  -  ECDHE-RSA-CHACHA20-POLY1305    TLSv1.2  Kx=ECDH  Au=RSA    Enc=CHACHA20/POLY1305(256)  Mac=AEAD
 0x00,0x9E  -  DHE-RSA-AES128-GCM-SHA256      TLSv1.2  Kx=DH    Au=RSA    Enc=AESGCM(128)             Mac=AEAD
 0x00,0x9F  -  DHE-RSA-AES256-GCM-SHA384      TLSv1.2  Kx=DH    Au=RSA    Enc=AESGCM(256)             Mac=AEAD
+0xCC,0xAA  -  DHE-RSA-CHACHA20-POLY1305      TLSv1.2  Kx=DH    Au=RSA    Enc=CHACHA20/POLY1305(256)  Mac=AEAD
 </source>
 
 * Rationale:
@@ -150,6 +153,7 @@ This configuration is compatible with a number of very old clients, and should b
 * Certificate lifespan: '''90 days''' (recommended) to '''366 days'''
 * Cipher preference: '''server chooses'''
 
+<!-- This tabular openssl list can be produced by running "openssl ciphers -V" -->
 <source>
 0x13,0x01  -  TLS_AES_128_GCM_SHA256         TLSv1.3  Kx=any   Au=any    Enc=AESGCM(128)             Mac=AEAD
 0x13,0x02  -  TLS_AES_256_GCM_SHA384         TLSv1.3  Kx=any   Au=any    Enc=AESGCM(256)             Mac=AEAD
@@ -201,6 +205,14 @@ This configuration is compatible with a number of very old clients, and should b
 ! Version
 ! Editor
 ! Changes
+|-
+| style="text-align: center;" | 5.7
+| style="text-align: center;" | Gene Wood
+| Add DHE-RSA-CHACHA20-POLY1305 cipher to the Intermediate configuration
+|-
+| style="text-align: center;" | 5.6
+| style="text-align: center;" | April King
+| Fixed incorrect cipher ordering for the Intermediate configuration
 |-
 | style="text-align: center;" | 5.5
 | style="text-align: center;" | April King
