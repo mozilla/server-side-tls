@@ -18,21 +18,21 @@ IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table be
 | style="background-color: #9EDB58; font-weight: bold;" | TLS_AES_256_GCM_SHA384
 | style="background-color: #9EDB58; font-weight: bold;" | TLS_AES_256_GCM_SHA384
 | style="background-color: #9EDB58; font-weight: bold;" | TLS_AES_256_GCM_SHA384
-| style="background-color: #9EDB58; font-weight: bold;" | 
+| style="background-color: #9EDB58; font-weight: bold;" | TLS_AES_256_GCM_SHA384
 |-
 ! scope=row | 0x13,0x03
 | style="background-color: #9EDB58; font-weight: bold; text-align: center;" | 2
 | style="background-color: #9EDB58; font-weight: bold;" | TLS_CHACHA20_POLY1305_SHA256
 | style="background-color: #9EDB58; font-weight: bold;" | TLS_CHACHA20_POLY1305_SHA256
 | style="background-color: #9EDB58; font-weight: bold;" | TLS_CHACHA20_POLY1305_SHA256
-| style="background-color: #9EDB58; font-weight: bold;" | 
+| style="background-color: #9EDB58; font-weight: bold;" | TLS_CHACHA20_POLY1305_SHA256
 |-
 ! scope=row | 0x13,0x01
 | style="background-color: #9EDB58; font-weight: bold; text-align: center;" | 3
 | style="background-color: #9EDB58; font-weight: bold;" | TLS_AES_128_GCM_SHA256
 | style="background-color: #9EDB58; font-weight: bold;" | TLS_AES_128_GCM_SHA256
 | style="background-color: #9EDB58; font-weight: bold;" | TLS_AES_128_GCM_SHA256
-| style="background-color: #9EDB58; font-weight: bold;" | 
+| style="background-color: #9EDB58; font-weight: bold;" | TLS_AES_128_GCM_SHA256
 |-
 ! scope=row | 0xCC,0xA9
 | style="background-color: #9EDB58; font-weight: bold; text-align: center;" | 4
