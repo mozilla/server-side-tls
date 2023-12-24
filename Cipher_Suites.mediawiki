@@ -1333,15 +1333,15 @@ IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table be
 | style="background-color: white;" data-sort-value="1000" | 
 | style="background-color: white;" | TLS_AES_128_CCM_SHA256
 | style="background-color: white;" | TLS_AES_128_CCM_SHA256
-| style="background-color: white;" | 
-| style="background-color: white;" | 
+| style="background-color: white;" | TLS_AES_128_CCM_SHA256
+| style="background-color: white;" | TLS_AES_128_CCM_SHA256
 |-
 ! scope=row | 0x13,0x05
 | style="background-color: white;" data-sort-value="1000" | 
 | style="background-color: white;" | TLS_AES_128_CCM_8_SHA256
 | style="background-color: white;" | TLS_AES_128_CCM_8_SHA256
-| style="background-color: white;" | 
-| style="background-color: white;" | 
+| style="background-color: white;" | TLS_AES_128_CCM_8_SHA256
+| style="background-color: white;" | TLS_AES_128_CCM_8_SHA256
 |-
 ! scope=row | 0x56,0x00
 | style="background-color: white;" data-sort-value="1000" | 
