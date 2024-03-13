@@ -623,11 +623,11 @@ IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table be
 | style="" | 
 |-
 ! scope=row | 0x00,0x0A
-| style="" data-sort-value="1000" | 
-| style="" | TLS_RSA_WITH_3DES_EDE_CBC_SHA
-| style="" | TLS_RSA_3DES_EDE_CBC_SHA1
-| style="" | TLS_RSA_WITH_3DES_EDE_CBC_SHA
-| style="" | 
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 88
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_3DES_EDE_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_3DES_EDE_CBC_SHA1
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_3DES_EDE_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | DES-CBC3-SHA
 |-
 ! scope=row | 0x00,0x0B
 | style="" data-sort-value="1000" | 
