@@ -13,26 +13,26 @@ IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table be
 ! scope="col" | NSS
 ! scope="col" | OpenSSL
 |-
-! scope=row | 0x13,0x02
+! scope=row | 0x13,0x01
 | style="background-color: #9c0; font-weight: bold; text-align: center;" | 1
+| style="background-color: #9c0; font-weight: bold;" | TLS_AES_128_GCM_SHA256
+| style="background-color: #9c0; font-weight: bold;" | TLS_AES_128_GCM_SHA256
+| style="background-color: #9c0; font-weight: bold;" | TLS_AES_128_GCM_SHA256
+| style="background-color: #9c0; font-weight: bold;" | TLS_AES_128_GCM_SHA256
+|-
+! scope=row | 0x13,0x02
+| style="background-color: #9c0; font-weight: bold; text-align: center;" | 2
 | style="background-color: #9c0; font-weight: bold;" | TLS_AES_256_GCM_SHA384
 | style="background-color: #9c0; font-weight: bold;" | TLS_AES_256_GCM_SHA384
 | style="background-color: #9c0; font-weight: bold;" | TLS_AES_256_GCM_SHA384
 | style="background-color: #9c0; font-weight: bold;" | TLS_AES_256_GCM_SHA384
 |-
 ! scope=row | 0x13,0x03
-| style="background-color: #9c0; font-weight: bold; text-align: center;" | 2
-| style="background-color: #9c0; font-weight: bold;" | TLS_CHACHA20_POLY1305_SHA256
-| style="background-color: #9c0; font-weight: bold;" | TLS_CHACHA20_POLY1305_SHA256
-| style="background-color: #9c0; font-weight: bold;" | TLS_CHACHA20_POLY1305_SHA256
-| style="background-color: #9c0; font-weight: bold;" | TLS_CHACHA20_POLY1305_SHA256
-|-
-! scope=row | 0x13,0x01
 | style="background-color: #9c0; font-weight: bold; text-align: center;" | 3
-| style="background-color: #9c0; font-weight: bold;" | TLS_AES_128_GCM_SHA256
-| style="background-color: #9c0; font-weight: bold;" | TLS_AES_128_GCM_SHA256
-| style="background-color: #9c0; font-weight: bold;" | TLS_AES_128_GCM_SHA256
-| style="background-color: #9c0; font-weight: bold;" | TLS_AES_128_GCM_SHA256
+| style="background-color: #9c0; font-weight: bold;" | TLS_CHACHA20_POLY1305_SHA256
+| style="background-color: #9c0; font-weight: bold;" | TLS_CHACHA20_POLY1305_SHA256
+| style="background-color: #9c0; font-weight: bold;" | TLS_CHACHA20_POLY1305_SHA256
+| style="background-color: #9c0; font-weight: bold;" | TLS_CHACHA20_POLY1305_SHA256
 |-
 ! scope=row | 0xCC,0xA9
 | style="background-color: #fc6; font-weight: bold; text-align: center;" | 4
