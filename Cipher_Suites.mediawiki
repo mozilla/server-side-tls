@@ -168,11 +168,11 @@ IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table be
 | style="background-color: #fc6; font-weight: bold;" | DHE-RSA-AES128-SHA256
 |-
 ! scope=row | 0x00,0x33
-| style="background-color: #fc6; font-weight: bold; text-align: center;" | 23
-| style="background-color: #fc6; font-weight: bold;" | TLS_DHE_RSA_WITH_AES_128_CBC_SHA
-| style="background-color: #fc6; font-weight: bold;" | TLS_DHE_RSA_AES_128_CBC_SHA1
-| style="background-color: #fc6; font-weight: bold;" | TLS_DHE_RSA_WITH_AES_128_CBC_SHA
-| style="background-color: #fc6; font-weight: bold;" | DHE-RSA-AES128-SHA
+| style="" data-sort-value="1000" | 
+| style="" | TLS_DHE_RSA_WITH_AES_128_CBC_SHA
+| style="" | TLS_DHE_RSA_AES_128_CBC_SHA1
+| style="" | TLS_DHE_RSA_WITH_AES_128_CBC_SHA
+| style="" | DHE-RSA-AES128-SHA
 |-
 ! scope=row | 0x00,0x40
 | style="" data-sort-value="1000" | 
@@ -196,11 +196,11 @@ IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table be
 | style="" | DHE-DSS-AES256-SHA
 |-
 ! scope=row | 0x00,0x39
-| style="background-color: #fc6; font-weight: bold; text-align: center;" | 27
-| style="background-color: #fc6; font-weight: bold;" | TLS_DHE_RSA_WITH_AES_256_CBC_SHA
-| style="background-color: #fc6; font-weight: bold;" | TLS_DHE_RSA_AES_256_CBC_SHA1
-| style="background-color: #fc6; font-weight: bold;" | TLS_DHE_RSA_WITH_AES_256_CBC_SHA
-| style="background-color: #fc6; font-weight: bold;" | DHE-RSA-AES256-SHA
+| style="" data-sort-value="1000" | 
+| style="" | TLS_DHE_RSA_WITH_AES_256_CBC_SHA
+| style="" | TLS_DHE_RSA_AES_256_CBC_SHA1
+| style="" | TLS_DHE_RSA_WITH_AES_256_CBC_SHA
+| style="" | DHE-RSA-AES256-SHA
 |-
 ! scope=row | 0x00,0x9C
 | style="background-color: #fc6; font-weight: bold; text-align: center;" | 28
