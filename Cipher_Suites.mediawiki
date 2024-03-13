@@ -97,6 +97,125 @@ IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table be
 | style="background-color: #fc6; font-weight: bold;" | TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256
 | style="background-color: #fc6; font-weight: bold;" | DHE-RSA-CHACHA20-POLY1305
 |-
+! scope=row | 0xC0,0x23
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 13
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_AES_128_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | ECDHE-ECDSA-AES128-SHA256
+|-
+! scope=row | 0xC0,0x27
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 14
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_AES_128_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | ECDHE-RSA-AES128-SHA256
+|-
+! scope=row | 0xC0,0x09
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 15
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_AES_128_CBC_SHA1
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | ECDHE-ECDSA-AES128-SHA
+|-
+! scope=row | 0xC0,0x13
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 16
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_AES_128_CBC_SHA1
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | ECDHE-RSA-AES128-SHA
+|-
+! scope=row | 0xC0,0x24
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 17
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_AES_256_CBC_SHA384
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384
+| style="background-color: #ccc; font-weight: bold;" | ECDHE-ECDSA-AES256-SHA384
+|-
+! scope=row | 0xC0,0x28
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 18
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_AES_256_CBC_SHA384
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+| style="background-color: #ccc; font-weight: bold;" | ECDHE-RSA-AES256-SHA384
+|-
+! scope=row | 0xC0,0x0A
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 19
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_AES_256_CBC_SHA1
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | ECDHE-ECDSA-AES256-SHA
+|-
+! scope=row | 0xC0,0x14
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 20
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_AES_256_CBC_SHA1
+| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | ECDHE-RSA-AES256-SHA
+|-
+! scope=row | 0x00,0x67
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 21
+| style="background-color: #ccc; font-weight: bold;" | TLS_DHE_RSA_WITH_AES_128_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | TLS_DHE_RSA_AES_128_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | TLS_DHE_RSA_WITH_AES_128_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | DHE-RSA-AES128-SHA256
+|-
+! scope=row | 0x00,0x6B
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 22
+| style="background-color: #ccc; font-weight: bold;" | TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | TLS_DHE_RSA_AES_256_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | DHE-RSA-AES256-SHA256
+|-
+! scope=row | 0x00,0x9C
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 23
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_128_GCM_SHA256
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_AES_128_GCM_SHA256
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_128_GCM_SHA256
+| style="background-color: #ccc; font-weight: bold;" | AES128-GCM-SHA256
+|-
+! scope=row | 0x00,0x9D
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 24
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_256_GCM_SHA384
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_AES_256_GCM_SHA384
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_256_GCM_SHA384
+| style="background-color: #ccc; font-weight: bold;" | AES256-GCM-SHA384
+|-
+! scope=row | 0x00,0x3C
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 25
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_128_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_AES_128_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_128_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | AES128-SHA256
+|-
+! scope=row | 0x00,0x3D
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 26
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_256_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_AES_256_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_256_CBC_SHA256
+| style="background-color: #ccc; font-weight: bold;" | AES256-SHA256
+|-
+! scope=row | 0x00,0x2F
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 27
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_128_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_AES_128_CBC_SHA1
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_128_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | AES128-SHA
+|-
+! scope=row | 0x00,0x35
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 28
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_256_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_AES_256_CBC_SHA1
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_256_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | AES256-SHA
+|-
+! scope=row | 0x00,0x0A
+| style="background-color: #ccc; font-weight: bold; text-align: center;" | 29
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_3DES_EDE_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_3DES_EDE_CBC_SHA1
+| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_3DES_EDE_CBC_SHA
+| style="background-color: #ccc; font-weight: bold;" | DES-CBC3-SHA
+|-
 ! scope=row | 0x00,0xA2
 | style="" data-sort-value="1000" | 
 | style="" | TLS_DHE_DSS_WITH_AES_128_GCM_SHA256
@@ -110,69 +229,6 @@ IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table be
 | style="" | TLS_DHE_DSS_AES_256_GCM_SHA384
 | style="" | TLS_DHE_DSS_WITH_AES_256_GCM_SHA384
 | style="" | DHE-DSS-AES256-GCM-SHA384
-|-
-! scope=row | 0xC0,0x27
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 14
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_AES_128_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | ECDHE-RSA-AES128-SHA256
-|-
-! scope=row | 0xC0,0x23
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 15
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_AES_128_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | ECDHE-ECDSA-AES128-SHA256
-|-
-! scope=row | 0xC0,0x13
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 16
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_AES_128_CBC_SHA1
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
-| style="background-color: #ccc; font-weight: bold;" | ECDHE-RSA-AES128-SHA
-|-
-! scope=row | 0xC0,0x09
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 17
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_AES_128_CBC_SHA1
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
-| style="background-color: #ccc; font-weight: bold;" | ECDHE-ECDSA-AES128-SHA
-|-
-! scope=row | 0xC0,0x28
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 18
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_AES_256_CBC_SHA384
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
-| style="background-color: #ccc; font-weight: bold;" | ECDHE-RSA-AES256-SHA384
-|-
-! scope=row | 0xC0,0x24
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 19
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_AES_256_CBC_SHA384
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384
-| style="background-color: #ccc; font-weight: bold;" | ECDHE-ECDSA-AES256-SHA384
-|-
-! scope=row | 0xC0,0x14
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 20
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_AES_256_CBC_SHA1
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
-| style="background-color: #ccc; font-weight: bold;" | ECDHE-RSA-AES256-SHA
-|-
-! scope=row | 0xC0,0x0A
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 21
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_AES_256_CBC_SHA1
-| style="background-color: #ccc; font-weight: bold;" | TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
-| style="background-color: #ccc; font-weight: bold;" | ECDHE-ECDSA-AES256-SHA
-|-
-! scope=row | 0x00,0x67
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 22
-| style="background-color: #ccc; font-weight: bold;" | TLS_DHE_RSA_WITH_AES_128_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | TLS_DHE_RSA_AES_128_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | TLS_DHE_RSA_WITH_AES_128_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | DHE-RSA-AES128-SHA256
 |-
 ! scope=row | 0x00,0x33
 | style="" data-sort-value="1000" | 
@@ -188,13 +244,6 @@ IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table be
 | style="" | TLS_DHE_DSS_WITH_AES_128_CBC_SHA256
 | style="" | DHE-DSS-AES128-SHA256
 |-
-! scope=row | 0x00,0x6B
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 25
-| style="background-color: #ccc; font-weight: bold;" | TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | TLS_DHE_RSA_AES_256_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | DHE-RSA-AES256-SHA256
-|-
 ! scope=row | 0x00,0x38
 | style="" data-sort-value="1000" | 
 | style="" | TLS_DHE_DSS_WITH_AES_256_CBC_SHA
@@ -208,48 +257,6 @@ IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table be
 | style="" | TLS_DHE_RSA_AES_256_CBC_SHA1
 | style="" | TLS_DHE_RSA_WITH_AES_256_CBC_SHA
 | style="" | DHE-RSA-AES256-SHA
-|-
-! scope=row | 0x00,0x9C
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 28
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_128_GCM_SHA256
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_AES_128_GCM_SHA256
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_128_GCM_SHA256
-| style="background-color: #ccc; font-weight: bold;" | AES128-GCM-SHA256
-|-
-! scope=row | 0x00,0x9D
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 29
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_256_GCM_SHA384
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_AES_256_GCM_SHA384
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_256_GCM_SHA384
-| style="background-color: #ccc; font-weight: bold;" | AES256-GCM-SHA384
-|-
-! scope=row | 0x00,0x3C
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 30
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_128_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_AES_128_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_128_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | AES128-SHA256
-|-
-! scope=row | 0x00,0x3D
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 31
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_256_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_AES_256_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_256_CBC_SHA256
-| style="background-color: #ccc; font-weight: bold;" | AES256-SHA256
-|-
-! scope=row | 0x00,0x2F
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 32
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_128_CBC_SHA
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_AES_128_CBC_SHA1
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_128_CBC_SHA
-| style="background-color: #ccc; font-weight: bold;" | AES128-SHA
-|-
-! scope=row | 0x00,0x35
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 33
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_256_CBC_SHA
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_AES_256_CBC_SHA1
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_AES_256_CBC_SHA
-| style="background-color: #ccc; font-weight: bold;" | AES256-SHA
 |-
 ! scope=row | 0xC0,0xAF
 | style="" data-sort-value="1000" | 
@@ -621,13 +628,6 @@ IANA, OpenSSL and GnuTLS use different naming for the same ciphers. The table be
 | style="" | 
 | style="" | TLS_RSA_WITH_DES_CBC_SHA
 | style="" | 
-|-
-! scope=row | 0x00,0x0A
-| style="background-color: #ccc; font-weight: bold; text-align: center;" | 88
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_3DES_EDE_CBC_SHA
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_3DES_EDE_CBC_SHA1
-| style="background-color: #ccc; font-weight: bold;" | TLS_RSA_WITH_3DES_EDE_CBC_SHA
-| style="background-color: #ccc; font-weight: bold;" | DES-CBC3-SHA
 |-
 ! scope=row | 0x00,0x0B
 | style="" data-sort-value="1000" | 
