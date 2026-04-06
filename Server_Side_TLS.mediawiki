@@ -17,11 +17,10 @@ In the interests of usability and maintainability, these guidelines have been co
 [[Image:Ssl-config.mozilla.org.png|600px|link=https://ssl-config.mozilla.org/|Mozilla SSL Configuration Generator]]<br>
 The [https://ssl-config.mozilla.org/ Mozilla SSL Configuration Generator]
 </span>
-Mozilla maintains three recommended configurations for servers using TLS. Pick the correct configuration depending on your audience:
+Mozilla maintains two recommended configurations for servers using TLS. Pick the correct configuration depending on your audience:
 
 * <span style="color: green; font-weight: bold;">Modern</span>''':''' Modern clients that support TLS 1.3, with no need for backwards compatibility
 * <span style="color: orange; font-weight: bold;">Intermediate</span>''':''' Recommended configuration for a general-purpose server
-* <span style="color: gray; font-weight: bold;">Old</span>''':''' Services accessed by very old clients or libraries, such as Internet Explorer 8 (Windows XP), Java 6, or OpenSSL 0.9.8
 
 {| class="wikitable" style="margin: 1.5rem 1rem;"
 |-
@@ -48,31 +47,18 @@ Mozilla maintains three recommended configurations for servers using TLS. Pick t
 | style="text-align: center;" | 12.1
 |-
 | style="color:orange;" | '''Intermediate'''
-| style="text-align: center;" | 27
+| style="text-align: center;" | 31.3.0
 | style="text-align: center;" | 4.4.2
-| style="text-align: center;" | 31
-| style="text-align: center;" | 12
-| style="text-align: center;" | 11 (Win7)
-| style="text-align: center;" | 8u31
-| style="text-align: center;" | 1.0.1
+| style="text-align: center;" | 49
+| style="text-align: center;" | 15 (Win10)
+| style="text-align: center;" | 11 (Win10)
+| style="text-align: center;" | 8u161
+| style="text-align: center;" | 1.0.1l
 | style="text-align: center;" | 20
 | style="text-align: center;" | 9
-|-
-| style="color:gray;" | '''Old'''
-| style="text-align: center;" | 1
-| style="text-align: center;" | 2.3
-| style="text-align: center;" | 1
-| style="text-align: center;" | 12
-| style="text-align: center;" | 8 (WinXP)
-| style="text-align: center;" | 6
-| style="text-align: center;" | 0.9.8
-| style="text-align: center;" | 5
-| style="text-align: center;" | 1
 |}
 
-<p style="max-width: 60em;">The ordering of cipher suites in the <span style="color: gray; font-weight: bold;">Old</span> configuration is very important, as it determines the priority with which algorithms are selected.</p>
-
-<p style="max-width: 60em;">OpenSSL will ignore cipher suites it doesn't understand, so always use the full set of cipher suites below, in their recommended order. The use of the <span style="color: gray; font-weight: bold;">Old</span> configuration with modern versions of OpenSSL may require custom builds with support for deprecated ciphers.</p>
+<p style="max-width: 60em;">OpenSSL will ignore cipher suites it doesn't understand, so always use the full set of cipher suites below in their recommended order.</p>
 
 <p style="max-width: 60em;">Different libraries support different cipher suites and refer to them by different names. Mozilla maintains a list of [[Security/Cipher Suites|all known cipher suites]] and their corresponding names.</p>
 <br style="clear: right;">
@@ -84,7 +70,7 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 * Cipher suites (TLS 1.2): (none)
 * Protocols: '''TLS 1.3'''
 * Certificate type: '''ECDSA (P-256)'''
-* TLS curves: '''X25519, prime256v1, secp384r1'''
+* TLS curves: '''X25519MLKEM768, X25519, prime256v1, secp384r1'''
 * HSTS: '''max-age=63072000''' (two years)
 * Certificate lifespan: '''90 days'''
 * Cipher preference: '''client chooses'''
@@ -105,9 +91,9 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 <p style="max-width: 60em;">For services that don't need compatibility with legacy clients such as Windows XP or old versions of OpenSSL. This is the recommended configuration for the vast majority of services, as it is highly secure and compatible with nearly every client released in the last five (or more) years.</p>
 
 * Cipher suites (TLS 1.3): '''TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256'''
-* Cipher suites (TLS 1.2): '''ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305'''
+* Cipher suites (TLS 1.2): '''ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305'''
 * Protocols: '''TLS 1.2, TLS 1.3'''
-* TLS curves: '''X25519, prime256v1, secp384r1'''
+* TLS curves: '''X25519MLKEM768, X25519, prime256v1, secp384r1'''
 * Certificate type: '''ECDSA (P-256)''' (recommended), or '''RSA (2048 bits)'''
 * DH parameter size: '''2048''' (ffdhe2048, [https://tools.ietf.org/html/rfc7919#appendix-A.1 RFC 7919])
 * HSTS: '''max-age=63072000''' (two years)
@@ -125,9 +111,6 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 0xC0,0x30  -  ECDHE-RSA-AES256-GCM-SHA384    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(256)             Mac=AEAD
 0xCC,0xA9  -  ECDHE-ECDSA-CHACHA20-POLY1305  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=CHACHA20/POLY1305(256)  Mac=AEAD
 0xCC,0xA8  -  ECDHE-RSA-CHACHA20-POLY1305    TLSv1.2  Kx=ECDH  Au=RSA    Enc=CHACHA20/POLY1305(256)  Mac=AEAD
-0x00,0x9E  -  DHE-RSA-AES128-GCM-SHA256      TLSv1.2  Kx=DH    Au=RSA    Enc=AESGCM(128)             Mac=AEAD
-0x00,0x9F  -  DHE-RSA-AES256-GCM-SHA384      TLSv1.2  Kx=DH    Au=RSA    Enc=AESGCM(256)             Mac=AEAD
-0xCC,0xAA  -  DHE-RSA-CHACHA20-POLY1305      TLSv1.2  Kx=DH    Au=RSA    Enc=CHACHA20/POLY1305(256)  Mac=AEAD
 </pre>
 
 * Rationale:
@@ -136,70 +119,16 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 ** ECDSA certificates are recommended over RSA certificates, as they allow the use of ECDHE with Windows 7 clients using Internet Explorer 11, as well as allow connections from IE11 on Windows Server 2008 R2
 ** The cipher suites are all strong and so we allow the client to choose, as they will know best if they have support for hardware-accelerated AES
 ** Windows XP (including all embedded versions) are no longer supported by Microsoft, eliminating the need for many older protocols and ciphers
+** DHE-RSA-* ciphers DHE-RSA-AES128-GCM-SHA256, DHE-RSA-AES256-GCM-SHA384, and DHE-RSA-CHACHA20-POLY1305 are excluded due to being more computationally expensive than ECDHE, and being more vulnerable to resource exhaustion attacks such as the D(HE)at attack (CVE-2002-20001).  DHE-RSA-* ciphers were previously included to support limitations of IE11 on Windows 7.
 ** Administrators needing to provide access to [https://www.ssllabs.com/ssltest/viewClient.html?name=IE&version=11&platform=Win%207&key=36 IE 11 on Windows Server 2008 R2] and who are unable to switch to or add ECDSA certificates can add <tt>TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA</tt>
 ** While the goal is to support a broad range of clients, we reasonably disable a number of ciphers that have little support (such as ARIA, Camellia, 3DES, and SEED)
 ** 90 days is the recommended maximum certificate lifespan, to encourage certificate issuance automation
 
-== <span style="color:gray;">'''Old'''</span> backward compatibility ==
-
-This configuration is compatible with a number of very old clients, and should be used only as a last resort.
-
-* Cipher suites (TLS 1.3): '''TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256'''
-* Cipher suites (TLS 1.0 - 1.2): '''ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA256:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA'''
-* Protocols: '''TLS 1.0, TLS 1.1, TLS 1.2, TLS 1.3'''
-* TLS curves: '''X25519, prime256v1, secp384r1'''
-* Certificate type: '''RSA (2048-bits)'''
-* Certificate curve: '''None'''
-* DH parameter size: '''1024''' (generated with <tt>openssl dhparam 1024</tt>)
-* HSTS: '''max-age=63072000''' (two years)
-* Certificate lifespan: '''90 days''' (recommended) to '''366 days'''
-* Cipher preference: '''server chooses'''
-
-<!-- This tabular openssl list can be produced by running "openssl ciphers -V" -->
-<pre>
-0x13,0x01  -  TLS_AES_128_GCM_SHA256         TLSv1.3  Kx=any   Au=any    Enc=AESGCM(128)             Mac=AEAD
-0x13,0x02  -  TLS_AES_256_GCM_SHA384         TLSv1.3  Kx=any   Au=any    Enc=AESGCM(256)             Mac=AEAD
-0x13,0x03  -  TLS_CHACHA20_POLY1305_SHA256   TLSv1.3  Kx=any   Au=any    Enc=CHACHA20/POLY1305(256)  Mac=AEAD
-0xC0,0x2B  -  ECDHE-ECDSA-AES128-GCM-SHA256  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(128)             Mac=AEAD
-0xC0,0x2F  -  ECDHE-RSA-AES128-GCM-SHA256    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(128)             Mac=AEAD
-0xC0,0x2C  -  ECDHE-ECDSA-AES256-GCM-SHA384  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(256)             Mac=AEAD
-0xC0,0x30  -  ECDHE-RSA-AES256-GCM-SHA384    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(256)             Mac=AEAD
-0xCC,0xA9  -  ECDHE-ECDSA-CHACHA20-POLY1305  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=CHACHA20/POLY1305(256)  Mac=AEAD
-0xCC,0xA8  -  ECDHE-RSA-CHACHA20-POLY1305    TLSv1.2  Kx=ECDH  Au=RSA    Enc=CHACHA20/POLY1305(256)  Mac=AEAD
-0x00,0x9E  -  DHE-RSA-AES128-GCM-SHA256      TLSv1.2  Kx=DH    Au=RSA    Enc=AESGCM(128)             Mac=AEAD
-0x00,0x9F  -  DHE-RSA-AES256-GCM-SHA384      TLSv1.2  Kx=DH    Au=RSA    Enc=AESGCM(256)             Mac=AEAD
-0xCC,0xAA  -  DHE-RSA-CHACHA20-POLY1305      TLSv1.2  Kx=DH    Au=RSA    Enc=CHACHA20/POLY1305(256)  Mac=AEAD
-0xC0,0x23  -  ECDHE-ECDSA-AES128-SHA256      TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AES(128)                Mac=SHA256
-0xC0,0x27  -  ECDHE-RSA-AES128-SHA256        TLSv1.2  Kx=ECDH  Au=RSA    Enc=AES(128)                Mac=SHA256
-0xC0,0x09  -  ECDHE-ECDSA-AES128-SHA         TLSv1    Kx=ECDH  Au=ECDSA  Enc=AES(128)                Mac=SHA1
-0xC0,0x13  -  ECDHE-RSA-AES128-SHA           TLSv1    Kx=ECDH  Au=RSA    Enc=AES(128)                Mac=SHA1
-0xC0,0x24  -  ECDHE-ECDSA-AES256-SHA384      TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AES(256)                Mac=SHA384
-0xC0,0x28  -  ECDHE-RSA-AES256-SHA384        TLSv1.2  Kx=ECDH  Au=RSA    Enc=AES(256)                Mac=SHA384
-0xC0,0x0A  -  ECDHE-ECDSA-AES256-SHA         TLSv1    Kx=ECDH  Au=ECDSA  Enc=AES(256)                Mac=SHA1
-0xC0,0x14  -  ECDHE-RSA-AES256-SHA           TLSv1    Kx=ECDH  Au=RSA    Enc=AES(256)                Mac=SHA1
-0x00,0x67  -  DHE-RSA-AES128-SHA256          TLSv1.2  Kx=DH    Au=RSA    Enc=AES(128)                Mac=SHA256
-0x00,0x6B  -  DHE-RSA-AES256-SHA256          TLSv1.2  Kx=DH    Au=RSA    Enc=AES(256)                Mac=SHA256
-0x00,0x9C  -  AES128-GCM-SHA256              TLSv1.2  Kx=RSA   Au=RSA    Enc=AESGCM(128)             Mac=AEAD
-0x00,0x9D  -  AES256-GCM-SHA384              TLSv1.2  Kx=RSA   Au=RSA    Enc=AESGCM(256)             Mac=AEAD
-0x00,0x3C  -  AES128-SHA256                  TLSv1.2  Kx=RSA   Au=RSA    Enc=AES(128)                Mac=SHA256
-0x00,0x3D  -  AES256-SHA256                  TLSv1.2  Kx=RSA   Au=RSA    Enc=AES(256)                Mac=SHA256
-0x00,0x2F  -  AES128-SHA                     SSLv3    Kx=RSA   Au=RSA    Enc=AES(128)                Mac=SHA1
-0x00,0x35  -  AES256-SHA                     SSLv3    Kx=RSA   Au=RSA    Enc=AES(256)                Mac=SHA1
-0x00,0x0A  -  DES-CBC3-SHA                   SSLv3    Kx=RSA   Au=RSA    Enc=3DES(168)               Mac=SHA1
-</pre>
-
-* Rationale:
-** Take a hard look at your infrastructure needs before using this configuration; it is intended for special use cases only
-** If possible, use this configuration only for endpoints that require it, segregating it from other traffic
-** SSLv3 has been disabled entirely, ending support for older Windows XP SP2 clients. Users requiring support for Windows XP SP2 may use [[Security/Archive/Server Side TLS 4.0|previous versions]] of this configuration, with the caveat that SSLv3 is no longer safe to use
-** This configuration requires custom builds to work with modern versions of OpenSSL, using <tt>enable-ssl3</tt>, <tt>enable-ssl3-method</tt>, <tt>enable-deprecated</tt>, and <tt>enable-weak-ssl-ciphers</tt>
-** Most ciphers that are not clearly broken and dangerous to use are supported
-
 = JSON version of the recommendations =
 
-<p style="max-width: 60em;">Mozilla also maintains [https://ssl-config.mozilla.org/guidelines/5.7.json these recommendations] in JSON format, for automated system configuration. This location is versioned and permanent, and can be referenced in scripts and tools. The file will not change, to avoid breaking tools when we update the recommendations.</p>
+<p style="max-width: 60em;">Mozilla also maintains [https://ssl-config.mozilla.org/guidelines/6.0.json these recommendations] in JSON format, for automated system configuration. This location is versioned and permanent, and can be referenced in scripts and tools. The file will not change, to avoid breaking tools when we update the recommendations.</p>
 
-<p style="max-width: 60em;">We also maintain a [https://ssl-config.mozilla.org/guidelines/latest.json rolling version] of these recommendations, with the caveat that they may change '''without warning''' and '''without providing backwards compatibility'''. As it may break things if you use it to automatically configure your servers without review, we recommend you use the [https://ssl-config.mozilla.org/guidelines/5.7.json version-specific file] instead.</p>
+<p style="max-width: 60em;">We also maintain a [https://ssl-config.mozilla.org/guidelines/latest.json rolling version] of these recommendations, with the caveat that they may change '''without warning''' and '''without providing backwards compatibility'''. As it may break things if you use it to automatically configure your servers without review, we recommend you use the [https://ssl-config.mozilla.org/guidelines/6.0.json version-specific file] instead.</p>
 
 = Version History =
 {| class="wikitable"
@@ -207,6 +136,17 @@ This configuration is compatible with a number of very old clients, and should b
 ! Version
 ! Editor
 ! Changes
+|-
+| style="text-align: center;" | 6.0
+| style="text-align: center;" | Glenn Strauss
+| Remove Old configuration
+|-
+| style="text-align: center;" | 5.8
+| style="text-align: center;" | Glenn Strauss
+| Remove kDHE ciphers from Intermediate and Old
+  Change Old dhParamSize from 1024 to 2048
+  Change Old to use ffdhe2048 instead of locally generated dhparams
+  Prepend X25519MLKEM768 PQC hybrid KEM to recommended groups
 |-
 | style="text-align: center;" | 5.7
 | style="text-align: center;" | Gene Wood
