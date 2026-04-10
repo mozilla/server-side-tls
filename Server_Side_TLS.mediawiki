@@ -122,6 +122,7 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 ** DHE-RSA-* ciphers DHE-RSA-AES128-GCM-SHA256, DHE-RSA-AES256-GCM-SHA384, and DHE-RSA-CHACHA20-POLY1305 are excluded due to being more computationally expensive than ECDHE, and being more vulnerable to resource exhaustion attacks such as the D(HE)at attack (CVE-2002-20001).  DHE-RSA-* ciphers were previously included to support limitations of IE11 on Windows 7.
 ** Administrators needing to provide access to [https://www.ssllabs.com/ssltest/viewClient.html?name=IE&version=11&platform=Win%207&key=36 IE 11 on Windows Server 2008 R2] and who are unable to switch to or add ECDSA certificates can add <tt>TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA</tt>
 ** While the goal is to support a broad range of clients, we reasonably disable a number of ciphers that have little support (such as ARIA, Camellia, 3DES, and SEED)
+** Admins may consider amending this cipher list with [https://github.com/mozilla/server-side-tls/issues/279 AES-CCM ciphers] with full 16-byte tag for embedded systems with low-power ICs lacking crypto acceleration
 ** 90 days is the recommended maximum certificate lifespan, to encourage certificate issuance automation
 
 = JSON version of the recommendations =
