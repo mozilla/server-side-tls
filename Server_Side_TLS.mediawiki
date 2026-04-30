@@ -144,9 +144,9 @@ For services with clients that support TLS 1.3 and don't need backward compatibi
 |-
 | style="text-align: center;" | 5.8
 | style="text-align: center;" | Glenn Strauss
-| Remove kDHE ciphers from Intermediate and Old
-Change Old dhParamSize from 1024 to 2048
-Change Old to use ffdhe2048 instead of locally generated dhparams
+| Remove kDHE ciphers from Intermediate and Old<br>
+Change Old dhParamSize from 1024 to 2048<br>
+Change Old to use ffdhe2048 instead of locally generated dhparams<br>
 Prepend X25519MLKEM768 PQC hybrid KEM to recommended groups
 |-
 | style="text-align: center;" | 5.7
