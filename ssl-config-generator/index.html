@@ -2,19 +2,19 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Redirecting to ssl-config.mozilla.org...</title>
+    <title>Redirecting to configurator.tlsref.org...</title>
 </head>
 <body>
     <div style="text-align: center;">
         <h1>Mozilla SSL Configuration Generator</h1>
         <div>
-            Redirecting to the updated <a href="https://ssl-config.mozilla.org/">SSL Configuration Generator</a>&hellip;
+            Redirecting to the updated <a href="https://configurator.tlsref.org/">TLSRef TLS Configuration Generator</a>&hellip;
         </div>
     </div>
     <script>
         // get the current location
         var url = new URL(window.location);
-        var redirect = 'https://ssl-config.mozilla.org/';
+        var redirect = 'https://configurator.tlsref.org/';
 
         if (url.search !== '') {
             var search = url.search;
@@ -29,7 +29,7 @@
                            .replace('profile=', 'config=')
                            .replace('openssl=', 'openssl-version=');
 
-            redirect = 'https://ssl-config.mozilla.org/' + search;
+            redirect = 'https://configurator.tlsref.org/' + search;
         }
 
         // boop
