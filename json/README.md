@@ -1,6 +1,6 @@
 # Current JSON Server Side TLS Recommendations
 
-The current JSON recommendations can be found at https://github.com/mozilla/ssl-config-generator/tree/master/src/static/guidelines
+The current JSON recommendations can be found at https://github.com/tlsref/data/tree/master/docs/guidelines
 
 # Historical JSON Versions of Server Side TLS Recommendations
 
@@ -14,5 +14,5 @@ account. The CloudFront distribution `EIB8EDBWWFDDU ` terminates the TLS
 connection at https://statics.tls.security.mozilla.org serving up the content 
 from the S3 bucket.
 
-All future recommendation updates should be made in the https://github.com/mozilla/ssl-config-generator/
+All future recommendation updates should be made in the https://github.com/tlsref/data/
 repository, not here.
