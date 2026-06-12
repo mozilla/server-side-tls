@@ -7,4 +7,4 @@ The Server Side TLS guidelines content has moved to two places
 
 Historically, this repository contained both the MediaWiki source for Mozilla's Server Side TLS
 document at [Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS) and Mozilla's SSL/TLS Configuration Generator. Access the current generator by following this link: [TLSRef TLS Configuration Generator](https://configurator.tlsref.org/).
-The current code for the configuration generator is located at https://github.com/tlsref/configurator , the previous code was located at https://github.com/mozilla/ssl-config-generator and the original code [can be found at this revision](https://github.com/mozilla/server-side-tls/tree/last-revision-before-move).
+The current code for the configuration generator is located at https://github.com/tlsref/configurator , the previous code was located at https://github.com/mozilla/ssl-config-generator and the original code from years before that [can be found at this revision](https://github.com/mozilla/server-side-tls/tree/last-revision-before-move).
